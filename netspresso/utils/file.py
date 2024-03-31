@@ -52,7 +52,7 @@ class FileHandler:
         folder_path: str,
         parents: bool = True,
         exist_ok: bool = True,
-        is_folder_check: bool = True,
+        is_folder_check: bool = False,
     ) -> None:
         """Create a folder.
 
