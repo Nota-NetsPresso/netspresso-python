@@ -22,6 +22,7 @@ class DeviceName(str, Enum):
     RENESAS_RA8D1 = "Renesas-RA8D1"
     ARM_ETHOS_U_SERIES = "Arm Virtual Hardware Ethos-U Series"
     NXP_iMX93 = "nxp_imx93_ethos_u65"
+    ARDUINO_NICLA_VISION = "arduino_nicla_vision"
 
     @classmethod
     def create_literal(cls):
@@ -44,7 +45,8 @@ class DeviceName(str, Enum):
             "Ensemble-E7-DevKit-Gen2",
             "Renesas-RA8D1",
             "Arm Virtual Hardware Ethos-U Series",
-            "nxp_imx93_ethos_u65"
+            "nxp_imx93_ethos_u65",
+            "arduino_nicla_vision"
         ]
 
     JETSON_DEVICES = [
@@ -74,9 +76,10 @@ class DeviceName(str, Enum):
         RASPBERRY_PI_ZERO_W,
         RASPBERRY_PI_ZERO_2W,
         ARM_ETHOS_U_SERIES,
-        NXP_iMX93
+        NXP_iMX93,
+        ARDUINO_NICLA_VISION
     ]
-    ONLY_INT8_DEVICES = [ALIF_ENSEMBLE_E7_DEVKIT_GEN2, RENESAS_RA8D1, ARM_ETHOS_U_SERIES, NXP_iMX93]
+    ONLY_INT8_DEVICES = [ALIF_ENSEMBLE_E7_DEVKIT_GEN2, RENESAS_RA8D1, ARM_ETHOS_U_SERIES, NXP_iMX93, ARDUINO_NICLA_VISION]
 
 
 class SoftwareVersion(str, Enum):

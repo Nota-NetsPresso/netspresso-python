@@ -15,6 +15,8 @@ from netspresso.enums import DataType, DeviceName, Framework
 # DeviceName.RASPBERRY_PI_ZERO_2W
 # DeviceName.ALIF_ENSEMBLE_E7_DEVKIT_GEN2
 # DeviceName.RENESAS_RA8D1
+# DeviceName.NXP_iMX93
+# DeviceName.ARDUINO_NICLA_VISION
 #
 
 ###
@@ -25,6 +27,8 @@ from netspresso.enums import DataType, DeviceName, Framework
 # DeviceName.RASPBERRY_PI_ZERO_2W
 # DeviceName.ALIF_ENSEMBLE_E7_DEVKIT_GEN2
 # DeviceName.RENESAS_RA8D1
+# DeviceName.NXP_iMX93
+# DeviceName.ARDUINO_NICLA_VISION
 #
 
 EMAIL = "YOUR_EMAIL"
