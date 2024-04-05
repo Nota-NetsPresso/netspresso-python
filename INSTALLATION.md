@@ -55,5 +55,9 @@ docker run -it --ipc=host\
   -p 50002:50002\
   -p 50003:50003\
   -p 50004:50004\
-  --name netspresso-dev netspresso:v$(cat netspresso/VERSION)
+  --name netspresso-dev netspresso:v$(cat netspresso/VERSION) bash
+```
+
+```bash
+root@cdd67a8bef5b:~# pip install -e .
 ```
