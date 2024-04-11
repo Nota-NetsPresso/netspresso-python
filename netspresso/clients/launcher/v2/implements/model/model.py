@@ -1,6 +1,7 @@
 from dataclasses import asdict
 
-from netspresso.clients.launcher.v2.enums import LauncherTask
+from netspresso.clients.utils.requester import Requester
+from netspresso.enums import LauncherTask
 from netspresso.clients.launcher.v2.interfaces import ModelInterface
 from netspresso.clients.launcher.v2.schemas import (
     AuthorizationHeader,
@@ -13,8 +14,8 @@ from netspresso.clients.launcher.v2.schemas import (
     ResponseModelItem,
     ResponseModelItems,
     ResponseModelStatus,
+    ResponseModelOptions,
 )
-from netspresso.clients.utils.requester import Requester
 
 
 class ModelAPI(ModelInterface):
@@ -95,3 +96,10 @@ class ModelAPI(ModelInterface):
         endpoint = f"{self.model_base_url}/{ai_model_id}"
         response = Requester().get(url=endpoint, headers=asdict(headers))
         return ResponseModelStatus(**response.json())
+
+    def options(
+        self, headers: AuthorizationHeader, ai_model_id: str
+    ) -> ResponseModelOptions:
+        endpoint = f"{self.model_base_url}/{ai_model_id}/options"
+        response = Requester().get(url=endpoint, headers=asdict(headers))
+        return ResponseModelOptions(**response.json())

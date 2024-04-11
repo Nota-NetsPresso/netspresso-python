@@ -1,4 +1,4 @@
-from .common import Device, TaskStatusInfo
+from .common import TaskStatusInfo
 from .convert import (
     RequestConvert,
     ResponseConvertTaskItem,
@@ -13,7 +13,6 @@ from .benchmark import (
 )
 
 __all__ = [
-    Device,
     TaskStatusInfo,
     RequestConvert,
     ResponseConvertTaskItem,

@@ -9,6 +9,7 @@ from .response_body import (
     ResponseModelItem,
     ResponseModelItems,
     ResponseModelStatus,
+    ResponseModelOptions,
 )
 
 
@@ -23,4 +24,5 @@ __all__ = [
     ResponseModelItem,
     ResponseModelItems,
     ResponseModelStatus,
+    ResponseModelOptions,
 ]

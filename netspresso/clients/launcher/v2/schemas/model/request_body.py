@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from netspresso.clients.launcher.v2.enums import LauncherTask
+from netspresso.enums import LauncherTask
 
 
 @dataclass

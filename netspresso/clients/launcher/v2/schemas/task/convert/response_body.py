@@ -2,14 +2,15 @@ import dataclasses
 from dataclasses import dataclass, field
 from typing import Optional, List
 
-from netspresso.clients.launcher.v2.enums import TaskStatus
-from netspresso.clients.launcher.v2.schemas.task.common import Device, TaskStatusInfo
+from netspresso.enums import TaskStatusForDisplay
+from netspresso.clients.launcher.v2.schemas.task.common import TaskStatusInfo
 from netspresso.clients.launcher.v2.schemas import (
+    DeviceInfo,
     InputLayer,
+    ModelOption,
     ResponseItem,
     ResponseItems,
 )
-from netspresso.enums import DataType
 
 
 @dataclass
@@ -17,15 +18,9 @@ class ConvertTask:
     convert_task_id: str
     input_model_id: str
     output_model_id: str
-    target_framework: str
-    target_device_name: str
-    display_brand_name: str
-    display_device_name: str
-    data_type: DataType
     input_layer: InputLayer
-    status: TaskStatus
-    software_version: str = None
-    display_software_version: str = None
+    status: TaskStatusForDisplay
+    convert_task_option: Optional[ModelOption] = None
 
     def __init__(self, **kwargs):
         names = set([f.name for f in dataclasses.fields(self)])
@@ -44,11 +39,9 @@ class ResponseConvertTaskItem(ResponseItem):
 
 @dataclass(init=False)
 class ConvertOption:
-    option_id: str
     option_name: str
     framework: str
-    device: Device
-    sw_version: Optional[str] = ""
+    device: DeviceInfo
 
     def __init__(self, **kwargs):
         names = set([f.name for f in dataclasses.fields(self)])

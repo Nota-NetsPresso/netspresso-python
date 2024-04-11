@@ -1,6 +1,8 @@
 from .common import (
     AuthorizationHeader,
+    DeviceInfo,
     UploadFile,
+    ModelOption,
     RequestPagination,
     ResponseItem,
     ResponseItems,
@@ -16,6 +18,7 @@ from .model import (
     ResponseModelItem,
     ResponseModelItems,
     ResponseModelStatus,
+    ResponseModelOptions,
 )
 from .task import (
     RequestBenchmark,

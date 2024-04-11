@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from netspresso.clients.launcher.v2.enums import TaskStatus
+from netspresso.enums import TaskStatusForDisplay
 
 
 @dataclass
@@ -11,4 +11,4 @@ class Device:
 
 @dataclass
 class TaskStatusInfo:
-    status: TaskStatus
+    status: TaskStatusForDisplay

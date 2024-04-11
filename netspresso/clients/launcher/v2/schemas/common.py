@@ -1,6 +1,14 @@
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Union
 from dataclasses import dataclass, field
+
+from netspresso.enums import (
+    DataType,
+    HardwareType,
+    Framework,
+    SoftwareVersion,
+    DisplaySoftwareVersion,
+)
 
 
 class Order(str, Enum):
@@ -57,3 +65,32 @@ class ResponsePaginationItems:
     result_count: int
     total_count: int
     data: List[Optional[object]] = field(default_factory=list)
+
+
+@dataclass
+class SoftwareVersionInfo:
+    """ """
+
+    software_version: Optional[Union[None, SoftwareVersion]] = None
+    display_software_version: Optional[Union[None, DisplaySoftwareVersion]] = None
+
+
+@dataclass
+class DeviceInfo:
+    """ """
+
+    device_name: str
+    display_device_name: str
+    display_brand_name: str
+    software_versions: Optional[List[SoftwareVersionInfo]] = field(default_factory=list)
+    data_types: Optional[List[DataType]] = field(default_factory=list)
+    hardware_types: Optional[List[HardwareType]] = field(default_factory=list)
+
+
+@dataclass
+class ModelOption:
+    """ """
+
+    framework: Optional[Framework] = ""
+    display_framework: Optional[str] = ""
+    devices: List[DeviceInfo] = field(default_factory=list)

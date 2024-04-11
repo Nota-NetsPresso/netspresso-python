@@ -2,8 +2,12 @@ import os
 from loguru import logger
 
 from netspresso.clients.launcher.v2 import utils
-from netspresso.clients.launcher.v2.enums import (
+from netspresso.enums import (
     LauncherTask,
+    DataType,
+    Framework,
+    DeviceName,
+    SoftwareVersion,
 )
 from netspresso.clients.launcher.v2.schemas import (
     AuthorizationHeader,
@@ -14,13 +18,13 @@ from netspresso.clients.launcher.v2.schemas import (
     RequestValidateModel,
     ResponseModelUploadUrl,
     ResponseModelItem,
+    ResponseModelOptions,
     RequestConvert,
     ResponseConvertTaskItem,
     ResponseConvertStatusItem,
     ResponseConvertOptionItems,
 )
 from netspresso.clients.launcher.v2.implements import ModelAPI, ConvertTaskAPI
-from netspresso.enums import DeviceName, Framework, DataType, SoftwareVersion
 
 
 class Converter:
@@ -92,13 +96,23 @@ class Converter:
         logger.info(f"Request Convert validate_model result: {validated_model}")
         return validated_model
 
-    def download_model_file(self, access_token, ai_model_id) -> str:
+    def download_model_file(self, access_token, convert_task_uuid) -> str:
         token_header = AuthorizationHeader(access_token=access_token)
-        download_url = self.convert_model.get_download_url(
-            headers=token_header, ai_model_id=ai_model_id
+        download_url = self.convert_task.get_download_url(
+            headers=token_header, convert_task_uuid=convert_task_uuid
         )
         logger.info(f"Request converted model download_url: {download_url}")
         return download_url
+
+    def read_model_task_options(
+        self, access_token, ai_model_id
+    ) -> ResponseModelOptions:
+        token_header = AuthorizationHeader(access_token=access_token)
+        model_task_options = self.convert_model.options(
+            headers=token_header, ai_model_id=ai_model_id
+        )
+        logger.info(f"Request model task_options: {model_task_options}")
+        return model_task_options
 
     def start_task(
         self,

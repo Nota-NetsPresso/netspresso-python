@@ -86,3 +86,12 @@ class ModelInterface(ABC):
         :return:
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def options(self, headers: dataclasses, ai_model_id: str) -> ResponseItems:
+        """
+        :param headers:
+        :param ai_model_id:
+        :return:
+        """
+        raise NotImplementedError

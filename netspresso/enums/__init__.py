@@ -1,13 +1,26 @@
 from netspresso.clients.compressor.schemas.compression import Options
 
-from .compression import CompressionMethod, GroupPolicy, LayerNorm, Policy, RecommendationMethod, StepOp
-from .credit import ServiceCredit
-from .device import DeviceName, HardwareType, SoftwareVersion, TaskStatus
+from .compression import (
+    CompressionMethod,
+    GroupPolicy,
+    LayerNorm,
+    Policy,
+    RecommendationMethod,
+    StepOp,
+)
+from .credit import ServiceCredit, MembershipType
+from .device import (
+    DeviceName,
+    HardwareType,
+    SoftwareVersion,
+    TaskStatus,
+    DisplaySoftwareVersion,
+)
 from .metadata import Status, TaskType
 from .model import DataType, Extension, Framework, OriginFrom
 from .module import Module
 from .tao.action import ConvertAction, ExperimentAction
-from .task import Task
+from .task import Task, TaskStatusForDisplay, ConvertStatus, BenchmarkStatus, LauncherTask
 
 __all__ = [
     "ServiceCredit",
@@ -26,6 +39,7 @@ __all__ = [
     "DataType",
     "DeviceName",
     "SoftwareVersion",
+    "DisplaySoftwareVersion",
     "HardwareType",
     "TaskStatus",
     "Module",
@@ -33,4 +47,10 @@ __all__ = [
     "ConvertAction",
     "ExperimentAction",
     "StepOp",
+    "MembershipType",
+    "DisplaySoftwareVersion",
+    "LauncherTask",
+    "TaskStatusForDisplay",
+    "ConvertStatus",
+    "BenchmarkStatus",
 ]

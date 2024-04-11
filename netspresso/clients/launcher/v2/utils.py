@@ -2,8 +2,8 @@ from loguru import logger
 
 from fastapi.security import OAuth2PasswordRequestForm
 
+from netspresso.clients.auth.response_body import TokenResponse
 from netspresso.clients.auth.v2.client import auth_client_v2
-from netspresso.clients.auth.v2.schemas.token import TokenResponse
 
 
 def read_file_bytes(file_path: str) -> bytes:

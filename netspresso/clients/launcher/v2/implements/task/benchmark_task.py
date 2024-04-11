@@ -1,7 +1,7 @@
 from dataclasses import asdict
 
 from netspresso.clients.utils.requester import Requester
-from netspresso.clients.launcher.v2.enums import LauncherTask
+from netspresso.enums import LauncherTask
 from netspresso.clients.launcher.v2.interfaces import TaskInterface
 from netspresso.clients.launcher.v2.schemas import (
     AuthorizationHeader,

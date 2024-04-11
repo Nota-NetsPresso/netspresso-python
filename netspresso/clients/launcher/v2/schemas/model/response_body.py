@@ -3,38 +3,14 @@ from typing import Optional, List
 
 from netspresso.clients.launcher.v2.schemas.common import (
     ResponseItem,
+    ResponseItems,
     ResponsePaginationItems,
+    ModelOption,
 )
-from netspresso.clients.launcher.v2.schemas.model import ModelBase, ModelStatus
-from netspresso.enums import DataType
-
-
-@dataclass
-class DeviceInfo:
-    device_name: str
-    display_brand_name: str
-    display_device_name: str
-
-
-@dataclass
-class ConvertOption:
-    option_name: str
-    framework: str
-    target_framework: str
-    data_type: DataType
-    device: DeviceInfo = field(default_factory=DeviceInfo)
-    software_version: Optional[str] = None
-    display_software_version: Optional[str] = None
-
-
-@dataclass
-class BenchmarkOption:
-    option_name: str
-    framework: str
-    device: DeviceInfo = field(default_factory=DeviceInfo)
-    hardware_type: Optional[str] = None
-    software_version: Optional[str] = None
-    display_software_version: Optional[str] = None
+from netspresso.clients.launcher.v2.schemas.model import (
+    ModelBase,
+    ModelStatus,
+)
 
 
 @dataclass
@@ -59,7 +35,7 @@ class ResponseModelUploadUrl(ResponseItem):
 class ResponseModelStatus(ResponseItem):
     """ """
 
-    data: ModelStatus
+    data: ModelStatus = field(default_factory=ModelStatus)
 
     def __post_init__(self):
         self.data = ModelStatus(**self.data)
@@ -76,7 +52,20 @@ class ResponseModelItem(ResponseItem):
 
 
 @dataclass
+class ResponseModelOptions(ResponseItems):
+    """ """
+
+    data: Optional[List[ModelOption]] = field(default_factory=list)
+
+    def __post_init__(self):
+        self.data = [ModelOption(**option) for option in self.data]
+
+
+@dataclass
 class ResponseModelItems(ResponsePaginationItems):
     """ """
 
     data: Optional[List[ModelBase]] = field(default_factory=list)
+
+    def __post_init__(self):
+        self.data = [ModelBase(**model) for model in self.data]

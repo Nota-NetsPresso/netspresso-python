@@ -1,7 +1,8 @@
 from dataclasses import asdict
 from loguru import logger
 
-from netspresso.clients.launcher.v2.enums import LauncherTask
+from netspresso.clients.utils.requester import Requester
+from netspresso.enums import LauncherTask
 from netspresso.clients.launcher.v2.interfaces import TaskInterface
 from netspresso.clients.launcher.v2.schemas import (
     AuthorizationHeader,
@@ -11,7 +12,6 @@ from netspresso.clients.launcher.v2.schemas import (
     ResponseConvertOptionItems,
     ResponseConvertStatusItem,
 )
-from netspresso.clients.utils.requester import Requester
 
 
 class ConvertTaskAPI(TaskInterface):
@@ -20,6 +20,7 @@ class ConvertTaskAPI(TaskInterface):
         self.base_url = url
         self.task_base_url = f"{self.base_url}/{self.task_type}/tasks"
         self.option_base_url = f"{self.base_url}/{self.task_type}/options"
+        self.model_base_url = f"{self.base_url}/{self.task_type}/models"
 
     def start(
         self,
@@ -80,9 +81,16 @@ class ConvertTaskAPI(TaskInterface):
         response = Requester().get(url=endpoint, headers=asdict(headers))
         return ResponseConvertOptionItems(**response.json())
 
-    def option_by_target_device(
+    def option_by_target_framework(
         self, headers: AuthorizationHeader, target_framework: str
     ) -> ResponseConvertOptionItems:
         endpoint = f"{self.option_base_url}/details/{target_framework}"
         response = Requester().get(url=endpoint, headers=asdict(headers))
         return ResponseConvertOptionItems(**response.json())
+
+    def get_download_url(
+        self, headers: AuthorizationHeader, convert_task_uuid: str
+    ) -> str:
+        endpoint = f"{self.model_base_url}/{convert_task_uuid}"
+        response = Requester().get(url=endpoint, headers=asdict(headers))
+        return response.json()
