@@ -19,11 +19,9 @@ class InputShape:
 
 @dataclass
 class ModelInfo:
-    model_fime_name: str = ""
-    model_file_path: str = ""
     data_type: DataType = ""
     framework: Framework = ""
-    input_layer: InputShape = field(default_factory=InputShape)
+    input_shapes: List[InputShape] = field(default_factory=lambda: [InputShape()])
 
 
 @dataclass

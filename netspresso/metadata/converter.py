@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import List
 
 from netspresso.metadata.common import ModelInfo, AvailableOptions
 from netspresso.enums import (
@@ -35,4 +36,4 @@ class ConverterMetadata:
     converted_model_path: str = ""
     model_info: ModelInfo = field(default_factory=ModelInfo)
     convert_task_info: ConvertInfo = field(default_factory=ConvertInfo)
-    available_options: AvailableOptions = field(default_factory=AvailableOptions)
+    available_options: List[AvailableOptions] = field(default_factory=lambda: [AvailableOptions()])
