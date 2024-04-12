@@ -11,8 +11,7 @@ from netspresso.enums import (
 
 
 @dataclass
-class InputLayer:
-    name: str = None
+class InputShape:
     batch: int = 1
     channel: int = 3
     dimension: List[int] = field(default_factory=list)
@@ -24,19 +23,27 @@ class ModelInfo:
     model_file_path: str = ""
     data_type: DataType = ""
     framework: Framework = ""
-    input_layer: InputLayer = field(default_factory=InputLayer)
+    input_layer: InputShape = field(default_factory=InputShape)
 
 
-class InputModelInfo(ModelInfo):
-    pass
-
-
-class OutputModelInfo(ModelInfo):
-    pass
+@dataclass
+class SoftwareVersions:
+    software_version: SoftwareVersion = ""
+    display_software_versions: str = ""
 
 
 @dataclass()
 class DeviceInfo:
     device_name: DeviceName = ""
-    software_version: SoftwareVersion = ""
-    hardware_type: HardwareType = ""
+    display_device_name: str = ""
+    display_brand_name: str = ""
+    software_versions: SoftwareVersions = ""
+    data_types: List[DataType] = field(default_factory=list)
+    hardware_types: List[HardwareType] = field(default_factory=list)
+
+
+@dataclass()
+class AvailableOptions:
+    framework: Framework = ""
+    display_framework: str = ""
+    devices: List[DeviceInfo] = field(default_factory=lambda: [DeviceInfo()])

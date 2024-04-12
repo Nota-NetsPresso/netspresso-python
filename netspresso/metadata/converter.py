@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
-from typing import List
 
-from netspresso.metadata.common import InputModelInfo, OutputModelInfo, DeviceInfo
+from netspresso.metadata.common import ModelInfo, AvailableOptions
 from netspresso.enums import (
     Status,
     TaskType,
@@ -13,19 +12,27 @@ from netspresso.enums import (
 
 
 @dataclass
-class ConvertTaskInfo:
-    convert_task_id: str = ""
+class ConvertInfo:
+    convert_task_uuid: str = ""
+    framework: Framework = ""
+    display_framework: str = ""
+    device_name: DeviceName = ""
+    display_device_name: str = ""
+    display_brand_name: str = ""
     data_type: DataType = ""
-    target_framework: Framework = ""
-    target_device_name: DeviceName = ""
     software_version: SoftwareVersion = ""
+    display_software_version: str = ""
+    model_file_name: str = ""
+    input_model_uuid: str = ""
+    output_model_uuid: str = ""
 
 
 @dataclass
 class ConverterMetadata:
     status: Status = Status.IN_PROGRESS
     task_type: TaskType = TaskType.CONVERT
-    convert_task_info: ConvertTaskInfo = field(default_factory=ConvertTaskInfo)
-    input_model_info: InputModelInfo = field(default_factory=InputModelInfo)
-    output_model_info: OutputModelInfo = field(default_factory=OutputModelInfo)
-    available_options: List[DeviceInfo] = field(default_factory=lambda: [DeviceInfo()])
+    input_model_path: str = ""
+    converted_model_path: str = ""
+    model_info: ModelInfo = field(default_factory=ModelInfo)
+    convert_task_info: ConvertInfo = field(default_factory=ConvertInfo)
+    available_options: AvailableOptions = field(default_factory=AvailableOptions)

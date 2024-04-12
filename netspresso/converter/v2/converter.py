@@ -1,6 +1,6 @@
 import time
 from pathlib import Path
-from typing import Union, Optional, Dict
+from typing import Union, Optional
 from urllib import request
 
 from loguru import logger
@@ -144,7 +144,7 @@ class ConverterV2:
                 )
                 if response.data.status in [
                     TaskStatusForDisplay.FINISHED,
-                    TaskStatusForDisplay.CANCELLED,
+                    TaskStatusForDisplay.ERROR,
                 ]:
                     break
                 time.sleep(3)
@@ -153,28 +153,6 @@ class ConverterV2:
             conversion_task=response.data,
             local_path=str(default_model_path.with_suffix(extension)),
         )
-
-        # metadata.update_converted_model_path(
-        #     converted_model_path=default_model_path.with_suffix(extension).as_posix()
-        # )
-        # metadata.update_model_info(
-        #     data_type=model.data_type,
-        #     framework=model.framework,
-        #     input_shape=model.input_shape,
-        # )
-        # metadata.update_convert_info(
-        #     target_framework=conversion_task.target_framework,
-        #     target_device_name=conversion_task.target_device_name,
-        #     data_type=conversion_task.data_type,
-        #     software_version=conversion_task.software_version,
-        #     model_file_name=conversion_task.model_file_name,
-        #     convert_task_uuid=conversion_task.convert_task_uuid,
-        #     input_model_uuid=conversion_task.input_model_uuid,
-        #     output_model_uuid=conversion_task.output_model_uuid,
-        # )
-        # metadata.update_status(status=Status.COMPLETED)
-        # metadata.update_available_devices(converter_uploaded_model.available_devices)
-        # MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
 
         return response.data
 
