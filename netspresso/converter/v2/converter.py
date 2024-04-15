@@ -14,6 +14,7 @@ from netspresso.clients.launcher.v2.schemas.task.convert.response_body import (
 from netspresso.enums import TaskStatusForDisplay
 from netspresso.clients.launcher.v2.schemas import InputLayer, ResponseConvertTaskItem
 from netspresso.enums import Framework, DeviceName, DataType, SoftwareVersion
+from netspresso.metadata.converter import ConverterMetadata
 from netspresso.utils import FileHandler
 
 
@@ -25,7 +26,7 @@ class ConverterV2:
         self.user_info = user_info
 
     def _download_converted_model(
-        self, conversion_task: ConvertTask, local_path: str
+        self, convert_task: ConvertTask, local_path: str
     ) -> None:
         """Download the converted model with given conversion task or conversion task uuid.
 
@@ -37,17 +38,17 @@ class ConverterV2:
         """
 
         try:
-            if conversion_task.status == TaskStatusForDisplay.ERROR:
+            if convert_task.status == TaskStatusForDisplay.ERROR:
                 raise FileNotFoundError(
                     "The conversion is Failed. There is no file available for download."
                 )
-            if conversion_task.status != TaskStatusForDisplay.FINISHED:
+            if convert_task.status != TaskStatusForDisplay.FINISHED:
                 raise FileNotFoundError(
                     "The conversion is in progress. There is no file available for download at the moment."
                 )
 
             download_url = launcher_client_v2.converter.download_model_file(
-                convert_task_uuid=conversion_task.convert_task_id,
+                convert_task_uuid=convert_task.convert_task_id,
                 access_token=self.token_handler.tokens.access_token,
             )
             request.urlretrieve(download_url, local_path)
@@ -150,9 +151,22 @@ class ConverterV2:
                 time.sleep(3)
 
         self._download_converted_model(
-            conversion_task=response.data,
+            convert_task=response.data,
             local_path=str(default_model_path.with_suffix(extension)),
         )
+
+        convert_task = response.data
+
+        input_model_info = validate_model_response.data
+
+        task_options = launcher_client_v2.converter.read_model_task_options(
+            access_token=self.token_handler.tokens.access_token,
+            ai_model_id=convert_task.input_model_id,
+        ).data
+
+        print(f"convert_task : {convert_task}")
+        print(f"input_model_info : {input_model_info}")
+        print(f"task_options : {task_options}")
 
         return response.data
 
