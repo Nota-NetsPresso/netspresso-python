@@ -164,10 +164,15 @@ class ConverterV2:
             ai_model_id=convert_task.input_model_id,
         ).data
 
-        print(f"convert_task : {convert_task}")
-        print(f"input_model_info : {input_model_info}")
-        print(f"task_options : {task_options}")
+        converter_metadata = ConverterMetadata()
+        converter_metadata.input_model_path = input_model_path
+        converter_metadata.converted_model_path = output_dir
+        converter_metadata.model_info = input_model_info.to()
+        converter_metadata.convert_task_info = convert_task.to(input_model_info.uploaded_file_name)
+        for task_option in task_options:
+            converter_metadata.available_options.append(task_option.to())
 
+        logger.info(f"ConvertMetadata : {converter_metadata}")
         return response.data
 
     def get_conversion_task(self, conversion_task_id: str) -> ConvertTask:

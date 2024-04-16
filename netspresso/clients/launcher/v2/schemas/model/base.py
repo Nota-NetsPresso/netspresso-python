@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from netspresso.metadata.common import ModelInfo, InputShape
+
 
 @dataclass
 class InputLayer:
@@ -8,6 +10,13 @@ class InputLayer:
     batch: Optional[int] = None
     channel: Optional[int] = None
     dimension: Optional[list] = None
+
+    def to(self) -> InputShape:
+        input_shape = InputShape()
+        input_shape.batch = self.batch
+        input_shape.channel = self.channel
+        input_shape.dimension = self.dimension
+        return input_shape
 
 
 @dataclass
@@ -21,6 +30,9 @@ class ModelDetail:
     number_of_layers: Optional[int] = None
     graph_info: Optional[dict] = None
     input_layer: Optional[InputLayer] = None
+
+    def __post_init__(self):
+        self.input_layer = InputLayer(**self.input_layer)
 
 
 @dataclass
@@ -50,3 +62,10 @@ class ModelBase:
     def __post_init__(self):
         self.status = ModelStatus(**self.status)
         self.detail = ModelDetail(**self.detail)
+
+    def to(self) -> ModelInfo:
+        model_info = ModelInfo()
+        model_info.data_type = self.detail.data_type
+        model_info.framework = self.detail.framework
+        model_info.input_shapes.append(self.detail.input_layer.to())
+        return model_info

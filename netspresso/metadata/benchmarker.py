@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List
 
-from netspresso.metadata.common import InputModelInfo, DeviceInfo
+from netspresso.metadata.common import DeviceInfo, ModelInfo
 from netspresso.enums import (
     DataType,
     SoftwareVersion,
@@ -45,7 +45,7 @@ class BenchmarkerMetadata:
     status: Status = Status.IN_PROGRESS
     task_type: TaskType = TaskType.BENCHMARK
     benchmark_task_info: BenchmarkTaskInfo = field(default_factory=BenchmarkTaskInfo)
-    input_model_info: InputModelInfo = field(default_factory=InputModelInfo)
+    input_model_info: ModelInfo = field(default_factory=ModelInfo)
     device_info: DeviceInfo = field(default_factory=DeviceInfo)
     benchmark_result: BenchmarkResult = field(default_factory=BenchmarkResult)
     benchmark_environment: BenchmarkEnvironment = field(

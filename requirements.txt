@@ -10,3 +10,4 @@ netspresso_trainer==0.1.2
 PyGithub>=2.1.1
 matplotlib>=3.7.4
 aenum==3.1.15
+fastapi==0.100.0

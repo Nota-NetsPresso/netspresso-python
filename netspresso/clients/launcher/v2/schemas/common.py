@@ -9,6 +9,8 @@ from netspresso.enums import (
     SoftwareVersion,
     DisplaySoftwareVersion,
 )
+from netspresso.metadata import common
+from netspresso.metadata.common import AvailableOptions
 
 
 class Order(str, Enum):
@@ -86,6 +88,27 @@ class DeviceInfo:
     data_types: Optional[List[DataType]] = field(default_factory=list)
     hardware_types: Optional[List[HardwareType]] = field(default_factory=list)
 
+    def __post_init__(self):
+        self.software_versions = [SoftwareVersionInfo(**item) for item in self.software_versions]
+
+    def to(self) -> common.DeviceInfo:
+        device_info = common.DeviceInfo()
+
+        device_info.device_name = self.device_name
+        device_info.display_device_name = self.display_device_name
+        device_info.display_brand_name = self.display_brand_name
+        device_info.data_types = self.data_types
+        device_info.hardware_types = self.hardware_types
+
+        device_info.software_versions.software_version = self.software_versions[
+            0
+        ].software_version
+        device_info.software_versions.display_software_versions = (
+            self.software_versions[0].display_software_version
+        )
+
+        return device_info
+
 
 @dataclass
 class ModelOption:
@@ -94,3 +117,15 @@ class ModelOption:
     framework: Optional[Framework] = ""
     display_framework: Optional[str] = ""
     devices: List[DeviceInfo] = field(default_factory=list)
+
+    def __post_init__(self):
+        self.devices = [DeviceInfo(**item) for item in self.devices]
+
+    def to(self) -> AvailableOptions:
+        available_options = AvailableOptions()
+        available_options.framework = self.framework
+        available_options.display_framework = self.display_framework
+        for device in self.devices:
+            available_options.devices.append(device.to())
+
+        return available_options
