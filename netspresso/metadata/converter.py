@@ -31,6 +31,7 @@ class ConvertInfo:
 @dataclass
 class ConverterMetadata:
     status: Status = Status.IN_PROGRESS
+    message: str = ""
     task_type: TaskType = TaskType.CONVERT
     input_model_path: str = ""
     converted_model_path: str = ""

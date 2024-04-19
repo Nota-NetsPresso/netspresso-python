@@ -6,17 +6,17 @@ from urllib import request
 
 from loguru import logger
 
-from netspresso.clients.auth import TokenHandler
+from netspresso.clients.auth import TokenHandler, auth_client
 from netspresso.clients.auth.response_body import UserResponse
 from netspresso.clients.launcher import launcher_client_v2
 from netspresso.clients.launcher.v2.schemas.task.convert.response_body import (
     ConvertTask,
 )
-from netspresso.enums import TaskStatusForDisplay
+from netspresso.enums import TaskStatusForDisplay, ServiceCredit, Status
 from netspresso.clients.launcher.v2.schemas import InputLayer, ResponseConvertTaskItem
 from netspresso.enums import Framework, DeviceName, DataType, SoftwareVersion
 from netspresso.metadata.converter import ConverterMetadata
-from netspresso.utils import FileHandler
+from netspresso.utils import FileHandler, check_credit_balance
 from netspresso.utils.metadata import MetadataHandler
 
 
@@ -102,84 +102,112 @@ class ConverterV2:
             folder_path=output_dir, framework=target_framework
         )
         FileHandler.create_unique_folder(folder_path=output_dir)
-        # metadata = MetadataHandler.init_metadata(folder_path=output_dir, task_type=TaskType.CONVERT)
+        converter_metadata = ConverterMetadata()
+        MetadataHandler.save_json(
+            data=asdict(converter_metadata), folder_path=output_dir
+        )
 
-        # GET presigned_model_upload_url
-        presigned_url_response = (
-            launcher_client_v2.converter.presigned_model_upload_url(
+        try:
+            current_credit = auth_client.get_credit(
+                self.token_handler.tokens.access_token,
+                verify_ssl=self.token_handler.verify_ssl,
+            )
+            check_credit_balance(
+                user_credit=current_credit, service_credit=ServiceCredit.MODEL_CONVERT
+            )
+
+            # GET presigned_model_upload_url
+            presigned_url_response = (
+                launcher_client_v2.converter.presigned_model_upload_url(
+                    access_token=self.token_handler.tokens.access_token,
+                    input_model_path=input_model_path,
+                )
+            )
+
+            # UPLOAD model_file
+            model_upload_response = launcher_client_v2.converter.upload_model_file(
                 access_token=self.token_handler.tokens.access_token,
                 input_model_path=input_model_path,
+                presigned_upload_url=presigned_url_response.data.presigned_upload_url,
             )
-        )
 
-        # UPLOAD model_file
-        model_upload_response = launcher_client_v2.converter.upload_model_file(
-            access_token=self.token_handler.tokens.access_token,
-            input_model_path=input_model_path,
-            presigned_upload_url=presigned_url_response.data.presigned_upload_url,
-        )
+            # VALIDATE model_file
+            validate_model_response = launcher_client_v2.converter.validate_model_file(
+                access_token=self.token_handler.tokens.access_token,
+                input_model_path=input_model_path,
+                ai_model_id=presigned_url_response.data.ai_model_id,
+            )
 
-        # VALIDATE model_file
-        validate_model_response = launcher_client_v2.converter.validate_model_file(
-            access_token=self.token_handler.tokens.access_token,
-            input_model_path=input_model_path,
-            ai_model_id=presigned_url_response.data.ai_model_id,
-        )
+            # START convert task
+            response = launcher_client_v2.converter.start_task(
+                access_token=self.token_handler.tokens.access_token,
+                input_model_id=presigned_url_response.data.ai_model_id,
+                target_device_name=target_device_name,
+                target_framework=target_framework,
+                data_type=target_data_type,
+                input_layer=input_layer,
+                software_version=target_software_version,
+                dataset_path=dataset_path,
+            )
 
-        # START convert task
-        response = launcher_client_v2.converter.start_task(
-            access_token=self.token_handler.tokens.access_token,
-            input_model_id=presigned_url_response.data.ai_model_id,
-            target_device_name=target_device_name,
-            target_framework=target_framework,
-            data_type=target_data_type,
-            input_layer=input_layer,
-            software_version=target_software_version,
-            dataset_path=dataset_path,
-        )
+            if wait_until_done:
+                while True:
+                    # Poll Convert Task status
+                    response = launcher_client_v2.converter.read_task(
+                        access_token=self.token_handler.tokens.access_token,
+                        task_id=response.data.convert_task_id,
+                    )
+                    if response.data.status in [
+                        TaskStatusForDisplay.FINISHED,
+                        TaskStatusForDisplay.ERROR,
+                    ]:
+                        break
+                    time.sleep(3)
 
-        if wait_until_done:
-            while True:
-                # Poll Convert Task status
-                response = launcher_client_v2.converter.read_task(
-                    access_token=self.token_handler.tokens.access_token,
-                    task_id=response.data.convert_task_id,
-                )
-                if response.data.status in [
-                    TaskStatusForDisplay.FINISHED,
-                    TaskStatusForDisplay.ERROR,
-                ]:
-                    break
-                time.sleep(3)
+            self._download_converted_model(
+                convert_task=response.data,
+                local_path=str(default_model_path.with_suffix(extension)),
+            )
 
-        self._download_converted_model(
-            convert_task=response.data,
-            local_path=str(default_model_path.with_suffix(extension)),
-        )
+            convert_task = response.data
 
-        convert_task = response.data
+            input_model_info = validate_model_response.data
 
-        input_model_info = validate_model_response.data
+            task_options = launcher_client_v2.converter.read_model_task_options(
+                access_token=self.token_handler.tokens.access_token,
+                ai_model_id=convert_task.input_model_id,
+            ).data
 
-        task_options = launcher_client_v2.converter.read_model_task_options(
-            access_token=self.token_handler.tokens.access_token,
-            ai_model_id=convert_task.input_model_id,
-        ).data
+            converter_metadata.status = Status.COMPLETED
+            converter_metadata.input_model_path = input_model_path
+            converter_metadata.converted_model_path = output_dir
+            converter_metadata.model_info = input_model_info.to()
+            converter_metadata.convert_task_info = convert_task.to(
+                input_model_info.uploaded_file_name
+            )
+            for task_option in task_options:
+                converter_metadata.available_options.append(task_option.to())
 
-        converter_metadata = ConverterMetadata()
-        converter_metadata.input_model_path = input_model_path
-        converter_metadata.converted_model_path = output_dir
-        converter_metadata.model_info = input_model_info.to()
-        converter_metadata.convert_task_info = convert_task.to(
-            input_model_info.uploaded_file_name
-        )
-        for task_option in task_options:
-            converter_metadata.available_options.append(task_option.to())
+            MetadataHandler.save_json(
+                data=asdict(converter_metadata), folder_path=output_dir
+            )
+            logger.info(f"ConvertMetadata : {converter_metadata}")
 
-        MetadataHandler.save_json(data=asdict(converter_metadata), folder_path=output_dir)
-        logger.info(f"ConvertMetadata : {converter_metadata}")
+            return response.data
 
-        return response.data
+        except Exception as e:
+            logger.error(f"Convert failed. Error: {e}")
+            converter_metadata.status = Status.ERROR
+            MetadataHandler.save_json(
+                data=asdict(converter_metadata), folder_path=output_dir
+            )
+            raise e
+
+        except KeyboardInterrupt:
+            converter_metadata.status = Status.STOPPED
+            MetadataHandler.save_json(
+                data=asdict(converter_metadata), folder_path=output_dir
+            )
 
     def get_conversion_task(self, conversion_task_id: str) -> ConvertTask:
         response = launcher_client_v2.converter.read_task(
