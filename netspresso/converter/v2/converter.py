@@ -210,11 +210,10 @@ class ConverterV2:
             )
 
     def get_conversion_task(self, conversion_task_id: str) -> ConvertTask:
+        self.token_handler.validate_token()
+
         response = launcher_client_v2.converter.read_task(
             access_token=self.token_handler.tokens.access_token,
             task_id=conversion_task_id,
         )
         return response.data
-
-    def __generate_metadata(self):
-        pass

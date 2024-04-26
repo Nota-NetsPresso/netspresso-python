@@ -27,7 +27,7 @@ class ModelAPI(ModelInterface):
     def get_upload_url(
         self, request_params: RequestModelUploadUrl, headers: AuthorizationHeader
     ) -> ResponseModelUploadUrl:
-        endpoint = f"{self.model_base_url}/presigned_url"
+        endpoint = f"{self.model_base_url}/upload_url"
         response = Requester().get(
             url=endpoint, headers=asdict(headers), params=asdict(request_params)
         )

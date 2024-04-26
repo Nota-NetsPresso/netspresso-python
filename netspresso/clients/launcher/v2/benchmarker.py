@@ -7,6 +7,7 @@ from netspresso.enums import (
     DeviceName,
     HardwareType,
     SoftwareVersion,
+    DataType,
 )
 from netspresso.clients.launcher.v2.schemas import (
     AuthorizationHeader,
@@ -109,6 +110,7 @@ class Benchmarker:
         access_token: str,
         input_model_id: str,
         target_device_name: DeviceName,
+        data_type: DataType = None,
         hardware_type: HardwareType = None,
         input_layer: InputLayer = None,
         software_version: SoftwareVersion = None,
@@ -117,6 +119,7 @@ class Benchmarker:
         request_body = RequestBenchmark(
             input_model_id=input_model_id,
             target_device_name=target_device_name,
+            data_type=data_type,
             hardware_type=hardware_type,
             input_layer=input_layer,
             software_version=software_version,
