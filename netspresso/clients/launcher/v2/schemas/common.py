@@ -20,7 +20,7 @@ class Order(str, Enum):
     ASC = "asc"
 
 
-@dataclass(init=False)
+@dataclass
 class AuthorizationHeader:
     Authorization: str
 
@@ -28,7 +28,7 @@ class AuthorizationHeader:
         self.Authorization = f"Bearer {access_token}"
 
 
-@dataclass(init=False)
+@dataclass
 class UploadFile:
     files: List
 

@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List
 
-from netspresso.metadata.common import DeviceInfo, ModelInfo
 from netspresso.enums import (
     DataType,
     SoftwareVersion,
@@ -14,10 +13,13 @@ from netspresso.enums import (
 
 @dataclass
 class BenchmarkTaskInfo:
-    benchmark_task_id: str = ""
-    data_type: DataType = ""
-    target_device_name: DeviceName = ""
+    benchmark_task_uuid: str = ""
+    device_name: DeviceName = ""
+    display_device_name: str = ""
+    display_brand_name: str = ""
     software_version: SoftwareVersion = ""
+    display_software_version: str = ""
+    data_type: DataType = ""
     hardware_type: HardwareType = ""
 
 
@@ -28,6 +30,7 @@ class BenchmarkResult:
     power_consumption: int = None
     ram_size: int = None
     latency: int = None
+    file_size: int = None
 
 
 @dataclass
@@ -43,11 +46,8 @@ class BenchmarkEnvironment:
 @dataclass
 class BenchmarkerMetadata:
     status: Status = Status.IN_PROGRESS
+    message: str = ""
     task_type: TaskType = TaskType.BENCHMARK
+    input_model_path: str = ""
     benchmark_task_info: BenchmarkTaskInfo = field(default_factory=BenchmarkTaskInfo)
-    input_model_info: ModelInfo = field(default_factory=ModelInfo)
-    device_info: DeviceInfo = field(default_factory=DeviceInfo)
     benchmark_result: BenchmarkResult = field(default_factory=BenchmarkResult)
-    benchmark_environment: BenchmarkEnvironment = field(
-        default_factory=BenchmarkEnvironment
-    )

@@ -1,19 +1,27 @@
 import time
+from dataclasses import asdict
+from pathlib import Path
 from typing import Dict, Optional, Union
+
+from loguru import logger
 
 from netspresso.clients.auth import TokenHandler, auth_client
 from netspresso.clients.auth.response_body import UserResponse
 from netspresso.clients.launcher import launcher_client_v2
-from netspresso.clients.launcher.v2.schemas.task.benchmark.response_body import BenchmarkTask
-from netspresso.enums import TaskStatusForDisplay
+from netspresso.clients.launcher.v2.schemas.task.benchmark.response_body import (
+    BenchmarkTask,
+)
+from netspresso.enums import TaskStatusForDisplay, Status, TaskType
 from netspresso.enums.credit import ServiceCredit
 from netspresso.enums.device import (
     DeviceName,
     HardwareType,
     SoftwareVersion,
 )
+from netspresso.metadata.benchmarker import BenchmarkerMetadata
 
 from netspresso.utils import FileHandler, check_credit_balance
+from netspresso.utils.metadata import MetadataHandler
 
 
 class BenchmarkerV2:
@@ -22,6 +30,27 @@ class BenchmarkerV2:
 
         self.token_handler = token_handler
         self.user_info = user_info
+
+    def get_benchmark_task(self, benchmark_task_id: str) -> BenchmarkTask:
+        """Get information about the specified benchmark task using the benchmark task UUID.
+
+        Args:
+            benchmark_task_uuid (str): Benchmark task UUID of the benchmark task.
+
+        Raises:
+            e: If an error occurs while retrieving information about the benchmark task.
+
+        Returns:
+            BenchmarkTask: Model benchmark task object.
+        """
+
+        self.token_handler.validate_token()
+
+        response = launcher_client_v2.benchmarker.read_task(
+            access_token=self.token_handler.tokens.access_token,
+            task_id=benchmark_task_id,
+        )
+        return response.data
 
     def benchmark_model(
         self,
@@ -52,7 +81,18 @@ class BenchmarkerV2:
 
         self.token_handler.validate_token()
 
+        file_name = "benchmark"
+
         try:
+            folder_path = Path(input_model_path).parent
+
+            benchmarker_metadata = BenchmarkerMetadata()
+            metadatas = []
+
+            if FileHandler.check_exists(folder_path / f"{file_name}.json"):
+                metadatas = MetadataHandler.load_json(folder_path / f"{file_name}.json")
+                # metadatas.append(asdict(benchmarker_metadata))
+
             current_credit = auth_client.get_credit(
                 access_token=self.token_handler.tokens.access_token,
                 verify_ssl=self.token_handler.verify_ssl,
@@ -109,16 +149,44 @@ class BenchmarkerV2:
                     ]:
                         break
                     time.sleep(3)
+
+            benchmark_task = response.data
+            input_model_info = validate_model_response.data
+
+            benchmarker_metadata.status = Status.COMPLETED
+            benchmarker_metadata.task_type = TaskType.BENCHMARK
+            benchmarker_metadata.input_model_path = input_model_path
+            benchmarker_metadata.benchmark_task_info = benchmark_task.to()
+            benchmarker_metadata.convert_task_info = benchmark_task.benchmark_result.to(
+                file_size=input_model_info.file_size_in_mb
+            )
+
+            metadatas.append(asdict(benchmarker_metadata))
+            MetadataHandler.save_json(
+                data=metadatas,
+                folder_path=folder_path,
+                file_name=file_name,
+            )
+            logger.info(f"BenchmarkMetadata : {benchmarker_metadata}")
+
             return response.data
+
         except Exception as e:
+            logger.error(f"Benchmark failed. Error: {e}")
+            benchmarker_metadata.status = Status.ERROR
+            metadatas.append(asdict(benchmarker_metadata))
+            MetadataHandler.save_json(
+                data=metadatas,
+                folder_path=folder_path,
+                file_name=file_name,
+            )
             raise e
 
-
-    def get_benchmark_task(self,benchmark_task_id:str)->BenchmarkTask:
-        self.token_handler.validate_token()
-
-        response = launcher_client_v2.benchmarker.read_task(
-            access_token=self.token_handler.tokens.access_token,
-            task_id=benchmark_task_id,
-        )
-        return response.data
+        except KeyboardInterrupt:
+            benchmarker_metadata.status = Status.STOPPED
+            metadatas.append(asdict(benchmarker_metadata))
+            MetadataHandler.save_json(
+                data=metadatas,
+                folder_path=folder_path,
+                file_name=file_name,
+            )
