@@ -4,7 +4,7 @@ import jwt
 import pytz
 from loguru import logger
 
-from netspresso.clients.auth.response_body import UserResponse, TokenResponse
+from netspresso.clients.auth.response_body import TokenResponse, UserResponse
 from netspresso.clients.auth.v1.client import AuthClientV1
 from netspresso.clients.auth.v2.client import AuthClientV2
 from netspresso.clients.config import Config, Module

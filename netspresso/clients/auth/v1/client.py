@@ -3,7 +3,7 @@ import json
 import requests
 from loguru import logger
 
-from netspresso.clients.auth.response_body import UserResponse, TokenResponse
+from netspresso.clients.auth.response_body import TokenResponse, UserResponse
 from netspresso.clients.auth.v1.schemas import (
     LoginRequest,
     LoginResponse,

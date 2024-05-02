@@ -3,9 +3,9 @@ from typing import List
 
 from netspresso.enums import (
     DataType,
-    SoftwareVersion,
     DeviceName,
     HardwareType,
+    SoftwareVersion,
     Status,
     TaskType,
 )

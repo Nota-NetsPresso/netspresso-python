@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from netspresso.clients.launcher.v2.schemas import InputLayer
-from netspresso.enums import DeviceName, SoftwareVersion, HardwareType, DataType
+from netspresso.enums import DataType, DeviceName, HardwareType, SoftwareVersion
 
 
 @dataclass

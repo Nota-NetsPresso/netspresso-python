@@ -1,13 +1,13 @@
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import List, Optional, Union
-from dataclasses import dataclass, field
 
 from netspresso.enums import (
     DataType,
-    HardwareType,
-    Framework,
-    SoftwareVersion,
     DisplaySoftwareVersion,
+    Framework,
+    HardwareType,
+    SoftwareVersion,
 )
 from netspresso.metadata import common
 from netspresso.metadata.common import AvailableOptions

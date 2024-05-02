@@ -1,30 +1,31 @@
 import os
+
 from loguru import logger
 
 from netspresso.clients.launcher.v2 import utils
-from netspresso.enums import (
-    LauncherTask,
-    DeviceName,
-    HardwareType,
-    SoftwareVersion,
-    DataType,
-)
+from netspresso.clients.launcher.v2.implements import BenchmarkTaskAPI, ModelAPI
 from netspresso.clients.launcher.v2.schemas import (
     AuthorizationHeader,
-    UploadFile,
     InputLayer,
+    RequestBenchmark,
     RequestModelUploadUrl,
     RequestUploadModel,
     RequestValidateModel,
-    ResponseModelItem,
-    ResponseModelUploadUrl,
-    ResponseModelOptions,
-    RequestBenchmark,
-    ResponseBenchmarkTaskItem,
-    ResponseBenchmarkStatusItem,
     ResponseBenchmarkOptionItems,
+    ResponseBenchmarkStatusItem,
+    ResponseBenchmarkTaskItem,
+    ResponseModelItem,
+    ResponseModelOptions,
+    ResponseModelUploadUrl,
+    UploadFile,
 )
-from netspresso.clients.launcher.v2.implements import ModelAPI, BenchmarkTaskAPI
+from netspresso.enums import (
+    DataType,
+    DeviceName,
+    HardwareType,
+    LauncherTask,
+    SoftwareVersion,
+)
 
 
 class Benchmarker:
@@ -176,7 +177,7 @@ class Benchmarker:
 
     def read_options(self, access_token: str) -> ResponseBenchmarkOptionItems:
         token_header = AuthorizationHeader(access_token=access_token)
-        logger.info(f"Request Benchmark options")
+        logger.info("Request Benchmark options")
 
         benchmark_task_option_response = self.benchmark_task.options(
             headers=token_header

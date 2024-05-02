@@ -3,10 +3,10 @@ from typing import List
 
 from netspresso.enums import (
     DataType,
-    Framework,
     DeviceName,
-    SoftwareVersion,
+    Framework,
     HardwareType,
+    SoftwareVersion,
 )
 
 

@@ -1,15 +1,15 @@
 from dataclasses import dataclass, field
 from typing import List
 
-from netspresso.metadata.common import ModelInfo, AvailableOptions
 from netspresso.enums import (
+    DataType,
+    DeviceName,
+    Framework,
+    SoftwareVersion,
     Status,
     TaskType,
-    DataType,
-    Framework,
-    DeviceName,
-    SoftwareVersion,
 )
+from netspresso.metadata.common import AvailableOptions, ModelInfo
 
 
 @dataclass

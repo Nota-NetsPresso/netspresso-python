@@ -1,9 +1,10 @@
 from pydantic import BaseModel, EmailStr, Field
 
 from netspresso.clients.auth.response_body import (
-    UserResponse,
+    CreditResponse,
+    TokenResponse,
     UserDetailResponse,
-    CreditResponse, TokenResponse,
+    UserResponse,
 )
 
 

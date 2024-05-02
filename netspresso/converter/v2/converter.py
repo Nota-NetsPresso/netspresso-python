@@ -1,7 +1,7 @@
 import time
 from dataclasses import asdict
 from pathlib import Path
-from typing import Union, Optional
+from typing import Optional, Union
 from urllib import request
 
 from loguru import logger
@@ -9,12 +9,19 @@ from loguru import logger
 from netspresso.clients.auth import TokenHandler, auth_client
 from netspresso.clients.auth.response_body import UserResponse
 from netspresso.clients.launcher import launcher_client_v2
+from netspresso.clients.launcher.v2.schemas import InputLayer, ResponseConvertTaskItem
 from netspresso.clients.launcher.v2.schemas.task.convert.response_body import (
     ConvertTask,
 )
-from netspresso.enums import TaskStatusForDisplay, ServiceCredit, Status
-from netspresso.clients.launcher.v2.schemas import InputLayer, ResponseConvertTaskItem
-from netspresso.enums import Framework, DeviceName, DataType, SoftwareVersion
+from netspresso.enums import (
+    DataType,
+    DeviceName,
+    Framework,
+    ServiceCredit,
+    SoftwareVersion,
+    Status,
+    TaskStatusForDisplay,
+)
 from netspresso.metadata.converter import ConverterMetadata
 from netspresso.utils import FileHandler, check_credit_balance
 from netspresso.utils.metadata import MetadataHandler
@@ -125,7 +132,7 @@ class ConverterV2:
             )
 
             # UPLOAD model_file
-            model_upload_response = launcher_client_v2.converter.upload_model_file(
+            launcher_client_v2.converter.upload_model_file(
                 access_token=self.token_handler.tokens.access_token,
                 input_model_path=input_model_path,
                 presigned_upload_url=presigned_url_response.data.presigned_upload_url,

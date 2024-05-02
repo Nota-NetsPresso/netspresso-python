@@ -8,19 +8,19 @@ from .compression import (
     RecommendationMethod,
     StepOp,
 )
-from .credit import ServiceCredit, MembershipType
+from .credit import MembershipType, ServiceCredit
 from .device import (
     DeviceName,
+    DisplaySoftwareVersion,
     HardwareType,
     SoftwareVersion,
     TaskStatus,
-    DisplaySoftwareVersion,
 )
 from .metadata import Status, TaskType
 from .model import DataType, Extension, Framework, OriginFrom
 from .module import Module
 from .tao.action import ConvertAction, ExperimentAction
-from .task import Task, TaskStatusForDisplay, LauncherTask
+from .task import LauncherTask, Task, TaskStatusForDisplay
 
 __all__ = [
     "ServiceCredit",

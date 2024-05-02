@@ -11,7 +11,7 @@ from netspresso.clients.launcher import launcher_client_v2
 from netspresso.clients.launcher.v2.schemas.task.benchmark.response_body import (
     BenchmarkTask,
 )
-from netspresso.enums import TaskStatusForDisplay, Status, TaskType
+from netspresso.enums import Status, TaskStatusForDisplay, TaskType
 from netspresso.enums.credit import ServiceCredit
 from netspresso.enums.device import (
     DeviceName,
@@ -19,7 +19,6 @@ from netspresso.enums.device import (
     SoftwareVersion,
 )
 from netspresso.metadata.benchmarker import BenchmarkerMetadata
-
 from netspresso.utils import FileHandler, check_credit_balance
 from netspresso.utils.metadata import MetadataHandler
 
@@ -110,7 +109,7 @@ class BenchmarkerV2:
             )
 
             # UPLOAD model_file
-            model_upload_response = launcher_client_v2.benchmarker.upload_model_file(
+            launcher_client_v2.benchmarker.upload_model_file(
                 access_token=self.token_handler.tokens.access_token,
                 input_model_path=input_model_path,
                 presigned_upload_url=presigned_url_response.data.presigned_upload_url,

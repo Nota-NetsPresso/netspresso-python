@@ -1,6 +1,7 @@
-from pydantic import BaseModel
-from typing import Optional
 from datetime import datetime
+from typing import Optional
+
+from pydantic import BaseModel
 
 from netspresso.clients.auth import response_body
 from netspresso.clients.auth.response_body import UserDetailResponse

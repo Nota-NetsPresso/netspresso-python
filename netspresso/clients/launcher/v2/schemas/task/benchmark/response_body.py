@@ -1,17 +1,17 @@
 import dataclasses
 from dataclasses import dataclass, field
-from typing import Optional, List
+from typing import List, Optional
 
-from netspresso.enums import (
-    TaskStatusForDisplay,
-)
-from netspresso.clients.launcher.v2.schemas.task.common import TaskStatusInfo
 from netspresso.clients.launcher.v2.schemas import (
+    DeviceInfo,
+    InputLayer,
+    ModelOption,
     ResponseItem,
     ResponseItems,
-    InputLayer,
-    DeviceInfo,
-    ModelOption,
+)
+from netspresso.clients.launcher.v2.schemas.task.common import TaskStatusInfo
+from netspresso.enums import (
+    TaskStatusForDisplay,
 )
 from netspresso.metadata import benchmarker
 from netspresso.metadata.benchmarker import BenchmarkTaskInfo
@@ -57,7 +57,7 @@ class BenchmarkTask:
     benchmark_environment: Optional[BenchmarkEnvironment] = None
 
     def __init__(self, **kwargs):
-        names = set([f.name for f in dataclasses.fields(self)])
+        names = {f.name for f in dataclasses.fields(self)}
         for k, v in kwargs.items():
             if k in names:
                 setattr(self, k, v)
@@ -105,7 +105,7 @@ class BenchmarkOption:
     device: DeviceInfo
 
     def __init__(self, **kwargs):
-        names = set([f.name for f in dataclasses.fields(self)])
+        names = {f.name for f in dataclasses.fields(self)}
         for k, v in kwargs.items():
             if k in names:
                 setattr(self, k, v)

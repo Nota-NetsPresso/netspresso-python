@@ -13,7 +13,6 @@ from netspresso.enums.device import DeviceName, HardwareType, SoftwareVersion, T
 from netspresso.enums.metadata import Status, TaskType
 from netspresso.enums.model import DataType
 from netspresso.enums.module import Module
-
 from netspresso.utils import FileHandler, check_credit_balance
 from netspresso.utils.metadata import MetadataHandler
 

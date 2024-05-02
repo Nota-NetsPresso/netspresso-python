@@ -1,30 +1,31 @@
 import os
+
 from loguru import logger
 
 from netspresso.clients.launcher.v2 import utils
-from netspresso.enums import (
-    LauncherTask,
-    DataType,
-    Framework,
-    DeviceName,
-    SoftwareVersion,
-)
+from netspresso.clients.launcher.v2.implements import ConvertTaskAPI, ModelAPI
 from netspresso.clients.launcher.v2.schemas import (
     AuthorizationHeader,
-    UploadFile,
     InputLayer,
+    RequestConvert,
     RequestModelUploadUrl,
     RequestUploadModel,
     RequestValidateModel,
-    ResponseModelUploadUrl,
+    ResponseConvertOptionItems,
+    ResponseConvertStatusItem,
+    ResponseConvertTaskItem,
     ResponseModelItem,
     ResponseModelOptions,
-    RequestConvert,
-    ResponseConvertTaskItem,
-    ResponseConvertStatusItem,
-    ResponseConvertOptionItems,
+    ResponseModelUploadUrl,
+    UploadFile,
 )
-from netspresso.clients.launcher.v2.implements import ModelAPI, ConvertTaskAPI
+from netspresso.enums import (
+    DataType,
+    DeviceName,
+    Framework,
+    LauncherTask,
+    SoftwareVersion,
+)
 
 
 class Converter:
@@ -192,7 +193,7 @@ class Converter:
 
     def read_options(self, access_token: str) -> ResponseConvertOptionItems:
         token_header = AuthorizationHeader(access_token=access_token)
-        logger.info(f"Request Convert options")
+        logger.info("Request Convert options")
 
         convert_task_option_response = self.convert_task.options(headers=token_header)
         logger.info(f"Request Convert Task Options: {convert_task_option_response}")
