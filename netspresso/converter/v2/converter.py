@@ -169,6 +169,15 @@ class ConverterV2:
                 local_path=str(default_model_path.with_suffix(extension)),
             )
 
+            if launcher_client_v2.is_cloud():
+                remaining_credit = auth_client.get_credit(
+                    self.token_handler.tokens.access_token,
+                    self.token_handler.verify_ssl,
+                )
+                logger.info(
+                    f"{ServiceCredit.MODEL_BENCHMARK} credits have been consumed. Remaining Credit: {remaining_credit}"
+                )
+
             convert_task = response.data
 
             input_model_info = validate_model_response.data
@@ -191,7 +200,6 @@ class ConverterV2:
             MetadataHandler.save_json(
                 data=asdict(converter_metadata), folder_path=output_dir
             )
-            logger.info(f"ConvertMetadata : {converter_metadata}")
 
             return response.data
 

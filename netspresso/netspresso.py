@@ -1,12 +1,11 @@
 from typing import Optional, Union
 
-from netspresso.benchmarker import Benchmarker
+from netspresso.benchmarker import Benchmarker, BenchmarkerV2
 from netspresso.clients.auth import TokenHandler, auth_client
 from netspresso.clients.auth.response_body import UserResponse
 from netspresso.clients.tao import TAOTokenHandler
 from netspresso.compressor import Compressor
-from netspresso.converter import Converter
-from netspresso.converter.v2.converter import ConverterV2
+from netspresso.converter import Converter, ConverterV2
 from netspresso.enums import Task
 from netspresso.tao import TAOTrainer
 from netspresso.trainer import Trainer
@@ -21,7 +20,9 @@ class NetsPresso:
             password (str): User's password for authentication.
             verify_ssl (bool): Flag to indicate whether SSL certificates should be verified. Defaults to True.
         """
-        self.token_handler = TokenHandler(email=email, password=password, verify_ssl=verify_ssl)
+        self.token_handler = TokenHandler(
+            email=email, password=password, verify_ssl=verify_ssl
+        )
         self.user_info = self.get_user()
 
     def get_user(self) -> UserResponse:
@@ -30,10 +31,14 @@ class NetsPresso:
         Returns:
             UserInfo: User information.
         """
-        user_info = auth_client.get_user_info(self.token_handler.tokens.access_token, self.token_handler.verify_ssl)
+        user_info = auth_client.get_user_info(
+            self.token_handler.tokens.access_token, self.token_handler.verify_ssl
+        )
         return user_info
 
-    def trainer(self, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None) -> Trainer:
+    def trainer(
+        self, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None
+    ) -> Trainer:
         """Initialize and return a Trainer instance.
 
         Args:
@@ -76,6 +81,14 @@ class NetsPresso:
             Benchmarker: Initialized Benchmarker instance.
         """
         return Benchmarker(token_handler=self.token_handler, user_info=self.user_info)
+
+    def benchmarker_v2(self) -> BenchmarkerV2:
+        """Initialize and return a Benchmarker instance.
+
+        Returns:
+            Benchmarker: Initialized Benchmarker instance.
+        """
+        return BenchmarkerV2(token_handler=self.token_handler, user_info=self.user_info)
 
 
 class TAO:

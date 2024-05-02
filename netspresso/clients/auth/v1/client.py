@@ -10,12 +10,12 @@ from netspresso.clients.auth.v1.schemas import (
     TokenRequest,
     UserInfo,
 )
-from netspresso.clients.config import Config, Module
+from netspresso.clients.config import Config
 from netspresso.clients.utils import get_headers
 
 
 class AuthClientV1:
-    def __init__(self, config: Config = Module.GENERAL):
+    def __init__(self, config: Config):
         """Initialize the UserSession.
 
         Args:
@@ -23,7 +23,7 @@ class AuthClientV1:
             password (str): The password for a user account.
         """
 
-        self.config = Config(config)
+        self.config = config
         self.host = self.config.HOST
         self.port = self.config.PORT
         self.uri_prefix = self.config.URI_PREFIX
@@ -102,5 +102,3 @@ class AuthClientV1:
             logger.info(f"Failed to reissue token. Error: {e}")
             raise e
 
-
-auth_client_v1 = AuthClientV1()

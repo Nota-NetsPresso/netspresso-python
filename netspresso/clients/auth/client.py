@@ -5,13 +5,13 @@ import pytz
 from loguru import logger
 
 from netspresso.clients.auth.response_body import UserResponse, TokenResponse
-from netspresso.clients.auth.v1.client import auth_client_v1
-from netspresso.clients.auth.v2.client import auth_client_v2
+from netspresso.clients.auth.v1.client import AuthClientV1
+from netspresso.clients.auth.v2.client import AuthClientV2
 from netspresso.clients.config import Config, Module
 
 
 class AuthClient:
-    def __init__(self, config: Config = Module.GENERAL):
+    def __init__(self, config: Config = Config(Module.GENERAL)):
         """Initialize the UserSession.
 
         Args:
@@ -19,14 +19,14 @@ class AuthClient:
             password (str): The password for a user account.
         """
 
-        self.api_client = self.__get_api_client_by_env()
+        self.api_client = self.__get_api_client_by_env(config=config)
 
-    def __get_api_client_by_env(self):
+    def __get_api_client_by_env(self, config: Config):
         # return proper client version by env (cloud : v1, on-prem : v2)
-        if True:
-            return auth_client_v1
+        if config.is_v1():
+            return AuthClientV1(config=config)
         else:
-            return auth_client_v2
+            return AuthClientV2(config=config)
 
     def login(self, email, password, verify_ssl: bool = True) -> TokenResponse:
         return self.api_client.login(

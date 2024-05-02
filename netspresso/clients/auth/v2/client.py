@@ -6,23 +6,23 @@ from netspresso.clients.auth.v2.schemas.auth import TokenRefreshRequest
 from netspresso.clients.auth.v2.schemas.credit import SummarizedCreditResponse
 from netspresso.clients.auth.v2.schemas.token import TokenResponse
 from netspresso.clients.auth.v2.schemas.user import UserResponse
-from netspresso.clients.config import Config, Module
+from netspresso.clients.config import Config
 from netspresso.clients.utils.requester import Requester
 
 
 class AuthClientV2:
-    def __init__(self, config: Config = Module.GENERAL):
+    def __init__(self, config: Config):
         """Initialize the UserSession.
 
         Args:
             email (str): The email address for a user account.
             password (str): The password for a user account.
         """
-
-        self.host = "http://10.169.1.62"
-        self.port = 40003
-        self.uri_prefix = "/api/v3"
-        self.base_url = f"{self.host}:{self.port}{self.uri_prefix}"
+        self.config = config
+        self.host = self.config.HOST
+        self.port = self.config.PORT
+        self.prefix = self.config.URI_PREFIX
+        self.base_url = f"{self.host}:{self.port}{self.prefix}"
 
     def login(
         self, email, password, verify_ssl: bool = True
@@ -106,6 +106,3 @@ class AuthClientV2:
 
     def __make_bearer_header(self, token: str):
         return {"Authorization": f"Bearer {token}"}
-
-
-auth_client_v2 = AuthClientV2()

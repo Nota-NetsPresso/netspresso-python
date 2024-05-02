@@ -6,9 +6,9 @@ from netspresso.clients.launcher.v2.converter import Converter
 class LauncherAPIClient:
     def __init__(self):
         self.config = Config(Module.LAUNCHER)
-        self.host = "http://10.169.1.62"
-        self.port = "40005"
-        self.prefix = "/api/v2"
+        self.host = self.config.HOST
+        self.port = self.config.PORT
+        self.prefix = self.config.URI_PREFIX
         self.url = f"{self.host}:{self.port}{self.prefix}"
         self.converter = self._create_convert_api()
         self.benchmarker = self._create_benchmark_api()
@@ -18,6 +18,9 @@ class LauncherAPIClient:
 
     def _create_benchmark_api(self):
         return Benchmarker(self.url)
+
+    def is_cloud(self) -> bool:
+        return self.config.is_cloud()
 
 
 launcher_client_v2 = LauncherAPIClient()
