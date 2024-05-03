@@ -422,7 +422,7 @@ class Compressor:
 
             self.download_model(
                 model_id=compression_info.new_model_id,
-                local_path=default_model_path.with_suffix('.pt'),
+                local_path=default_model_path.with_suffix(extension),
             )
             compressed_model = self.get_model(model_id=compression_info.new_model_id)
 
@@ -605,7 +605,7 @@ class Compressor:
 
             self.download_model(
                 model_id=compression_info.new_model_id,
-                local_path=default_model_path.with_suffix('.pt'),
+                local_path=default_model_path.with_suffix(extension),
             )
             compressed_model = self.get_model(model_id=compression_info.new_model_id)
 
@@ -719,7 +719,7 @@ class Compressor:
 
             self.download_model(
                 model_id=model_info.model_id,
-                local_path=default_model_path.with_suffix('.pt'),
+                local_path=default_model_path.with_suffix(extension),
             )
             compressed_model = self.model_factory.create_compressed_model(model_info=model_info)  # TODO: delete
 
