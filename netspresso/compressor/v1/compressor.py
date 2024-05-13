@@ -6,7 +6,7 @@ from loguru import logger
 
 from netspresso.clients.auth import TokenHandler, auth_client
 from netspresso.clients.compressor import compressor_client
-from netspresso.clients.compressor.schemas.compression import (
+from netspresso.clients.compressor.v1.schemas.compression import (
     AutoCompressionRequest,
     AvailableLayer,
     CompressionRequest,
@@ -16,15 +16,15 @@ from netspresso.clients.compressor.schemas.compression import (
     RecommendationRequest,
     UploadDatasetRequest,
 )
-from netspresso.clients.compressor.schemas.model import UploadModelRequest
+from netspresso.clients.compressor.v1.schemas.model import UploadModelRequest
 from netspresso.clients.launcher import launcher_client
 from netspresso.compressor.core.compression import CompressionInfo
 from netspresso.compressor.core.model import CompressedModel, Model, ModelCollection, ModelFactory
 from netspresso.enums import CompressionMethod, Framework, Module, RecommendationMethod, ServiceCredit, Status, TaskType
 
-from ..utils import FileHandler, check_credit_balance
-from ..utils.metadata import MetadataHandler
-from .utils.onnx import export_onnx
+from netspresso.utils import FileHandler, check_credit_balance
+from netspresso.utils.metadata import MetadataHandler
+from netspresso.compressor.utils.onnx import export_onnx
 
 
 class Compressor:
