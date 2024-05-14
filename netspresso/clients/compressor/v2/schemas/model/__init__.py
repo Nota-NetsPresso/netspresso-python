@@ -5,7 +5,7 @@ from .response_body import (
     ResponseModelItems,
     ResponseModelOptions,
     ResponseModelStatus,
-    ResponseModelUploadUrl,
+    ResponseModelUrl,
 )
 
 __all__ = [
@@ -15,7 +15,7 @@ __all__ = [
     RequestCreateModel,
     RequestUploadModel,
     RequestValidateModel,
-    ResponseModelUploadUrl,
+    ResponseModelUrl,
     ResponseModelItem,
     ResponseModelItems,
     ResponseModelStatus,

@@ -18,7 +18,7 @@ from netspresso.clients.compressor.v2.schemas.model import (
     RequestValidateModel,
     ResponseModelItem,
     ResponseModelItems,
-    ResponseModelUploadUrl,
+    ResponseModelUrl,
 )
 from netspresso.clients.config import Config, Module
 from netspresso.clients.utils.common import get_headers
@@ -35,13 +35,13 @@ class CompressorAPIClient:
 
     def create_model(
         self, request_data: RequestCreateModel, access_token: str, verify_ssl: bool = True
-    ) -> ResponseModelUploadUrl:
+    ) -> ResponseModelUrl:
         url = f"{self.url}/models"
         response = Requester.post_as_json(url=url, request_body=asdict(request_data), headers=get_headers(access_token))
 
-        return ResponseModelUploadUrl(**response.json())
+        return ResponseModelUrl(**response.json())
 
-    def upload_model(self, request_data: RequestUploadModel, file: UploadFile, access_token: str) -> bool:
+    def upload_model(self, request_data: RequestUploadModel, file: UploadFile, access_token: str, verify_ssl: bool = True) -> bool:
         url = f"{self.url}/models/upload"
         response = Requester.post_as_form(
             url=url,
@@ -84,6 +84,15 @@ class CompressorAPIClient:
         )
 
         return ResponseModelItem(**response.json())
+
+    def download_model(self, ai_model_id: str, access_token: str, verify_ssl: bool = True) -> ResponseModelUrl:
+        url = f"{self.url}/models/{ai_model_id}"
+        response = Requester.post_as_json(
+            url=url,
+            headers=get_headers(access_token),
+        )
+
+        return ResponseModelUrl(**response.json())
 
     def create_compression(
         self, request_data: RequestCreateCompression, access_token: str, verify_ssl: bool = True
@@ -144,7 +153,7 @@ class CompressorAPIClient:
 
         return ResponseModelItem(response.json())
 
-    def auto_compress(
+    def compress_model_with_automatic(
         self,
         ai_model_id: str,
         request_data: RequestAutomaticCompressionParams,

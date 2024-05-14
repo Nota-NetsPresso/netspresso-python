@@ -2,7 +2,8 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 from netspresso.clients.compressor.v2.schemas.common import ResponseItem, ResponsePaginationItems
-from netspresso.enums.compression import CompressionMethod, GroupPolicy, LayerNorm, Policy, RecommendationMethod, StepOp
+from netspresso.clients.compressor.v2.schemas.compression.base import Options
+from netspresso.enums.compression import CompressionMethod, RecommendationMethod
 
 
 @dataclass
@@ -15,7 +16,7 @@ class ResponseCompression:
     original_model_id: str
     user_id: str
     available_layers: List
-    parameters: Dict
+    options: Dict
 
 
 @dataclass
@@ -24,13 +25,14 @@ class ResponseRecommendation:
     recommendation_method: RecommendationMethod
     recommendation_ratio: float
     available_layers: List
-    parameters: Dict
+    options: Dict
     compression_id: str
 
 
 @dataclass
 class ResponseAvailableLayers:
     compression_method: CompressionMethod
+    options: Options
     available_layers: List
 
 

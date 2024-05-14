@@ -11,21 +11,21 @@ from netspresso.clients.compressor.v2.schemas.model import ModelBase, ModelStatu
 
 
 @dataclass
-class ModelUploadUrlData:
+class ModelUrlData:
     """ """
 
     ai_model_id: str
-    presigned_upload_url: str
+    presigned_url: str
 
 
 @dataclass
-class ResponseModelUploadUrl(ResponseItem):
+class ResponseModelUrl(ResponseItem):
     """ """
 
-    data: Optional[ModelUploadUrlData] = field(default_factory=dict)
+    data: Optional[ModelUrlData] = field(default_factory=dict)
 
     def __post_init__(self):
-        self.data = ModelUploadUrlData(**self.data)
+        self.data = ModelUrlData(**self.data)
 
 
 @dataclass

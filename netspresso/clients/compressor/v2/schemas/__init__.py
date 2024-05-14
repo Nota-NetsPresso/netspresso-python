@@ -17,6 +17,8 @@ from .compression import (
     RequestCreateRecommendation,
     RequestUpdateCompression,
     ResponseAvailableLayersItem,
+    ResponseAvailableLayers,
+    ResponseCompression,
     ResponseCompressionItem,
     ResponseCompressionItems,
     ResponseRecommendationItem,
@@ -32,5 +34,5 @@ from .model import (
     ResponseModelItems,
     ResponseModelOptions,
     ResponseModelStatus,
-    ResponseModelUploadUrl,
+    ResponseModelUrl,
 )

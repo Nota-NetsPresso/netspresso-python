@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Optional
 
 from netspresso.enums.model import Framework
 
@@ -25,7 +25,7 @@ class RequestUploadModel:
 
 @dataclass
 class RequestValidateModel:
-    display_name: str
+    display_name: Optional[str]
     framework: Framework = Framework.PYTORCH
     input_layers: List[InputLayer]
 

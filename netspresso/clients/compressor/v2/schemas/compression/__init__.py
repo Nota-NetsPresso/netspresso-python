@@ -13,6 +13,8 @@ from .response_body import (
     ResponseCompressionItems,
     ResponseRecommendationItem,
     ResponseRecommendationItems,
+    ResponseAvailableLayers,
+    ResponseCompression,
 )
 
 __all__ = [
@@ -28,4 +30,6 @@ __all__ = [
     ResponseRecommendationItem,
     ResponseRecommendationItems,
     ResponseAvailableLayersItem,
+    ResponseAvailableLayers,
+    ResponseCompression,
 ]
