@@ -7,7 +7,7 @@ from netspresso.clients.compressor.v2.schemas.compression import (
     RequestCreateCompression,
     RequestCreateRecommendation,
     RequestUpdateCompression,
-    ResponseAvailableLayersItem,
+    ResponseSelectMethodItem,
     ResponseCompressionItem,
     ResponseCompressionItems,
     ResponseRecommendationItem,
@@ -32,6 +32,10 @@ class CompressorAPIClient:
         self.port = self.config.PORT
         self.prefix = self.config.URI_PREFIX
         self.url = f"{self.host}:{self.port}{self.prefix}"
+
+    def is_cloud(self) -> bool:
+        # TODO
+        return self.config.is_cloud()
 
     def create_model(
         self, request_data: RequestCreateModel, access_token: str, verify_ssl: bool = True
@@ -86,7 +90,7 @@ class CompressorAPIClient:
         return ResponseModelItem(**response.json())
 
     def download_model(self, ai_model_id: str, access_token: str, verify_ssl: bool = True) -> ResponseModelUrl:
-        url = f"{self.url}/models/{ai_model_id}"
+        url = f"{self.url}/models/{ai_model_id}/download"
         response = Requester.post_as_json(
             url=url,
             headers=get_headers(access_token),
@@ -116,7 +120,7 @@ class CompressorAPIClient:
             headers=get_headers(access_token),
         )
 
-        return ResponseModelItems(**response.json())
+        return ResponseCompressionItems(**response.json())
 
     def read_compression(
         self, compression_id: str, access_token: str, verify_ssl: bool = True
@@ -127,7 +131,7 @@ class CompressorAPIClient:
             headers=get_headers(access_token),
         )
 
-        return ResponseModelItem(**response.json())
+        return ResponseCompressionItem(**response.json())
 
     def create_recommendation(
         self, compression_id: str, request_data: RequestCreateRecommendation, access_token: str, verify_ssl: bool = True
@@ -143,15 +147,15 @@ class CompressorAPIClient:
 
     def compress_model(
         self, compression_id: str, request_data: RequestUpdateCompression, access_token: str, verify_ssl: bool = True
-    ) -> ResponseModelItem:
+    ) -> ResponseCompressionItem:
         url = f"{self.url}/compressions/{compression_id}"
-        response = Requester.post_as_json(
+        response = Requester.put(
             url=url,
             request_body=asdict(request_data),
             headers=get_headers(access_token),
         )
 
-        return ResponseModelItem(response.json())
+        return ResponseCompressionItem(**response.json())
 
     def compress_model_with_automatic(
         self,
@@ -159,7 +163,7 @@ class CompressorAPIClient:
         request_data: RequestAutomaticCompressionParams,
         access_token: str,
         verify_ssl: bool = True,
-    ) -> ResponseModelItem:
+    ) -> ResponseCompressionItem:
         url = f"{self.url}/models/{ai_model_id}/auto_compress"
         response = Requester.post_as_json(
             url=url,
@@ -167,11 +171,11 @@ class CompressorAPIClient:
             headers=get_headers(access_token),
         )
 
-        return ResponseModelItem(response.json())
+        return ResponseCompressionItem(**response.json())
 
     def get_available_layers(
         self, ai_model_id: str, request_data: RequestAvailableLayers, access_token: str, verify_ssl: bool = True
-    ) -> ResponseAvailableLayersItem:
+    ) -> ResponseSelectMethodItem:
         url = f"{self.url}/models/{ai_model_id}/available_layers"
         response = Requester.post_as_json(
             url=url,
@@ -179,7 +183,7 @@ class CompressorAPIClient:
             headers=get_headers(access_token),
         )
 
-        return ResponseAvailableLayersItem(**response.json())
+        return ResponseSelectMethodItem(**response.json())
 
 
 compressor_client_v2 = CompressorAPIClient()

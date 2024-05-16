@@ -8,12 +8,12 @@ from .request_body import (
     RequestUpdateCompression,
 )
 from .response_body import (
-    ResponseAvailableLayersItem,
+    ResponseSelectMethodItem,
     ResponseCompressionItem,
     ResponseCompressionItems,
     ResponseRecommendationItem,
     ResponseRecommendationItems,
-    ResponseAvailableLayers,
+    ResponseSelectMethod,
     ResponseCompression,
 )
 
@@ -29,7 +29,7 @@ __all__ = [
     ResponseCompressionItems,
     ResponseRecommendationItem,
     ResponseRecommendationItems,
-    ResponseAvailableLayersItem,
-    ResponseAvailableLayers,
+    ResponseSelectMethodItem,
+    ResponseSelectMethod,
     ResponseCompression,
 ]

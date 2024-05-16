@@ -4,7 +4,7 @@ from netspresso.benchmarker import Benchmarker, BenchmarkerV2
 from netspresso.clients.auth import TokenHandler, auth_client
 from netspresso.clients.auth.response_body import UserResponse
 from netspresso.clients.tao import TAOTokenHandler
-from netspresso.compressor import Compressor
+from netspresso.compressor import Compressor, CompressorV2
 from netspresso.converter import Converter, ConverterV2
 from netspresso.enums import Task
 from netspresso.tao import TAOTrainer
@@ -57,6 +57,14 @@ class NetsPresso:
             Compressor: Initialized Compressor instance.
         """
         return Compressor(token_handler=self.token_handler)
+
+    def compressor_v2(self) -> CompressorV2:
+        """Initialize and return a Compressor instance.
+
+        Returns:
+            Compressor: Initialized Compressor instance.
+        """
+        return CompressorV2(token_handler=self.token_handler)
 
     def converter(self) -> Converter:
         """Initialize and return a Converter instance.

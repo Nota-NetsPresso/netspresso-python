@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from typing import List, Optional
 
 from netspresso.enums.model import Framework
@@ -19,18 +19,17 @@ class RequestCreateModel:
 
 @dataclass
 class RequestUploadModel:
-    ai_model_id: str
-    presigned_upload_url: str
+    url: str
 
 
 @dataclass
 class RequestValidateModel:
-    display_name: Optional[str]
-    framework: Framework = Framework.PYTORCH
     input_layers: List[InputLayer]
+    display_name: Optional[str] = ""
+    framework: Framework = Framework.PYTORCH
 
     def __post_init__(self):
-        new_input_layers = [input_layer.model_dump() for input_layer in self.input_layers]
+        new_input_layers = [input_layer for input_layer in self.input_layers]
         if self.framework == Framework.PYTORCH and not new_input_layers:
             raise Exception()
         self.input_layers = new_input_layers

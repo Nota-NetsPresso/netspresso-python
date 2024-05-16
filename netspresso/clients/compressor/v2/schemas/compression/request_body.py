@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import List
 
 from netspresso.enums.compression import CompressionMethod, RecommendationMethod
-from netspresso.clients.compressor.v2.schemas.compression.base import Options, RecommendationOptions
+from netspresso.clients.compressor.v2.schemas.compression.base import Options, RecommendationOptions, Layer
 
 
 @dataclass
@@ -27,11 +27,11 @@ class RequestCreateRecommendation:
 
 @dataclass
 class RequestUpdateCompression:
-    available_layers: List
+    available_layers: List[Layer]
     options: Options = field(default_factory=Options)
 
     def __post_init__(self):
-        if all(not available_layer["values"] for available_layer in self.available_layers):
+        if all(not available_layer.values for available_layer in self.available_layers):
             raise Exception(
                 "The available_layer.values all empty. please put in the available_layer.values to compress."
             )

@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import List
 
 from netspresso.enums.compression import GroupPolicy, LayerNorm, Policy, StepOp
 
@@ -26,3 +27,11 @@ class Options(OptionsBase):
 
 class RecommendationOptions(Options):
     min_num_of_value: int = 8
+
+
+@dataclass
+class Layer:
+    use: bool = False
+    name: str = "input"
+    channels: List[int] = field(default_factory=list)
+    values: List[int] = field(default_factory=list)
