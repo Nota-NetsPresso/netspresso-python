@@ -2,12 +2,12 @@ import json
 
 import requests
 
-from netspresso.clients.compressor.schemas.compression import (
+from netspresso.clients.compressor.v1.schemas.compression import (
     CompressionResponse,
     GetAvailableLayersReponse,
     RecommendationResponse,
 )
-from netspresso.clients.compressor.schemas.model import GetDownloadLinkResponse, ModelResponse, UploadModelRequest
+from netspresso.clients.compressor.v1.schemas.model import GetDownloadLinkResponse, ModelResponse, UploadModelRequest
 from netspresso.clients.config import Config, Module
 from netspresso.clients.utils.common import get_files, get_headers
 
