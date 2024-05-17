@@ -198,3 +198,14 @@ class Converter:
         convert_task_option_response = self.convert_task.options(headers=token_header)
         logger.info(f"Request Convert Task Options: {convert_task_option_response}")
         return convert_task_option_response
+
+    def read_framework_options(self, access_token: str, framework: Framework) -> ResponseConvertOptionItems:
+        token_header = AuthorizationHeader(access_token=access_token)
+        logger.info(f"Request Convert options")
+
+        convert_task_option_response = self.convert_task.options_by_model_framework(
+            headers=token_header, model_framework=framework
+        )
+        logger.info(f"Request Convert Task Options by model_framework: {convert_task_option_response}")
+        return convert_task_option_response
+
