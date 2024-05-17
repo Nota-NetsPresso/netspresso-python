@@ -3,6 +3,7 @@ from .response_body import (
     ResponseBenchmarkOptionItems,
     ResponseBenchmarkStatusItem,
     ResponseBenchmarkTaskItem,
+    ResponseBenchmarkFrameworkOptionItems,
 )
 
 __all__ = [
@@ -10,4 +11,5 @@ __all__ = [
     ResponseBenchmarkTaskItem,
     ResponseBenchmarkOptionItems,
     ResponseBenchmarkStatusItem,
+    ResponseBenchmarkFrameworkOptionItems
 ]

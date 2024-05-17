@@ -1,6 +1,7 @@
 from .common import (
     AuthorizationHeader,
     DeviceInfo,
+    TaskInfo,
     TaskOption,
     ModelOption,
     RequestPagination,
