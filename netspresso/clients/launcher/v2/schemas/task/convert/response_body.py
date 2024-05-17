@@ -3,15 +3,15 @@ from dataclasses import dataclass, field
 from typing import List, Optional
 
 from netspresso.clients.launcher.v2.schemas import (
-    TaskOption,
-    TaskInfo,
     InputLayer,
     ModelOption,
     ResponseItem,
     ResponseItems,
+    TaskInfo,
+    TaskOption,
 )
 from netspresso.clients.launcher.v2.schemas.task.common import TaskStatusInfo
-from netspresso.enums import TaskStatusForDisplay, Framework
+from netspresso.enums import Framework, TaskStatusForDisplay
 from netspresso.metadata.converter import ConvertInfo
 
 

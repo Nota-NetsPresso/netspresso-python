@@ -177,7 +177,7 @@ class Converter:
 
     def read_framework_options(self, access_token: str, framework: Framework) -> ResponseConvertFrameworkOptionItems:
         token_header = AuthorizationHeader(access_token=access_token)
-        logger.info(f"Request Convert options")
+        logger.info("Request Convert options")
 
         convert_task_option_response = self.convert_task.options_by_model_framework(
             headers=token_header, model_framework=framework

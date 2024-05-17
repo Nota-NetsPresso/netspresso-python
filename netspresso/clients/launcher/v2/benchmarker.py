@@ -21,9 +21,9 @@ from netspresso.clients.launcher.v2.schemas import (
     UploadFile,
 )
 from netspresso.enums import (
-    Framework,
     DataType,
     DeviceName,
+    Framework,
     HardwareType,
     LauncherTask,
     SoftwareVersion,
@@ -161,7 +161,7 @@ class Benchmarker:
 
     def read_framework_options(self, access_token: str, framework: Framework) -> ResponseBenchmarkFrameworkOptionItems:
         token_header = AuthorizationHeader(access_token=access_token)
-        logger.info(f"Request Benchmark options")
+        logger.info("Request Benchmark options")
 
         convert_task_option_response = self.benchmark_task.options_by_model_framework(
             headers=token_header, model_framework=framework

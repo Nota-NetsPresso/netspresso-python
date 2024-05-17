@@ -1,5 +1,5 @@
 import json
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from typing import Optional
 
 from netspresso.clients.launcher.v2.schemas import InputLayer

@@ -1,9 +1,9 @@
 from .request_body import RequestBenchmark
 from .response_body import (
+    ResponseBenchmarkFrameworkOptionItems,
     ResponseBenchmarkOptionItems,
     ResponseBenchmarkStatusItem,
     ResponseBenchmarkTaskItem,
-    ResponseBenchmarkFrameworkOptionItems,
 )
 
 __all__ = [
