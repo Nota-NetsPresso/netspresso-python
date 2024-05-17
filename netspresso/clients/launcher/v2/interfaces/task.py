@@ -54,3 +54,12 @@ class TaskInterface(ABC):
         :return:
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def options_by_model_framework(self, headers: dataclasses, model_framework: str) -> ResponseItems:
+        """
+
+        :return:
+        """
+        raise NotImplementedError
+
