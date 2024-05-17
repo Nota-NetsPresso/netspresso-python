@@ -1,6 +1,7 @@
 from .common import (
     AuthorizationHeader,
     DeviceInfo,
+    TaskOption,
     ModelOption,
     RequestPagination,
     ResponseItem,
@@ -29,4 +30,5 @@ from .task import (
     ResponseConvertOptionItems,
     ResponseConvertStatusItem,
     ResponseConvertTaskItem,
+    ResponseConvertDownloadModelUrlItem
 )

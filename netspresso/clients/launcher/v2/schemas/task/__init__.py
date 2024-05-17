@@ -10,6 +10,7 @@ from .convert import (
     ResponseConvertOptionItems,
     ResponseConvertStatusItem,
     ResponseConvertTaskItem,
+    ResponseConvertDownloadModelUrlItem,
 )
 
 __all__ = [
@@ -22,4 +23,5 @@ __all__ = [
     ResponseBenchmarkTaskItem,
     ResponseBenchmarkOptionItems,
     ResponseBenchmarkStatusItem,
+    ResponseConvertDownloadModelUrlItem
 ]

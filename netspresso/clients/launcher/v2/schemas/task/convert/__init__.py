@@ -4,7 +4,6 @@ from .response_body import (
     ResponseConvertStatusItem,
     ResponseConvertTaskItem,
     ResponseConvertDownloadModelUrlItem,
-    ResponseConvertFrameworkOptionItems
 )
 
 __all__ = [
@@ -12,6 +11,5 @@ __all__ = [
     ResponseConvertTaskItem,
     ResponseConvertOptionItems,
     ResponseConvertStatusItem,
-    ResponseConvertDownloadModelUrlItem,
-    ResponseConvertFrameworkOptionItems
+    ResponseConvertDownloadModelUrlItem
 ]
