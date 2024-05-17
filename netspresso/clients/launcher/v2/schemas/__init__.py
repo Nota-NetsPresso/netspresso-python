@@ -31,5 +31,7 @@ from .task import (
     ResponseConvertOptionItems,
     ResponseConvertStatusItem,
     ResponseConvertTaskItem,
-    ResponseConvertDownloadModelUrlItem
+    ResponseConvertDownloadModelUrlItem,
+    ResponseConvertFrameworkOptionItems,
+    ResponseBenchmarkFrameworkOptionItems
 )

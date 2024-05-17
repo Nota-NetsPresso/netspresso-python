@@ -3,6 +3,7 @@ from .benchmark import (
     ResponseBenchmarkOptionItems,
     ResponseBenchmarkStatusItem,
     ResponseBenchmarkTaskItem,
+    ResponseBenchmarkFrameworkOptionItems
 )
 from .common import TaskStatusInfo
 from .convert import (
@@ -11,6 +12,7 @@ from .convert import (
     ResponseConvertStatusItem,
     ResponseConvertTaskItem,
     ResponseConvertDownloadModelUrlItem,
+    ResponseConvertFrameworkOptionItems
 )
 
 __all__ = [
@@ -23,5 +25,7 @@ __all__ = [
     ResponseBenchmarkTaskItem,
     ResponseBenchmarkOptionItems,
     ResponseBenchmarkStatusItem,
-    ResponseConvertDownloadModelUrlItem
+    ResponseConvertDownloadModelUrlItem,
+    ResponseConvertFrameworkOptionItems,
+    ResponseBenchmarkFrameworkOptionItems
 ]
