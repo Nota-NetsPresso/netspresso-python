@@ -3,7 +3,8 @@ from dataclasses import dataclass, field
 from typing import List, Optional
 
 from netspresso.clients.launcher.v2.schemas import (
-    DeviceInfo,
+    TaskInfo,
+    TaskOption,
     InputLayer,
     ModelOption,
     ResponseItem,
@@ -12,6 +13,7 @@ from netspresso.clients.launcher.v2.schemas import (
 from netspresso.clients.launcher.v2.schemas.task.common import TaskStatusInfo
 from netspresso.enums import (
     TaskStatusForDisplay,
+    Framework
 )
 from netspresso.metadata import benchmarker
 from netspresso.metadata.benchmarker import BenchmarkTaskInfo
@@ -21,6 +23,7 @@ from netspresso.metadata.benchmarker import BenchmarkTaskInfo
 class BenchmarkResult:
     processor: str
     ram_size: float
+    file_size: float
     latency: float
     power_consumption: float
     memory_footprint_cpu: float
@@ -46,13 +49,13 @@ class BenchmarkEnvironment:
     gpu: str = ""
 
 
-@dataclass
+@dataclass(init=False)
 class BenchmarkTask:
     benchmark_task_id: str
     input_model_id: str
     input_layer: InputLayer
     status: TaskStatusForDisplay
-    benchmark_task_option: Optional[ModelOption] = None
+    benchmark_task_option: Optional[TaskOption] = None
     benchmark_result: Optional[BenchmarkResult] = None
     benchmark_environment: Optional[BenchmarkEnvironment] = None
 
@@ -62,10 +65,9 @@ class BenchmarkTask:
             if k in names:
                 setattr(self, k, v)
 
-        self.benchmark_task_option = ModelOption(**self.benchmark_task_option)
+        self.benchmark_task_option = TaskOption(**self.benchmark_task_option)
         self.benchmark_result = BenchmarkResult(**self.benchmark_result)
         self.benchmark_environment = BenchmarkEnvironment(**self.benchmark_environment)
-
 
     def to(self) -> BenchmarkTaskInfo:
         device_info = self.benchmark_task_option.devices[0]
@@ -101,14 +103,17 @@ class ResponseBenchmarkTaskItem(ResponseItem):
 @dataclass
 class BenchmarkOption:
     option_name: str
-    framework: str
-    device: DeviceInfo
+    display_option: str
+    framework: Framework
+    device: TaskInfo
 
     def __init__(self, **kwargs):
         names = {f.name for f in dataclasses.fields(self)}
         for k, v in kwargs.items():
             if k in names:
                 setattr(self, k, v)
+
+        self.device = TaskInfo(**self.device)
 
 
 @dataclass
@@ -125,3 +130,10 @@ class ResponseBenchmarkStatusItem(ResponseItem):
 
     def __post_init__(self):
         self.data = TaskStatusInfo(**self.data)
+
+@dataclass
+class ResponseBenchmarkFrameworkOptionItems(ResponseItems):
+    data: List[Optional[ModelOption]] = field(default_factory=list)
+
+    def __post_init__(self):
+        self.data = [ModelOption(**item) for item in self.data]
