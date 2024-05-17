@@ -6,10 +6,12 @@ from netspresso.clients.launcher.v2.interfaces import TaskInterface
 from netspresso.clients.launcher.v2.schemas import (
     AuthorizationHeader,
     RequestConvert,
+    ResponseConvertFrameworkOptionItems,
     ResponseConvertOptionItems,
     ResponseConvertStatusItem,
     ResponseConvertTaskItem,
     UploadFile,
+    ResponseConvertDownloadModelUrlItem,
 )
 from netspresso.clients.utils.requester import Requester
 from netspresso.enums import LauncherTask
@@ -40,32 +42,22 @@ class ConvertTaskAPI(TaskInterface):
         )
         return ResponseConvertTaskItem(**response.json())
 
-    def cancel(
-        self, headers: AuthorizationHeader, task_id: str
-    ) -> ResponseConvertTaskItem:
+    def cancel(self, headers: AuthorizationHeader, task_id: str) -> ResponseConvertTaskItem:
         endpoint = f"{self.task_base_url}/{task_id}/cancel"
-        response = Requester().post_as_json(
-            url=endpoint, request_body={}, headers=asdict(headers)
-        )
+        response = Requester().post_as_json(url=endpoint, request_body={}, headers=asdict(headers))
         return ResponseConvertTaskItem(**response.json())
 
-    def read(
-        self, headers: AuthorizationHeader, task_id: str
-    ) -> ResponseConvertTaskItem:
+    def read(self, headers: AuthorizationHeader, task_id: str) -> ResponseConvertTaskItem:
         endpoint = f"{self.task_base_url}/{task_id}"
         response = Requester().get(url=endpoint, headers=asdict(headers))
         return ResponseConvertTaskItem(**response.json())
 
-    def delete(
-        self, headers: AuthorizationHeader, task_id: str
-    ) -> ResponseConvertTaskItem:
+    def delete(self, headers: AuthorizationHeader, task_id: str) -> ResponseConvertTaskItem:
         endpoint = f"{self.task_base_url}/{task_id}"
         response = Requester().delete(url=endpoint, headers=asdict(headers))
         return ResponseConvertTaskItem(**response.json())
 
-    def status(
-        self, headers: AuthorizationHeader, task_id: str
-    ) -> ResponseConvertStatusItem:
+    def status(self, headers: AuthorizationHeader, task_id: str) -> ResponseConvertStatusItem:
         endpoint = f"{self.task_base_url}/{task_id}"
         response = Requester().get(url=endpoint, headers=asdict(headers))
         return ResponseConvertStatusItem(**response.json())
@@ -75,12 +67,12 @@ class ConvertTaskAPI(TaskInterface):
         response = Requester().get(url=endpoint, headers=asdict(headers))
         return ResponseConvertOptionItems(**response.json())
 
-    def option_by_model_framework(
+    def options_by_model_framework(
         self, headers: AuthorizationHeader, model_framework: str
-    ) -> ResponseConvertOptionItems:
-        endpoint = f"{self.option_base_url}/framework/{model_framework}"
+    ) -> ResponseConvertFrameworkOptionItems:
+        endpoint = f"{self.option_base_url}/frameworks/{model_framework}"
         response = Requester().get(url=endpoint, headers=asdict(headers))
-        return ResponseConvertOptionItems(**response.json())
+        return ResponseConvertFrameworkOptionItems(**response.json())
 
     def option_by_target_framework(
         self, headers: AuthorizationHeader, target_framework: str
@@ -91,7 +83,7 @@ class ConvertTaskAPI(TaskInterface):
 
     def get_download_url(
         self, headers: AuthorizationHeader, convert_task_uuid: str
-    ) -> str:
+    ) -> ResponseConvertDownloadModelUrlItem:
         endpoint = f"{self.model_base_url}/{convert_task_uuid}"
         response = Requester().get(url=endpoint, headers=asdict(headers))
-        return response.json()
+        return ResponseConvertDownloadModelUrlItem(**response.json())
