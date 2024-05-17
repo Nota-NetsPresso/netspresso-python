@@ -21,3 +21,4 @@ class TaskStatusForDisplay(NamedConstant):
     FINISHED = "FINISHED"
     ERROR = "ERROR"
     USER_CANCEL = "USER_CANCEL"
+    TIMEOUT = "TIMEOUT"
