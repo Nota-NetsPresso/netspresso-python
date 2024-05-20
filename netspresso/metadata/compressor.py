@@ -84,5 +84,4 @@ class CompressorMetadata:
         update_model_fields(self.results.compressed_model, compressed_model)
 
     def update_available_options(self, available_options):
-        # TODO
-        pass
+        self.available_options = available_options

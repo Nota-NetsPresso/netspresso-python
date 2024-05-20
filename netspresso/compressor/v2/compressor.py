@@ -63,6 +63,23 @@ class CompressorV2:
 
         return metadata
 
+    def _get_available_options(self, compressed_model_info, default_model_path: str):
+        if compressed_model_info.detail.framework in [Framework.PYTORCH, Framework.ONNX]:
+            export_onnx(default_model_path, [compressed_model_info.detail.input_layer])
+            options_response = launcher_client_v2.converter.read_framework_options(
+                access_token=self.token_handler.tokens.access_token,
+                framework=Framework.ONNX,
+            )    
+        else:
+            options_response = launcher_client_v2.converter.read_framework_options(
+                access_token=self.token_handler.tokens.access_token,
+                framework=Framework.TENSORFLOW_KERAS,
+            )
+
+        available_options = options_response.data
+
+        return available_options
+
     def upload_model(
         self,
         input_model_path: str,
@@ -267,7 +284,7 @@ class CompressorV2:
 
             # TODO: For available devices
             compressed_model_info = self.get_model(model_id=compression_info.input_model_id)
-            # converter_uploaded_model = self._get_available_devices(compressed_model, default_model_path)
+            available_options = self._get_available_options(compressed_model_info, default_model_path)
 
             logger.info(f"Compress model successfully. Compressed Model ID: {compression_info.input_model_id}")
 
@@ -288,7 +305,8 @@ class CompressorV2:
             )
             metadata.update_results(model=model_info, compressed_model=compressed_model_info)
             metadata.update_status(status=Status.COMPLETED)
-            # metadata.update_available_devices(converter_uploaded_model.available_devices)
+            metadata.update_available_options(available_options)
+
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
 
             return compression_info
@@ -388,7 +406,7 @@ class CompressorV2:
 
             # TODO: For available devices
             compressed_model_info = self.get_model(model_id=compression_info.input_model_id)
-            # converter_uploaded_model = self._get_available_devices(compressed_model, default_model_path)
+            available_options = self._get_available_options(compressed_model_info, default_model_path)
 
             logger.info(f"Recommendation compression successfully. Compressed Model ID: {compression_info.input_model_id}")
 
@@ -410,7 +428,8 @@ class CompressorV2:
             )
             metadata.update_results(model=model_info, compressed_model=compressed_model_info)
             metadata.update_status(status=Status.COMPLETED)
-            # metadata.update_available_devices(converter_uploaded_model.available_devices)
+            metadata.update_available_options(available_options)
+
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
 
             return compression_info
@@ -468,7 +487,7 @@ class CompressorV2:
 
             # TODO: For available devices
             compressed_model_info = self.get_model(model_id=compression_info.input_model_id)
-            # converter_uploaded_model = self._get_available_devices(compressed_model, default_model_path)
+            available_options = self._get_available_options(compressed_model_info, default_model_path)
 
             logger.info(f"Automatic compression successfully. Compressed Model ID: {compression_info.input_model_id}")
 
@@ -486,7 +505,7 @@ class CompressorV2:
             )
             metadata.update_results(model=model_info, compressed_model=compressed_model_info)
             metadata.update_status(status=Status.COMPLETED)
-            # metadata.update_available_devices(converter_uploaded_model.available_devices)
+            metadata.update_available_options(available_options)
 
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
 
