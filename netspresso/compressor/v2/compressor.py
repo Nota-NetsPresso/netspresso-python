@@ -30,6 +30,7 @@ from netspresso.compressor.utils.onnx import export_onnx
 from netspresso.enums import CompressionMethod, Framework, Module, RecommendationMethod, ServiceCredit, Status, TaskType
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
+from netspresso.metadata.compressor import CompressorMetadata
 
 
 class CompressorV2:
@@ -39,7 +40,6 @@ class CompressorV2:
         self.token_handler = token_handler
 
     def check_credit_balance(self, service_credit):
-        # TODO: Create a base class and move functions
         current_credit = auth_client.get_credit(
             access_token=self.token_handler.tokens.access_token,
             verify_ssl=self.token_handler.verify_ssl
@@ -48,19 +48,33 @@ class CompressorV2:
         if current_credit < service_credit:
             sys.exit(f"Your current balance of {current_credit} credits is insufficient to complete the task. \n{service_credit} credits are required for one {service_name} task. \nFor additional credit, please contact us at netspresso@nota.ai.")
 
+    def print_remaining_credit(self):
+        if compressor_client_v2.is_cloud():
+            remaining_credit = auth_client.get_credit(
+                self.token_handler.tokens.access_token, verify_ssl=self.token_handler.verify_ssl
+            )
+            logger.info(
+                f"{ServiceCredit.ADVANCED_COMPRESSION} credits have been consumed. Remaining Credit: {remaining_credit}"
+            )
+
+    def create_metadata(self, folder_path) -> CompressorMetadata:
+        metadata = CompressorMetadata()
+        MetadataHandler.save_json(data=metadata.asdict(), folder_path=folder_path)
+
+        return metadata
+
     def upload_model(
         self,
         input_model_path: str,
         input_shapes: List[Dict[str, int]] = None,
         framework: Framework = Framework.PYTORCH,
     ) -> ModelBase:
-
-        FileHandler.check_input_model_path(input_model_path)
-
         self.token_handler.validate_token()
 
         try:
             logger.info("Uploading Model...")
+
+            FileHandler.check_input_model_path(input_model_path)
 
             object_name = Path(input_model_path).stem
 
@@ -83,7 +97,7 @@ class CompressorV2:
 
             if not upload_model_response:
                 # TODO: Confirm upload success
-                pass
+                raise Exception("Upload model failed.")
 
             validate_model_request = RequestValidateModel(framework=framework, input_layers=input_shapes)
             validate_model_response = compressor_client_v2.validate_model(
@@ -151,10 +165,6 @@ class CompressorV2:
         try:
             logger.info("Selecting compression method...")
 
-            # 이거를 backend에서 처리할 지 고민
-            # if model.framework == Framework.PYTORCH and compression_method == CompressionMethod.PR_NN:
-            #     raise Exception("The Nuclear Norm is only supported in the TensorFlow-Keras framework.")
-
             get_available_layers_request = RequestAvailableLayers(
                 compression_method=compression_method,
                 options=options,
@@ -211,10 +221,10 @@ class CompressorV2:
             model_info = self.get_model(compression.input_model_id)
 
             output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
+            metadata = self.create_metadata(folder_path=output_dir)
             default_model_path, extension = FileHandler.get_path_and_extension(
                 folder_path=output_dir, framework=model_info.detail.framework
             )
-            metadata = MetadataHandler.init_metadata(folder_path=output_dir, task_type=TaskType.COMPRESS)
 
             self.check_credit_balance(service_credit=ServiceCredit.ADVANCED_COMPRESSION)
 
@@ -229,12 +239,13 @@ class CompressorV2:
                 verify_ssl=self.token_handler.verify_ssl
             )
 
-            # if dataset_path and compression.compression_method == CompressionMethod.PR_NN:
-            #     self.__upload_dataset(model_id=compression.original_model_id, dataset_path=dataset_path)
-
             for available_layers in compression.available_layers:
                 if available_layers.values:
                     available_layers.use = True
+
+            # TODO: Upload dataset
+            # if dataset_path and compression.compression_method == CompressionMethod.PR_NN:
+            #     self.__upload_dataset(model_id=compression., dataset_path=dataset_path)
 
             update_compression_request = RequestUpdateCompression(
                 available_layers=compression.available_layers,
@@ -255,39 +266,30 @@ class CompressorV2:
             )
 
             # TODO: For available devices
+            compressed_model_info = self.get_model(model_id=compression_info.input_model_id)
             # converter_uploaded_model = self._get_available_devices(compressed_model, default_model_path)
 
             logger.info(f"Compress model successfully. Compressed Model ID: {compression_info.input_model_id}")
 
-            if compressor_client_v2.is_cloud():
-                remaining_credit = auth_client.get_credit(
-                    self.token_handler.tokens.access_token, verify_ssl=self.token_handler.verify_ssl
-                )
-                logger.info(
-                    f"{ServiceCredit.ADVANCED_COMPRESSION} credits have been consumed. Remaining Credit: {remaining_credit}"
-                )
+            self.print_remaining_credit()
 
-            # metadata.update_compressed_model_path(
-            #     compressed_model_path=default_model_path.with_suffix(extension).as_posix()
-            # )
-            # if compressed_model.framework in [Framework.PYTORCH, Framework.ONNX]:
-            #     metadata.update_compressed_onnx_model_path(
-            #         compressed_onnx_model_path=default_model_path.with_suffix(".onnx").as_posix()
-            #     )
-            # metadata.update_model_info(
-            #     task=model_info.task,
-            #     framework=model_info.framework,
-            #     input_shapes=model_info.input_shapes,
-            # )
-            # metadata.update_compression_info(
-            #     method=compression.compression_method,
-            #     options=compression.options,
-            #     layers=compression.available_layers,
-            # )
-            # metadata.update_results(model=model_info, compressed_model=compressed_model)
-            # metadata.update_status(status=Status.COMPLETED)
+            if compressed_model_info.detail.framework in [Framework.PYTORCH, Framework.ONNX]:
+                metadata.update_compressed_onnx_model_path(
+                    compressed_onnx_model_path=default_model_path.with_suffix(".onnx").as_posix()
+                )
+            metadata.update_compressed_model_path(
+                compressed_model_path=default_model_path.with_suffix(extension).as_posix()
+            )
+            metadata.update_model_info(framework=model_info.detail.framework, input_shapes=[model_info.detail.input_layer])
+            metadata.update_compression_info(
+                method=compression.compression_method,
+                options=compression.options,
+                layers=compression.available_layers,
+            )
+            metadata.update_results(model=model_info, compressed_model=compressed_model_info)
+            metadata.update_status(status=Status.COMPLETED)
             # metadata.update_available_devices(converter_uploaded_model.available_devices)
-            # MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
+            MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
 
             return compression_info
 
@@ -298,6 +300,7 @@ class CompressorV2:
             raise e
 
         except KeyboardInterrupt:
+            logger.error(f"Compress model stopped.")
             metadata.update_status(status=Status.STOPPED)
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
     
@@ -313,30 +316,28 @@ class CompressorV2:
         options: RecommendationOptions = RecommendationOptions(),
         dataset_path: Optional[str] = None,
     ) -> Dict:
-        FileHandler.check_input_model_path(input_model_path)
-
         self.token_handler.validate_token()
 
         try:
             logger.info("Compressing recommendation-based model...")
 
             output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
-            default_model_path, extension = FileHandler.get_path_and_extension(folder_path=output_dir, framework=framework)
-            metadata = MetadataHandler.init_metadata(folder_path=output_dir, task_type=TaskType.COMPRESS)
+            metadata = self.create_metadata(folder_path=output_dir)
+
+            default_model_path, extension = FileHandler.get_path_and_extension(
+                folder_path=output_dir, framework=framework
+            )
 
             self.check_credit_balance(service_credit=ServiceCredit.ADVANCED_COMPRESSION)
 
-            if framework == Framework.PYTORCH and compression_method == CompressionMethod.PR_NN:
-                raise Exception("The Nuclear Norm is only supported in the TensorFlow-Keras framework.")
-
-            model = self.upload_model(
+            model_info = self.upload_model(
                 framework=framework,
                 input_model_path=input_model_path,
                 input_shapes=input_shapes,
             )
 
             create_compression_request = RequestCreateCompression(
-                ai_model_id=model.ai_model_id,
+                ai_model_id=model_info.ai_model_id,
                 compression_method=compression_method,
                 options=options,
             )
@@ -346,6 +347,7 @@ class CompressorV2:
                 verify_ssl=self.token_handler.verify_ssl
             )
 
+            # TODO: Upload dataset
             # if dataset_path and compression_method == CompressionMethod.PR_NN:
             #     self.__upload_dataset(model_id=model.model_id, dataset_path=dataset_path)
 
@@ -385,38 +387,31 @@ class CompressorV2:
             )
 
             # TODO: For available devices
+            compressed_model_info = self.get_model(model_id=compression_info.input_model_id)
             # converter_uploaded_model = self._get_available_devices(compressed_model, default_model_path)
 
             logger.info(f"Recommendation compression successfully. Compressed Model ID: {compression_info.input_model_id}")
 
-            if compressor_client_v2.is_cloud():
-                remaining_credit = auth_client.get_credit(
-                    self.token_handler.tokens.access_token, verify_ssl=self.token_handler.verify_ssl
-                )
-                logger.info(
-                    f"{ServiceCredit.ADVANCED_COMPRESSION} credits have been consumed. Remaining Credit: {remaining_credit}"
-                )
+            self.print_remaining_credit()
 
-            # metadata.update_compressed_model_path(
-            #     compressed_model_path=default_model_path.with_suffix(extension).as_posix()
-            # )
-            # if compressed_model.framework in [Framework.PYTORCH, Framework.ONNX]:
-            #     metadata.update_compressed_onnx_model_path(
-            #         compressed_onnx_model_path=default_model_path.with_suffix(".onnx").as_posix()
-            #     )
-            # metadata.update_model_info(task=model.task, framework=framework, input_shapes=input_shapes)
-            # metadata.update_compression_info(
-            #     method=_compression_info.compression_method,
-            #     ratio=recommendation_ratio,
-            #     options=_compression_info.options,
-            #     layers=_compression_info.available_layers,
-            # )
-            # metadata.update_results(model=model, compressed_model=compressed_model)
-            # metadata.update_status(status=Status.COMPLETED)
+            if compressed_model_info.detail.framework in [Framework.PYTORCH, Framework.ONNX]:
+                metadata.update_compressed_onnx_model_path(
+                    compressed_onnx_model_path=default_model_path.with_suffix(".onnx").as_posix()
+                )
+            metadata.update_compressed_model_path(
+                compressed_model_path=default_model_path.with_suffix(extension).as_posix()
+            )
+            metadata.update_model_info(framework=framework, input_shapes=input_shapes)
+            metadata.update_compression_info(
+                method=compression_info.compression_method,
+                ratio=recommendation_ratio,
+                options=compression_info.options,
+                layers=compression_info.available_layers,
+            )
+            metadata.update_results(model=model_info, compressed_model=compressed_model_info)
+            metadata.update_status(status=Status.COMPLETED)
             # metadata.update_available_devices(converter_uploaded_model.available_devices)
-            # MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
-                
-            print(compression_info)
+            MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
 
             return compression_info
 
@@ -427,6 +422,7 @@ class CompressorV2:
             raise e
 
         except KeyboardInterrupt:
+            logger.error(f"Recommendation compression stopped.")
             metadata.update_status(status=Status.STOPPED)
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
 
@@ -438,27 +434,24 @@ class CompressorV2:
         framework: Framework = Framework.PYTORCH,
         compression_ratio: float = 0.5,
     ) -> Dict:
-        FileHandler.check_input_model_path(input_model_path)
-
         self.token_handler.validate_token()
 
         try:
             logger.info("Compressing automatic-based model...")
 
             output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
+            metadata = self.create_metadata(folder_path=output_dir)
+
             default_model_path, extension = FileHandler.get_path_and_extension(
                 folder_path=output_dir, framework=framework
             )
-            metadata = MetadataHandler.init_metadata(folder_path=output_dir, task_type=TaskType.COMPRESS)
 
             self.check_credit_balance(service_credit=ServiceCredit.AUTOMATIC_COMPRESSION)
 
             model_info = self.upload_model(framework=framework, input_model_path=input_model_path, input_shapes=input_shapes)
            
-            automatic_compression_request = RequestAutomaticCompressionParams(compression_ratio=compression_ratio)
-            
             logger.info("Compressing model...")
-
+            automatic_compression_request = RequestAutomaticCompressionParams(compression_ratio=compression_ratio)
             automatic_compression_response = compressor_client_v2.compress_model_with_automatic(
                 ai_model_id=model_info.ai_model_id,
                 request_data=automatic_compression_request,
@@ -473,36 +466,29 @@ class CompressorV2:
                 local_path=default_model_path.with_suffix(extension),
             )
 
+            # TODO: For available devices
+            compressed_model_info = self.get_model(model_id=compression_info.input_model_id)
             # converter_uploaded_model = self._get_available_devices(compressed_model, default_model_path)
 
             logger.info(f"Automatic compression successfully. Compressed Model ID: {compression_info.input_model_id}")
 
-            if compressor_client_v2.is_cloud():
-                remaining_credit = auth_client.get_credit(
-                    self.token_handler.tokens.access_token, verify_ssl=self.token_handler.verify_ssl
-                )
-                logger.info(
-                    f"{ServiceCredit.AUTOMATIC_COMPRESSION} credits have been consumed. Remaining Credit: {remaining_credit}"
-                )
+            self.print_remaining_credit()
 
-            # metadata.update_compressed_model_path(
-            #     compressed_model_path=default_model_path.with_suffix(extension).as_posix()
-            # )
-            # if compressed_model_info.detail.framework in [Framework.PYTORCH, Framework.ONNX]:
-            #     metadata.update_compressed_onnx_model_path(
-            #         compressed_onnx_model_path=default_model_path.with_suffix(".onnx").as_posix()
-            #     )
-            # metadata.update_model_info(framework=framework, input_shapes=input_shapes)
-            # metadata.update_compression_info(
-            #     method=compression_info.compression_method,
-            #     ratio=compression_ratio,
-            #     options=compression_info.options,
-            #     layers=compression_info.available_layers,
-            # )
-            # metadata.update_results(model=model, compressed_model=compressed_model)
-            # metadata.update_status(status=Status.COMPLETED)
-            # # metadata.update_available_devices(converter_uploaded_model.available_devices)
-            # MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
+            if compressed_model_info.detail.framework in [Framework.PYTORCH, Framework.ONNX]:
+                metadata.update_compressed_onnx_model_path(default_model_path.with_suffix(".onnx").as_posix())
+            metadata.update_compressed_model_path(default_model_path.with_suffix(extension).as_posix())
+            metadata.update_model_info(framework=framework, input_shapes=input_shapes)
+            metadata.update_compression_info(
+                method=compression_info.compression_method,
+                ratio=compression_ratio,
+                options=compression_info.options,
+                layers=compression_info.available_layers,
+            )
+            metadata.update_results(model=model_info, compressed_model=compressed_model_info)
+            metadata.update_status(status=Status.COMPLETED)
+            # metadata.update_available_devices(converter_uploaded_model.available_devices)
+
+            MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
 
             return compression_info
 
@@ -513,5 +499,6 @@ class CompressorV2:
             raise e
 
         except KeyboardInterrupt:
+            logger.error(f"Automatic compression stopped.")
             metadata.update_status(status=Status.STOPPED)
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
