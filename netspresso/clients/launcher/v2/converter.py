@@ -11,6 +11,8 @@ from netspresso.clients.launcher.v2.schemas import (
     RequestModelUploadUrl,
     RequestUploadModel,
     RequestValidateModel,
+    ResponseConvertDownloadModelUrlItem,
+    ResponseConvertFrameworkOptionItems,
     ResponseConvertOptionItems,
     ResponseConvertStatusItem,
     ResponseConvertTaskItem,
@@ -34,14 +36,10 @@ class Converter:
         self.convert_task = ConvertTaskAPI(url=url)
         self.convert_model = ModelAPI(url=url, task_type=self.task_type)
 
-    def presigned_model_upload_url(
-        self, access_token: str, input_model_path: str
-    ) -> ResponseModelUploadUrl:
+    def presigned_model_upload_url(self, access_token: str, input_model_path: str) -> ResponseModelUploadUrl:
         object_name = os.path.basename(input_model_path)
 
-        get_upload_url_request_body = RequestModelUploadUrl(
-            object_name=object_name, task=self.task_type
-        )
+        get_upload_url_request_body = RequestModelUploadUrl(object_name=object_name, task=self.task_type)
         token_header = AuthorizationHeader(access_token=access_token)
         logger.info(f"Request Convert model upload: path - {input_model_path}")
 
@@ -51,9 +49,7 @@ class Converter:
         logger.info(f"Request Convert upload_url result: {upload_url_response_body}")
         return upload_url_response_body
 
-    def upload_model_file(
-        self, access_token: str, input_model_path: str, presigned_upload_url: str
-    ) -> str:
+    def upload_model_file(self, access_token: str, input_model_path: str, presigned_upload_url: str) -> str:
         object_name = os.path.basename(input_model_path)
         file_content = utils.read_file_bytes(file_path=input_model_path)
 
@@ -75,16 +71,10 @@ class Converter:
         logger.info(f"Request Convert upload_model_file result: {upload_result}")
         return upload_result
 
-    def validate_model_file(
-        self, access_token: str, input_model_path: str, ai_model_id: str
-    ) -> ResponseModelItem:
+    def validate_model_file(self, access_token: str, input_model_path: str, ai_model_id: str) -> ResponseModelItem:
         object_name = os.path.basename(input_model_path)
         token_header = AuthorizationHeader(access_token=access_token)
-        logger.info(
-            f"Request Convert model validation:"
-            f" path - {input_model_path}"
-            f" ai_model_id - {ai_model_id}"
-        )
+        logger.info(f"Request Convert model validation:" f" path - {input_model_path}" f" ai_model_id - {ai_model_id}")
 
         get_validate_model_request_body = RequestValidateModel(
             ai_model_id=ai_model_id,
@@ -97,21 +87,15 @@ class Converter:
         logger.info(f"Request Convert validate_model result: {validated_model}")
         return validated_model
 
-    def download_model_file(self, access_token, convert_task_uuid) -> str:
+    def download_model_file(self, access_token, convert_task_uuid) -> ResponseConvertDownloadModelUrlItem:
         token_header = AuthorizationHeader(access_token=access_token)
-        download_url = self.convert_task.get_download_url(
-            headers=token_header, convert_task_uuid=convert_task_uuid
-        )
+        download_url = self.convert_task.get_download_url(headers=token_header, convert_task_uuid=convert_task_uuid)
         logger.info(f"Request converted model download_url: {download_url}")
         return download_url
 
-    def read_model_task_options(
-        self, access_token, ai_model_id
-    ) -> ResponseModelOptions:
+    def read_model_task_options(self, access_token, ai_model_id) -> ResponseModelOptions:
         token_header = AuthorizationHeader(access_token=access_token)
-        model_task_options = self.convert_model.options(
-            headers=token_header, ai_model_id=ai_model_id
-        )
+        model_task_options = self.convert_model.options(headers=token_header, ai_model_id=ai_model_id)
         logger.info(f"Request model task_options: {model_task_options}")
         return model_task_options
 
@@ -155,9 +139,7 @@ class Converter:
         token_header = AuthorizationHeader(access_token=access_token)
         logger.info(f"Request Convert Cancel task_id: {task_id}")
 
-        convert_task_response = self.convert_task.cancel(
-            headers=token_header, task_id=task_id
-        )
+        convert_task_response = self.convert_task.cancel(headers=token_header, task_id=task_id)
         logger.info(f"Request Convert Cancel result: {convert_task_response}")
         return convert_task_response
 
@@ -165,9 +147,7 @@ class Converter:
         token_header = AuthorizationHeader(access_token=access_token)
         logger.info(f"Request Convert Read task_id: {task_id}")
 
-        convert_task_response = self.convert_task.read(
-            headers=token_header, task_id=task_id
-        )
+        convert_task_response = self.convert_task.read(headers=token_header, task_id=task_id)
         logger.info(f"Request Convert Task Info: {convert_task_response}")
         return convert_task_response
 
@@ -175,9 +155,7 @@ class Converter:
         token_header = AuthorizationHeader(access_token=access_token)
         logger.info(f"Request Convert delete task_id: {task_id}")
 
-        convert_task_response = self.convert_task.delete(
-            headers=token_header, task_id=task_id
-        )
+        convert_task_response = self.convert_task.delete(headers=token_header, task_id=task_id)
         logger.info(f"Request Convert Delete Info: {convert_task_response}")
         return convert_task_response
 
@@ -185,9 +163,7 @@ class Converter:
         token_header = AuthorizationHeader(access_token=access_token)
         logger.info(f"Request Convert read_status task_id: {task_id}")
 
-        convert_task_response = self.convert_task.status(
-            headers=token_header, task_id=task_id
-        )
+        convert_task_response = self.convert_task.status(headers=token_header, task_id=task_id)
         logger.info(f"Request Convert Task Status: {convert_task_response}")
         return convert_task_response
 
@@ -196,5 +172,15 @@ class Converter:
         logger.info("Request Convert options")
 
         convert_task_option_response = self.convert_task.options(headers=token_header)
-        logger.info(f"Request Convert Task Options: {convert_task_option_response}")
+        logger.info(f"Response Convert Task Options: {convert_task_option_response}")
+        return convert_task_option_response
+
+    def read_framework_options(self, access_token: str, framework: Framework) -> ResponseConvertFrameworkOptionItems:
+        token_header = AuthorizationHeader(access_token=access_token)
+        logger.info("Request Convert options")
+
+        convert_task_option_response = self.convert_task.options_by_model_framework(
+            headers=token_header, model_framework=framework
+        )
+        logger.info(f"Request Convert Task Options by model_framework: {convert_task_option_response}")
         return convert_task_option_response

@@ -78,6 +78,18 @@ class SoftwareVersionInfo:
 
 
 @dataclass
+class TaskInfo:
+    """ """
+    device_name: str
+    display_brand_name: str
+    display_device_name: str
+    software_version: Optional[SoftwareVersion]
+    display_software_version: Optional[DisplaySoftwareVersion]
+    data_type: DataType
+    hardware_type: Optional[HardwareType]
+
+
+@dataclass
 class DeviceInfo:
     """ """
 
@@ -108,6 +120,17 @@ class DeviceInfo:
         )
 
         return device_info
+
+@dataclass
+class TaskOption:
+    """ """
+
+    framework: Optional[Framework] = ""
+    display_framework: Optional[str] = ""
+    target_device: List[TaskInfo] = field(default_factory=dict)
+
+    def __post_init__(self):
+        self.target_device = TaskInfo(**self.target_device)
 
 
 @dataclass

@@ -1,5 +1,7 @@
 from .request_body import RequestConvert
 from .response_body import (
+    ResponseConvertDownloadModelUrlItem,
+    ResponseConvertFrameworkOptionItems,
     ResponseConvertOptionItems,
     ResponseConvertStatusItem,
     ResponseConvertTaskItem,
@@ -10,4 +12,6 @@ __all__ = [
     ResponseConvertTaskItem,
     ResponseConvertOptionItems,
     ResponseConvertStatusItem,
+    ResponseConvertDownloadModelUrlItem,
+    ResponseConvertFrameworkOptionItems
 ]

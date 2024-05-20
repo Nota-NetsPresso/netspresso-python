@@ -3,14 +3,15 @@ from dataclasses import dataclass, field
 from typing import List, Optional
 
 from netspresso.clients.launcher.v2.schemas import (
-    DeviceInfo,
     InputLayer,
     ModelOption,
     ResponseItem,
     ResponseItems,
+    TaskInfo,
+    TaskOption,
 )
 from netspresso.clients.launcher.v2.schemas.task.common import TaskStatusInfo
-from netspresso.enums import TaskStatusForDisplay
+from netspresso.enums import Framework, TaskStatusForDisplay
 from netspresso.metadata.converter import ConvertInfo
 
 
@@ -21,7 +22,7 @@ class ConvertTask:
     output_model_id: str
     input_layer: InputLayer = field(default_factory=InputLayer)
     status: TaskStatusForDisplay = ""
-    convert_task_option: Optional[ModelOption] = field(default_factory=ModelOption)
+    convert_task_option: Optional[TaskOption] = field(default_factory=ModelOption)
 
     def __init__(self, **kwargs):
         names = {f.name for f in dataclasses.fields(self)}
@@ -30,7 +31,7 @@ class ConvertTask:
                 setattr(self, k, v)
 
         self.input_layer = InputLayer(**self.input_layer)
-        self.convert_task_option = ModelOption(**self.convert_task_option)
+        self.convert_task_option = TaskOption(**self.convert_task_option)
 
     def to(self, model_file_name: str) -> ConvertInfo:
         device_info = self.convert_task_option.devices[0]
@@ -70,8 +71,9 @@ class ResponseConvertTaskItem(ResponseItem):
 @dataclass
 class ConvertOption:
     option_name: str
-    framework: str
-    device: DeviceInfo
+    display_option: str
+    framework: Framework
+    device: TaskInfo
 
     def __init__(self, **kwargs):
         names = {f.name for f in dataclasses.fields(self)}
@@ -79,7 +81,7 @@ class ConvertOption:
             if k in names:
                 setattr(self, k, v)
 
-        self.device = DeviceInfo(**self.device)
+        self.device = TaskInfo(**self.device)
 
 
 @dataclass
@@ -96,3 +98,22 @@ class ResponseConvertStatusItem(ResponseItem):
 
     def __post_init__(self):
         self.data = TaskStatusInfo(**self.data)
+
+
+@dataclass
+class DownloadModelUrl:
+    ai_model_id: str
+    presigned_download_url: str
+
+
+@dataclass
+class ResponseConvertDownloadModelUrlItem(ResponseItem):
+    data: Optional[DownloadModelUrl] = field(default_factory=dict)
+
+
+@dataclass
+class ResponseConvertFrameworkOptionItems(ResponseItems):
+    data: List[Optional[ModelOption]] = field(default_factory=list)
+
+    def __post_init__(self):
+        self.data = [ModelOption(**item) for item in self.data]

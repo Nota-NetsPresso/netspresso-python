@@ -6,6 +6,8 @@ from .common import (
     ResponseItem,
     ResponseItems,
     ResponsePaginationItems,
+    TaskInfo,
+    TaskOption,
     UploadFile,
 )
 from .model import (
@@ -23,9 +25,12 @@ from .model import (
 from .task import (
     RequestBenchmark,
     RequestConvert,
+    ResponseBenchmarkFrameworkOptionItems,
     ResponseBenchmarkOptionItems,
     ResponseBenchmarkStatusItem,
     ResponseBenchmarkTaskItem,
+    ResponseConvertDownloadModelUrlItem,
+    ResponseConvertFrameworkOptionItems,
     ResponseConvertOptionItems,
     ResponseConvertStatusItem,
     ResponseConvertTaskItem,
