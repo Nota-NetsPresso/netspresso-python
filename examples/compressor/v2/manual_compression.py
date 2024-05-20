@@ -2,9 +2,8 @@ from netspresso import NetsPresso
 from netspresso.enums import CompressionMethod, GroupPolicy, LayerNorm, Policy, StepOp
 from netspresso.clients.compressor.v2.schemas.compression import Options
 
-EMAIL = "compressor@nota.ai"
-PASSWORD = "Nota180928!"
-
+EMAIL = "YOUR_EMAIL"
+PASSWORD = "YOUR_PASSWORD"
 
 netspresso = NetsPresso(email=EMAIL, password=PASSWORD)
 

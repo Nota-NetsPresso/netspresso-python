@@ -1,9 +1,8 @@
 from netspresso import NetsPresso
 from netspresso.enums import CompressionMethod, RecommendationMethod
 
-EMAIL = "compressor@nota.ai"
-PASSWORD = "Nota180928!"
-
+EMAIL = "YOUR_EMAIL"
+PASSWORD = "YOUR_PASSWORD"
 
 netspresso = NetsPresso(email=EMAIL, password=PASSWORD)
 
