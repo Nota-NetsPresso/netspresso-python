@@ -34,7 +34,7 @@ class ConvertTask:
         self.convert_task_option = TaskOption(**self.convert_task_option)
 
     def to(self, model_file_name: str) -> ConvertInfo:
-        device_info = self.convert_task_option.devices[0]
+        device_info = self.convert_task_option.target_device
 
         convert_info = ConvertInfo()
         convert_info.convert_task_uuid = self.convert_task_id
@@ -48,14 +48,10 @@ class ConvertTask:
         convert_info.display_device_name = device_info.display_device_name
         convert_info.display_brand_name = device_info.display_brand_name
 
-        convert_info.data_type = device_info.data_types[0]
+        convert_info.data_type = device_info.data_type
 
-        convert_info.software_version = device_info.software_versions[
-            0
-        ].software_version
-        convert_info.display_software_version = device_info.software_versions[
-            0
-        ].display_software_version
+        convert_info.software_version = device_info.software_version
+        convert_info.display_software_version = device_info.display_software_version
 
         return convert_info
 
@@ -109,6 +105,9 @@ class DownloadModelUrl:
 @dataclass
 class ResponseConvertDownloadModelUrlItem(ResponseItem):
     data: Optional[DownloadModelUrl] = field(default_factory=dict)
+
+    def __post_init__(self):
+        self.data = DownloadModelUrl(**self.data)
 
 
 @dataclass
