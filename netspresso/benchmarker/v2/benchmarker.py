@@ -145,6 +145,7 @@ class BenchmarkerV2:
                     if response.data.status in [
                         TaskStatusForDisplay.FINISHED,
                         TaskStatusForDisplay.ERROR,
+                        TaskStatusForDisplay.TIMEOUT,
                     ]:
                         break
                     time.sleep(3)
