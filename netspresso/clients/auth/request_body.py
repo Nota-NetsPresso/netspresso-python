@@ -1,9 +1,7 @@
-from pydantic import BaseModel, Field
+from dataclasses import dataclass
 
 
-class LoginRequest(BaseModel):
-    username: str = Field(..., description="User Name")
-    password: str = Field(..., description="Password")
-
-
-
+@dataclass
+class LoginRequest:
+    username: str
+    password: str

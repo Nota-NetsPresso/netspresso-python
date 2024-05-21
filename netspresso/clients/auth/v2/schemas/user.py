@@ -1,7 +1,6 @@
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
-
-from pydantic import BaseModel
 
 from netspresso.clients.auth import response_body
 from netspresso.clients.auth.response_body import UserDetailResponse
@@ -13,15 +12,17 @@ from netspresso.clients.auth.v2.schemas.credit import SummarizedCreditResponse
 from netspresso.clients.auth.v2.schemas.user_agreement import UserAgreementBase
 
 
-class UserBase(BaseModel):
+@dataclass
+class UserBase:
     username: str
     email: str
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    company: Optional[str] = None
+    first_name: Optional[str]
+    last_name: Optional[str]
+    company: Optional[str]
     region: str
 
 
+@dataclass
 class UserPayload(UserBase):
     user_id: str
     is_active: bool
@@ -31,11 +32,18 @@ class UserPayload(UserBase):
     last_login_time: datetime
     membership_type: MembershipType
 
-    user_agreement: UserAgreementBase
+    user_agreement: UserAgreementBase = field(default_factory=UserAgreementBase)
+
+    def __post_init__(self):
+        self.user_agreement = UserAgreementBase(**self.user_agreement)
 
 
+@dataclass
 class UserResponse(AbstractResponse):
-    data: UserPayload
+    data: UserPayload = field(default_factory=UserPayload)
+
+    def __post_init__(self):
+        self.data = UserPayload(**self.data)
 
     def to(
         self, summarized_credit_response: SummarizedCreditResponse

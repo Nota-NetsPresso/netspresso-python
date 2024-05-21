@@ -1,7 +1,8 @@
-from pydantic import BaseModel
+from dataclasses import dataclass
 
 
-class UserAgreementBase(BaseModel):
+@dataclass
+class UserAgreementBase:
     privacy_policy_agreement: bool = False
     marketing_agreement: bool = False
     personal_information_agreement: bool = False

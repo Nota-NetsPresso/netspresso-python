@@ -1,4 +1,5 @@
 import json
+from dataclasses import asdict
 
 import requests
 from loguru import logger
@@ -34,7 +35,7 @@ class AuthClientV1:
             url = f"{self.base_url}/auth/local/login"
             data = LoginRequest(username=email, password=password)
             response = requests.post(
-                url, json=data.dict(), headers=get_headers(), verify=verify_ssl
+                url, json=asdict(data), headers=get_headers(), verify=verify_ssl
             )
             response_body = json.loads(response.text)
 
