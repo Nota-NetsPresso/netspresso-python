@@ -46,7 +46,7 @@ class BenchmarkEnvironment:
     gpu: str = ""
 
 
-@dataclass(init=False)
+@dataclass
 class BenchmarkTask:
     benchmark_task_id: str
     input_model_id: str

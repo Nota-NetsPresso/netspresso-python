@@ -59,7 +59,8 @@ class ConverterV2:
             download_url = launcher_client_v2.converter.download_model_file(
                 convert_task_uuid=convert_task.convert_task_id,
                 access_token=self.token_handler.tokens.access_token,
-            )
+            ).data.presigned_download_url
+
             request.urlretrieve(download_url, local_path)
             logger.info(f"Model downloaded at {Path(local_path)}")
 

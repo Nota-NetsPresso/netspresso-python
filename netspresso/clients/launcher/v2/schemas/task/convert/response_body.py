@@ -22,7 +22,7 @@ class ConvertTask:
     output_model_id: str
     input_layer: InputLayer = field(default_factory=InputLayer)
     status: TaskStatusForDisplay = ""
-    convert_task_option: Optional[TaskOption] = field(default_factory=ModelOption)
+    convert_task_option: Optional[TaskOption] = field(default_factory=TaskOption)
 
     def __init__(self, **kwargs):
         names = {f.name for f in dataclasses.fields(self)}
