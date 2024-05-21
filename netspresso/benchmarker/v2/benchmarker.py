@@ -34,7 +34,7 @@ class BenchmarkerV2:
         """Get information about the specified benchmark task using the benchmark task UUID.
 
         Args:
-            benchmark_task_uuid (str): Benchmark task UUID of the benchmark task.
+            benchmark_task_id (str): Benchmark task UUID of the benchmark task.
 
         Raises:
             e: If an error occurs while retrieving information about the benchmark task.

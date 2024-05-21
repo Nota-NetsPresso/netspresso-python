@@ -225,6 +225,18 @@ class ConverterV2:
             )
 
     def get_conversion_task(self, conversion_task_id: str) -> ConvertTask:
+        """Get the conversion task information with given conversion task uuid.
+
+        Args:
+            conversion_task_id (str): Convert task UUID of the convert task.
+
+        Raises:
+            e: If an error occurs during the model conversion.
+
+        Returns:
+            ConversionTask: Model conversion task dictionary.
+        """
+
         self.token_handler.validate_token()
 
         response = launcher_client_v2.converter.read_task(
