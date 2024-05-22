@@ -2,7 +2,6 @@ import os
 
 from loguru import logger
 
-from netspresso.clients.launcher.v2 import utils
 from netspresso.clients.launcher.v2.implements import BenchmarkTaskAPI, ModelAPI
 from netspresso.clients.launcher.v2.schemas import (
     AuthorizationHeader,
@@ -20,6 +19,7 @@ from netspresso.clients.launcher.v2.schemas import (
     ResponseModelUploadUrl,
     UploadFile,
 )
+from netspresso.clients.utils.common import read_file_bytes
 from netspresso.enums import (
     DataType,
     DeviceName,
@@ -51,7 +51,7 @@ class Benchmarker:
 
     def upload_model_file(self, access_token: str, input_model_path: str, presigned_upload_url: str) -> str:
         object_name = os.path.basename(input_model_path)
-        file_content = utils.read_file_bytes(file_path=input_model_path)
+        file_content = read_file_bytes(file_path=input_model_path)
 
         token_header = AuthorizationHeader(access_token=access_token)
         logger.info(
