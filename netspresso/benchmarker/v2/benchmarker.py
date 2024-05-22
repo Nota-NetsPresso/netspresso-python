@@ -162,7 +162,11 @@ class BenchmarkerV2:
             benchmark_task = response.data
             input_model_info = validate_model_response.data
 
-            benchmarker_metadata.status = Status.COMPLETED
+            if benchmark_task.status == TaskStatusForDisplay.FINISHED:
+                benchmarker_metadata.status = Status.COMPLETED
+            else:
+                benchmarker_metadata.status = Status.ERROR
+
             benchmarker_metadata.task_type = TaskType.BENCHMARK
             benchmarker_metadata.input_model_path = input_model_path
             benchmarker_metadata.benchmark_task_info = benchmark_task.to()

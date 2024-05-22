@@ -196,7 +196,11 @@ class ConverterV2:
                 ai_model_id=convert_task.input_model_id,
             ).data
 
-            converter_metadata.status = Status.COMPLETED
+            if convert_task.status == TaskStatusForDisplay.FINISHED:
+                converter_metadata.status = Status.COMPLETED
+            else:
+                converter_metadata.status = Status.ERROR
+
             converter_metadata.input_model_path = input_model_path
             converter_metadata.converted_model_path = output_dir
             converter_metadata.model_info = input_model_info.to()
