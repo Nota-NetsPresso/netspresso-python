@@ -93,7 +93,7 @@ class CompressorV2:
 
             FileHandler.check_input_model_path(input_model_path)
 
-            object_name = Path(input_model_path).stem
+            object_name = Path(input_model_path).name
 
             create_model_request = RequestCreateModel(object_name=object_name)
             create_model_response = compressor_client_v2.create_model(
@@ -224,6 +224,26 @@ class CompressorV2:
             logger.error(f"Get compression failed. Error: {e}")
             raise e
 
+    def upload_dataset(self, compression_id: str, dataset_path: str) -> None:
+        self.token_handler.validate_token()
+
+        try:
+            logger.info("Uploading dataset...")
+            file_content = read_file_bytes(file_path=dataset_path)
+            object_name = Path(dataset_path).name
+            file = UploadFile(file_name=object_name, file_content=file_content)
+            compressor_client_v2.upload_dataset(
+                compression_id=compression_id,
+                file=file,
+                access_token=self.token_handler.tokens.access_token,
+                verify_ssl=self.token_handler.verify_ssl,
+            )
+            logger.info("Upload dataset successfully.")
+
+        except Exception as e:
+            logger.error(f"Upload dataset failed. Error: {e}")
+            raise e
+
     def compress_model(
         self,
         compression: ResponseSelectMethod,
@@ -260,9 +280,8 @@ class CompressorV2:
                 if available_layers.values:
                     available_layers.use = True
 
-            # TODO: Upload dataset
-            # if dataset_path and compression.compression_method == CompressionMethod.PR_NN:
-            #     self.__upload_dataset(model_id=compression., dataset_path=dataset_path)
+            if dataset_path and compression.compression_method == CompressionMethod.PR_NN:
+                self.upload_dataset(compression_id=compression.compression_id, dataset_path=dataset_path)
 
             update_compression_request = RequestUpdateCompression(
                 available_layers=compression.available_layers,
@@ -282,7 +301,6 @@ class CompressorV2:
                 local_path=default_model_path.with_suffix(extension),
             )
 
-            # TODO: For available devices
             compressed_model_info = self.get_model(model_id=compression_info.input_model_id)
             available_options = self._get_available_options(compressed_model_info, default_model_path)
 
@@ -365,9 +383,10 @@ class CompressorV2:
                 verify_ssl=self.token_handler.verify_ssl
             )
 
-            # TODO: Upload dataset
-            # if dataset_path and compression_method == CompressionMethod.PR_NN:
-            #     self.__upload_dataset(model_id=model.model_id, dataset_path=dataset_path)
+            if dataset_path and compression_method == CompressionMethod.PR_NN:
+                self.upload_dataset(
+                    compression_id=create_compression_response.data.compression_id, dataset_path=dataset_path
+                )
 
             logger.info("Calculating recommendation values...")
             create_recommendation_request = RequestCreateRecommendation(
@@ -404,7 +423,6 @@ class CompressorV2:
                 local_path=default_model_path.with_suffix(extension),
             )
 
-            # TODO: For available devices
             compressed_model_info = self.get_model(model_id=compression_info.input_model_id)
             available_options = self._get_available_options(compressed_model_info, default_model_path)
 
@@ -485,7 +503,6 @@ class CompressorV2:
                 local_path=default_model_path.with_suffix(extension),
             )
 
-            # TODO: For available devices
             compressed_model_info = self.get_model(model_id=compression_info.input_model_id)
             available_options = self._get_available_options(compressed_model_info, default_model_path)
 

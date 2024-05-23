@@ -185,5 +185,15 @@ class CompressorAPIClient:
 
         return ResponseSelectMethodItem(**response.json())
 
+    def upload_dataset(self, compression_id: str, file: UploadFile, access_token: str, verify_ssl: bool = True):
+        url = f"{self.url}/compressions/{compression_id}/datasets"
+        response = Requester.post_as_form(
+            url=url,
+            binary=file.files,
+            headers=get_headers(access_token),
+        )
+
+        return ResponseCompressionItem(**response.json())
+
 
 compressor_client_v2 = CompressorAPIClient()
