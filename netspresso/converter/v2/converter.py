@@ -198,8 +198,10 @@ class ConverterV2:
 
             if convert_task.status == TaskStatusForDisplay.FINISHED:
                 converter_metadata.status = Status.COMPLETED
+                logger.info("Convert task successfully completed.")
             else:
                 converter_metadata.status = Status.ERROR
+                logger.info("Convert task failed with an error.")
 
             converter_metadata.input_model_path = input_model_path
             converter_metadata.converted_model_path = output_dir

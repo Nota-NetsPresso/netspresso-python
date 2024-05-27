@@ -88,8 +88,10 @@ class BenchmarkerV2:
             benchmarker_metadata = BenchmarkerMetadata()
             metadatas = []
 
-            if FileHandler.check_exists(folder_path / f"{file_name}.json"):
-                metadatas = MetadataHandler.load_json(folder_path / f"{file_name}.json")
+            file_path = folder_path / f"{file_name}.json"
+
+            if FileHandler.check_exists(file_path):
+                metadatas = MetadataHandler.load_json(file_path)
                 # metadatas.append(asdict(benchmarker_metadata))
 
             current_credit = auth_client.get_credit(
@@ -164,8 +166,10 @@ class BenchmarkerV2:
 
             if benchmark_task.status == TaskStatusForDisplay.FINISHED:
                 benchmarker_metadata.status = Status.COMPLETED
+                logger.info("Benchmark task successfully completed.")
             else:
                 benchmarker_metadata.status = Status.ERROR
+                logger.info("Benchmark task failed with an error.")
 
             benchmarker_metadata.task_type = TaskType.BENCHMARK
             benchmarker_metadata.input_model_path = input_model_path
