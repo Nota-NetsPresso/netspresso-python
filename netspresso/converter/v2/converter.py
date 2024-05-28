@@ -59,7 +59,8 @@ class ConverterV2:
             download_url = launcher_client_v2.converter.download_model_file(
                 convert_task_uuid=convert_task.convert_task_id,
                 access_token=self.token_handler.tokens.access_token,
-            )
+            ).data.presigned_download_url
+
             request.urlretrieve(download_url, local_path)
             logger.info(f"Model downloaded at {Path(local_path)}")
 
@@ -167,6 +168,7 @@ class ConverterV2:
                     if response.data.status in [
                         TaskStatusForDisplay.FINISHED,
                         TaskStatusForDisplay.ERROR,
+                        TaskStatusForDisplay.TIMEOUT,
                     ]:
                         break
                     time.sleep(3)
@@ -194,7 +196,13 @@ class ConverterV2:
                 ai_model_id=convert_task.input_model_id,
             ).data
 
-            converter_metadata.status = Status.COMPLETED
+            if convert_task.status == TaskStatusForDisplay.FINISHED:
+                converter_metadata.status = Status.COMPLETED
+                logger.info("Convert task successfully completed.")
+            else:
+                converter_metadata.status = Status.ERROR
+                logger.info("Convert task failed with an error.")
+
             converter_metadata.input_model_path = input_model_path
             converter_metadata.converted_model_path = output_dir
             converter_metadata.model_info = input_model_info.to()
@@ -225,6 +233,18 @@ class ConverterV2:
             )
 
     def get_conversion_task(self, conversion_task_id: str) -> ConvertTask:
+        """Get the conversion task information with given conversion task uuid.
+
+        Args:
+            conversion_task_id (str): Convert task UUID of the convert task.
+
+        Raises:
+            e: If an error occurs during the model conversion.
+
+        Returns:
+            ConversionTask: Model conversion task dictionary.
+        """
+
         self.token_handler.validate_token()
 
         response = launcher_client_v2.converter.read_task(

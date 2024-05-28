@@ -1,12 +1,13 @@
+from dataclasses import dataclass
 from enum import Enum
 
-from pydantic import BaseModel
+
+@dataclass
+class AbstractResponse:
+    pass
 
 
-class AbstractResponse(BaseModel):
-    data: BaseModel
-
-
+@dataclass
 class PagingResponse(AbstractResponse):
     total_count: int
     result_count: int

@@ -46,7 +46,7 @@ class BenchmarkEnvironment:
     gpu: str = ""
 
 
-@dataclass(init=False)
+@dataclass
 class BenchmarkTask:
     benchmark_task_id: str
     input_model_id: str
@@ -67,24 +67,16 @@ class BenchmarkTask:
         self.benchmark_environment = BenchmarkEnvironment(**self.benchmark_environment)
 
     def to(self) -> BenchmarkTaskInfo:
-        device_info = self.benchmark_task_option.devices[0]
+        device_info = self.benchmark_task_option.target_device
         benchmark_task_info = BenchmarkTaskInfo()
         benchmark_task_info.benchmark_task_uuid = self.benchmark_task_id
         benchmark_task_info.device_name = device_info.device_name
         benchmark_task_info.display_device_name = device_info.display_device_name
         benchmark_task_info.display_brand_name = device_info.display_brand_name
-        benchmark_task_info.software_version = device_info.software_versions[
-            0
-        ].software_version
-        benchmark_task_info.display_software_version = device_info.software_versions[
-            0
-        ].display_software_version
-        benchmark_task_info.data_type = device_info.data_types[0]
-        benchmark_task_info.hardware_type = (
-            device_info.hardware_types[0]
-            if len(device_info.hardware_types) > 0
-            else None
-        )
+        benchmark_task_info.software_version = device_info.software_version
+        benchmark_task_info.display_software_version = device_info.display_software_version
+        benchmark_task_info.data_type = device_info.data_type
+        benchmark_task_info.hardware_type = device_info.hardware_type
 
         return benchmark_task_info
 

@@ -9,7 +9,7 @@ from netspresso.enums import (
     Status,
     TaskType,
 )
-from netspresso.metadata.common import AvailableOptions, ModelInfo
+from netspresso.metadata.common import AvailableOption, ModelInfo
 
 
 @dataclass
@@ -37,4 +37,4 @@ class ConverterMetadata:
     converted_model_path: str = ""
     model_info: ModelInfo = field(default_factory=ModelInfo)
     convert_task_info: ConvertInfo = field(default_factory=ConvertInfo)
-    available_options: List[AvailableOptions] = field(default_factory=list)
+    available_options: List[AvailableOption] = field(default_factory=list)

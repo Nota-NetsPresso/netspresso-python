@@ -12,8 +12,9 @@ class RequestConvert:
     target_framework: Framework
     target_device_name: DeviceName
     data_type: Optional[DataType] = None
-    input_layer: Optional[str] = field(default_factory=InputLayer)
+    input_layer: Optional[InputLayer] = field(default_factory=InputLayer)
     software_version: Optional[SoftwareVersion] = ""
 
     def __post_init__(self):
-        self.input_layer = json.dumps(asdict(self.input_layer))
+        if self.input_layer:
+            self.input_layer = json.dumps(asdict(self.input_layer))

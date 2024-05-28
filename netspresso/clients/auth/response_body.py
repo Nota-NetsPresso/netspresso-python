@@ -1,27 +1,31 @@
-from pydantic import BaseModel, EmailStr, Field
+from dataclasses import dataclass
 
 
-class TokenResponse(BaseModel):
-    access_token: str = Field(..., description="Access Token")
-    refresh_token: str = Field(..., description="Refresh Token")
+@dataclass
+class TokenResponse:
+    access_token: str
+    refresh_token: str
 
 
-class CreditResponse(BaseModel):
-    free: int = Field(..., description="Free Credit")
-    reward: int = Field(..., description="Reward Credit")
-    contract: int = Field(..., description="Contract Credit")
-    paid: int = Field(..., description="Paid Credit")
-    total: int = Field(..., description="Total Credit")
+@dataclass
+class CreditResponse:
+    free: int
+    reward: int
+    contract: int
+    paid: int
+    total: int
 
 
-class UserDetailResponse(BaseModel):
-    first_name: str = Field(..., description="First Name")
-    last_name: str = Field(..., description="Last Name")
-    company: str = Field(..., description="Company")
+@dataclass
+class UserDetailResponse:
+    first_name: str
+    last_name: str
+    company: str
 
 
-class UserResponse(BaseModel):
-    user_id: str = Field(..., description="User ID")
-    email: EmailStr = Field(..., description="Email")
-    detail_data: UserDetailResponse = Field(..., description="User Detail")
-    credit_info: CreditResponse = Field(..., description="Credit Info")
+@dataclass
+class UserResponse:
+    user_id: str
+    email: str
+    detail_data: UserDetailResponse
+    credit_info: CreditResponse

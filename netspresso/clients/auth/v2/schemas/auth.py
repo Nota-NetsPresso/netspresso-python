@@ -1,5 +1,6 @@
-from pydantic import BaseModel
+from dataclasses import dataclass
 
 
-class TokenRefreshRequest(BaseModel):
+@dataclass
+class TokenRefreshRequest:
     refresh_token: str

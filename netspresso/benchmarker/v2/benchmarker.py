@@ -34,7 +34,7 @@ class BenchmarkerV2:
         """Get information about the specified benchmark task using the benchmark task UUID.
 
         Args:
-            benchmark_task_uuid (str): Benchmark task UUID of the benchmark task.
+            benchmark_task_id (str): Benchmark task UUID of the benchmark task.
 
         Raises:
             e: If an error occurs while retrieving information about the benchmark task.
@@ -88,8 +88,10 @@ class BenchmarkerV2:
             benchmarker_metadata = BenchmarkerMetadata()
             metadatas = []
 
-            if FileHandler.check_exists(folder_path / f"{file_name}.json"):
-                metadatas = MetadataHandler.load_json(folder_path / f"{file_name}.json")
+            file_path = folder_path / f"{file_name}.json"
+
+            if FileHandler.check_exists(file_path):
+                metadatas = MetadataHandler.load_json(file_path)
                 # metadatas.append(asdict(benchmarker_metadata))
 
             current_credit = auth_client.get_credit(
@@ -145,6 +147,7 @@ class BenchmarkerV2:
                     if response.data.status in [
                         TaskStatusForDisplay.FINISHED,
                         TaskStatusForDisplay.ERROR,
+                        TaskStatusForDisplay.TIMEOUT,
                     ]:
                         break
                     time.sleep(3)
@@ -161,7 +164,13 @@ class BenchmarkerV2:
             benchmark_task = response.data
             input_model_info = validate_model_response.data
 
-            benchmarker_metadata.status = Status.COMPLETED
+            if benchmark_task.status == TaskStatusForDisplay.FINISHED:
+                benchmarker_metadata.status = Status.COMPLETED
+                logger.info("Benchmark task successfully completed.")
+            else:
+                benchmarker_metadata.status = Status.ERROR
+                logger.info("Benchmark task failed with an error.")
+
             benchmarker_metadata.task_type = TaskType.BENCHMARK
             benchmarker_metadata.input_model_path = input_model_path
             benchmarker_metadata.benchmark_task_info = benchmark_task.to()

@@ -12,11 +12,8 @@ from netspresso.clients.config import Config, Module
 
 class AuthClient:
     def __init__(self, config: Config = Config(Module.GENERAL)):
-        """Initialize the UserSession.
-
-        Args:
-            email (str): The email address for a user account.
-            password (str): The password for a user account.
+        """
+        Initialize the UserSession.
         """
 
         self.api_client = self.__get_api_client_by_env(config=config)

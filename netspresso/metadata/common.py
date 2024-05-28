@@ -39,7 +39,7 @@ class DeviceInfo:
 
 
 @dataclass()
-class AvailableOptions:
+class AvailableOption:
     framework: Framework = ""
     display_framework: str = ""
     devices: List[DeviceInfo] = field(default_factory=list)
