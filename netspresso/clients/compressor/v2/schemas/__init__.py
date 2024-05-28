@@ -22,7 +22,6 @@ from .compression import (
     ResponseCompressionItem,
     ResponseCompressionItems,
     ResponseRecommendationItem,
-    ResponseRecommendationItems,
 )
 from .model import (
     InputLayer,

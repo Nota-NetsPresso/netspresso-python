@@ -12,7 +12,6 @@ from .response_body import (
     ResponseCompressionItem,
     ResponseCompressionItems,
     ResponseRecommendationItem,
-    ResponseRecommendationItems,
     ResponseSelectMethod,
     ResponseCompression,
 )
@@ -28,7 +27,6 @@ __all__ = [
     ResponseCompressionItem,
     ResponseCompressionItems,
     ResponseRecommendationItem,
-    ResponseRecommendationItems,
     ResponseSelectMethodItem,
     ResponseSelectMethod,
     ResponseCompression,

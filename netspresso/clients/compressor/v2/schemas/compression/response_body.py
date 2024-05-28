@@ -72,7 +72,10 @@ class ResponseCompressionItem(ResponseItem):
 
 @dataclass
 class ResponseCompressionItems(ResponsePaginationItems):
-    data: List[ResponseCompression]
+    data: List[ResponseCompression] = field(default_factory=list)
+
+    def __post_init__(self):
+        self.data = [ResponseCompression(**compression) for compression in self.data]
 
 
 @dataclass
@@ -81,11 +84,6 @@ class ResponseRecommendationItem(ResponseItem):
 
     def __post_init__(self):
         self.data = ResponseRecommendation(**self.data)
-
-
-@dataclass
-class ResponseRecommendationItems(ResponsePaginationItems):
-    data: List[ResponseRecommendation]
 
 
 @dataclass
