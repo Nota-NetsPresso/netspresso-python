@@ -19,9 +19,9 @@ class RequestCreateRecommendation:
     options: RecommendationOptions = field(default_factory=RecommendationOptions)
 
     def __post_init__(self):
-        if self.recommendation_method in ["slamp"]:
+        if self.recommendation_method in [RecommendationMethod.SLAMP]:
             assert 0 < self.recommendation_ratio <= 1, "The ratio range for SLAMP is 0 < ratio < = 1."
-        elif self.recommendation_method in ["vbmf"]:
+        elif self.recommendation_method in [RecommendationMethod.VBMF]:
             assert -1 <= self.recommendation_ratio <= 1, "The ratio range for VBMF is -1 <= ratio <= 1."
 
 
