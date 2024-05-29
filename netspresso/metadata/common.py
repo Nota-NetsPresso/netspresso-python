@@ -30,7 +30,7 @@ class SoftwareVersions:
     display_software_versions: str = ""
 
 
-@dataclass()
+@dataclass
 class DeviceInfo:
     device_name: DeviceName = ""
     display_device_name: str = ""
@@ -40,7 +40,7 @@ class DeviceInfo:
     hardware_types: List[HardwareType] = field(default_factory=list)
 
 
-@dataclass()
+@dataclass
 class AvailableOption:
     framework: Framework = ""
     display_framework: str = ""
