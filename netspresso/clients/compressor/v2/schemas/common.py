@@ -5,7 +5,7 @@ from typing import List, Optional, Union
 from netspresso.enums.model import DataType, Framework
 from netspresso.enums.device import DisplaySoftwareVersion, HardwareType, SoftwareVersion
 from netspresso.metadata import common
-from netspresso.metadata.common import AvailableOptions
+from netspresso.metadata.common import AvailableOption
 
 
 class Order(str, Enum):
@@ -112,8 +112,8 @@ class ModelOption:
     def __post_init__(self):
         self.devices = [DeviceInfo(**item) for item in self.devices]
 
-    def to(self) -> AvailableOptions:
-        available_options = AvailableOptions()
+    def to(self) -> AvailableOption:
+        available_options = AvailableOption()
         available_options.framework = self.framework
         available_options.display_framework = self.display_framework
         for device in self.devices:

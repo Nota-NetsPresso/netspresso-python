@@ -4,8 +4,7 @@ from typing import Any, Dict, List, Optional
 
 from netspresso.enums.metadata import Status, TaskType
 
-from netspresso.utils.metadata.default.common import TargetDevice
-from netspresso.metadata.common import AvailableOptions, ModelInfo
+from netspresso.metadata.common import AvailableOption, ModelInfo
 
 
 @dataclass
@@ -45,7 +44,7 @@ class CompressorMetadata:
     model_info: ModelInfo = field(default_factory=ModelInfo)
     compression_info: CompressionInfo = field(default_factory=CompressionInfo)
     results: Results = field(default_factory=Results)
-    available_options: List[AvailableOptions] = field(default_factory=list)
+    available_options: List[AvailableOption] = field(default_factory=list)
 
     def asdict(self) -> Dict:
         _dict = json.loads(json.dumps(asdict(self)))
@@ -83,5 +82,5 @@ class CompressorMetadata:
         update_model_fields(self.results.original_model, model)
         update_model_fields(self.results.compressed_model, compressed_model)
 
-    def update_available_options(self, available_options):
-        self.available_options = available_options
+    def update_available_options(self, available_options):    
+        self.available_options = [available_option.to() for available_option in available_options]
