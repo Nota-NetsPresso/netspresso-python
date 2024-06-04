@@ -1,13 +1,11 @@
 from dataclasses import dataclass, field
 from typing import List
 
-from netspresso.enums import (
+from netspresso.enums.model import (
     DataType,
-    DeviceName,
     Framework,
-    HardwareType,
-    SoftwareVersion,
 )
+from netspresso.enums.device import DeviceName, HardwareType, SoftwareVersion
 
 
 @dataclass

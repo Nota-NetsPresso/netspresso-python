@@ -1,4 +1,4 @@
-from netspresso.clients.compressor.schemas.compression import Options
+from netspresso.clients.compressor.v1.schemas.compression import Options
 
 from .compression import (
     CompressionMethod,
