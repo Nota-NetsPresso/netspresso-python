@@ -25,8 +25,8 @@ class ModelDetail:
     ai_model_format: Optional[str] = None
     framework: Optional[str] = None
     flops: Optional[float] = 0
-    trainable_parameter: Optional[int] = 0
-    non_trainable_parameter: Optional[int] = 0
+    trainable_parameters: Optional[int] = 0
+    non_trainable_parameters: Optional[int] = 0
     number_of_layers: Optional[int] = None
     graph_info: Optional[dict] = None
     input_layer: Optional[InputLayer] = None
@@ -34,10 +34,10 @@ class ModelDetail:
     def __post_init__(self):
         self.input_layer = InputLayer(**self.input_layer)
 
-        if self.trainable_parameter is None:
-            self.trainable_parameter = 0
-        if self.non_trainable_parameter is None:
-            self.non_trainable_parameter = 0
+        if self.trainable_parameters is None:
+            self.trainable_parameters = 0
+        if self.non_trainable_parameters is None:
+            self.non_trainable_parameters = 0
 
 
 @dataclass
