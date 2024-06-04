@@ -73,9 +73,9 @@ class CompressorMetadata:
         def update_model_fields(target, source):
             target.size = source.file_size_in_mb
             target.flops = source.detail.flops
-            target.number_of_parameters = source.detail.trainable_parameter + source.detail.non_trainable_parameter
-            target.trainable_parameters = source.detail.trainable_parameter
-            target.non_trainable_parameters = source.detail.non_trainable_parameter
+            target.number_of_parameters = source.detail.trainable_parameters + source.detail.non_trainable_parameters
+            target.trainable_parameters = source.detail.trainable_parameters
+            target.non_trainable_parameters = source.detail.non_trainable_parameters
             target.number_of_layers = source.detail.number_of_layers if source.detail.number_of_layers != 0 else None
             target.model_id = source.ai_model_id
 

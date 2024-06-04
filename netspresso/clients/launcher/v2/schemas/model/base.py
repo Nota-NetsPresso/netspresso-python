@@ -25,8 +25,8 @@ class ModelDetail:
     ai_model_format: Optional[str] = None
     framework: Optional[str] = None
     flops: Optional[float] = None
-    non_trainable_parameter: Optional[int] = None
-    trainable_parameter: Optional[int] = None
+    non_trainable_parameters: Optional[int] = None
+    trainable_parameters: Optional[int] = None
     number_of_layers: Optional[int] = None
     graph_info: Optional[dict] = None
     input_layer: Optional[InputLayer] = None
