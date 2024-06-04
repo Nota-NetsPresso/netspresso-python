@@ -7,7 +7,7 @@ from loguru import logger
 
 BASE_DIR = Path(__file__).resolve().parent
 config_parser = configparser.ConfigParser()
-DEPLOYMENT_MODE = os.getenv("DEPLOYMENT_MODE", "v1-prod")
+DEPLOYMENT_MODE = os.getenv("DEPLOYMENT_MODE", "v2-dev-cloud")
 logger.info(f"Read {DEPLOYMENT_MODE} config")
 config_parser.read(f"{BASE_DIR}/configs/config-{DEPLOYMENT_MODE.lower()}.ini")
 
