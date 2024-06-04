@@ -20,11 +20,10 @@ from netspresso.clients.compressor.v1.schemas.model import UploadModelRequest
 from netspresso.clients.launcher import launcher_client
 from netspresso.compressor.core.compression import CompressionInfo
 from netspresso.compressor.core.model import CompressedModel, Model, ModelCollection, ModelFactory
+from netspresso.compressor.utils.onnx import export_onnx
 from netspresso.enums import CompressionMethod, Framework, Module, RecommendationMethod, ServiceCredit, Status, TaskType
-
 from netspresso.utils import FileHandler, check_credit_balance
 from netspresso.utils.metadata import MetadataHandler
-from netspresso.compressor.utils.onnx import export_onnx
 
 
 class Compressor:

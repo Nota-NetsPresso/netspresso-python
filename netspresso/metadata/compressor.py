@@ -3,7 +3,6 @@ from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, List, Optional
 
 from netspresso.enums.metadata import Status, TaskType
-
 from netspresso.metadata.common import AvailableOption, ModelInfo
 
 
@@ -82,5 +81,5 @@ class CompressorMetadata:
         update_model_fields(self.results.original_model, model)
         update_model_fields(self.results.compressed_model, compressed_model)
 
-    def update_available_options(self, available_options):    
+    def update_available_options(self, available_options):
         self.available_options = [available_option.to() for available_option in available_options]

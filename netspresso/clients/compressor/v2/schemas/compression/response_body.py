@@ -1,9 +1,9 @@
-from dataclasses import dataclass, field
 import dataclasses
+from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
 from netspresso.clients.compressor.v2.schemas.common import ResponseItem, ResponsePaginationItems
-from netspresso.clients.compressor.v2.schemas.compression.base import Options, Layer
+from netspresso.clients.compressor.v2.schemas.compression.base import Layer, Options
 from netspresso.enums.compression import CompressionMethod, RecommendationMethod
 
 
@@ -24,7 +24,7 @@ class ResponseCompression:
         for k, v in kwargs.items():
             if k in names:
                 setattr(self, k, v)
-        
+
         self.available_layers = [Layer(**layer) for layer in self.available_layers]
 
 
@@ -42,7 +42,7 @@ class ResponseRecommendation:
         for k, v in kwargs.items():
             if k in names:
                 setattr(self, k, v)
-        
+
         self.available_layers = [Layer(**layer) for layer in self.available_layers]
 
 

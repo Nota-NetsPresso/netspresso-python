@@ -7,10 +7,10 @@ from netspresso.clients.compressor.v2.schemas.compression import (
     RequestCreateCompression,
     RequestCreateRecommendation,
     RequestUpdateCompression,
-    ResponseSelectMethodItem,
     ResponseCompressionItem,
     ResponseCompressionItems,
     ResponseRecommendationItem,
+    ResponseSelectMethodItem,
 )
 from netspresso.clients.compressor.v2.schemas.model import (
     RequestCreateModel,

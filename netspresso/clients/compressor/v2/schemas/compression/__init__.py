@@ -8,12 +8,12 @@ from .request_body import (
     RequestUpdateCompression,
 )
 from .response_body import (
-    ResponseSelectMethodItem,
+    ResponseCompression,
     ResponseCompressionItem,
     ResponseCompressionItems,
     ResponseRecommendationItem,
     ResponseSelectMethod,
-    ResponseCompression,
+    ResponseSelectMethodItem,
 )
 
 __all__ = [

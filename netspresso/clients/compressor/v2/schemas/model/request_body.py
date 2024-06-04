@@ -29,7 +29,7 @@ class RequestValidateModel:
     framework: Framework = Framework.PYTORCH
 
     def __post_init__(self):
-        new_input_layers = [input_layer for input_layer in self.input_layers]
+        new_input_layers = list(self.input_layers)
         if self.framework == Framework.PYTORCH and not new_input_layers:
             raise Exception()
         self.input_layers = new_input_layers

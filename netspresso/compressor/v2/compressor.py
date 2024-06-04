@@ -1,5 +1,5 @@
-from pathlib import Path
 import sys
+from pathlib import Path
 from typing import Dict, List, Optional
 from urllib import request
 
@@ -8,29 +8,29 @@ from loguru import logger
 from netspresso.clients.auth import TokenHandler, auth_client
 from netspresso.clients.compressor import compressor_client_v2
 from netspresso.clients.compressor.v2.schemas import (
-    RequestCreateModel,
-    RequestUploadModel,
-    RequestValidateModel,
-    UploadFile,
     ModelBase,
     Options,
     RecommendationOptions,
-    ResponseCompressionItem,
-    ResponseCompression,
-    RequestAvailableLayers,
-    ResponseSelectMethod,
     RequestAutomaticCompressionParams,
+    RequestAvailableLayers,
     RequestCreateCompression,
+    RequestCreateModel,
     RequestCreateRecommendation,
     RequestUpdateCompression,
+    RequestUploadModel,
+    RequestValidateModel,
+    ResponseCompression,
+    ResponseCompressionItem,
+    ResponseSelectMethod,
+    UploadFile,
 )
 from netspresso.clients.launcher import launcher_client_v2
 from netspresso.compressor.utils.file import read_file_bytes
 from netspresso.compressor.utils.onnx import export_onnx
 from netspresso.enums import CompressionMethod, Framework, Module, RecommendationMethod, ServiceCredit, Status, TaskType
+from netspresso.metadata.compressor import CompressorMetadata
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
-from netspresso.metadata.compressor import CompressorMetadata
 
 
 class CompressorV2:
@@ -69,7 +69,7 @@ class CompressorV2:
             options_response = launcher_client_v2.converter.read_framework_options(
                 access_token=self.token_handler.tokens.access_token,
                 framework=Framework.ONNX,
-            )    
+            )
         else:
             options_response = launcher_client_v2.converter.read_framework_options(
                 access_token=self.token_handler.tokens.access_token,
@@ -336,10 +336,10 @@ class CompressorV2:
             raise e
 
         except KeyboardInterrupt:
-            logger.error(f"Compress model stopped.")
+            logger.error("Compress model stopped.")
             metadata.update_status(status=Status.STOPPED)
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
-    
+
     def recommendation_compression(
         self,
         compression_method: CompressionMethod,
@@ -392,7 +392,7 @@ class CompressorV2:
             create_recommendation_request = RequestCreateRecommendation(
                 recommendation_method=recommendation_method,
                 recommendation_ratio=recommendation_ratio,
-                options=options,                
+                options=options,
             )
             create_recommendation_response = compressor_client_v2.create_recommendation(
                 compression_id=create_compression_response.data.compression_id,
@@ -459,7 +459,7 @@ class CompressorV2:
             raise e
 
         except KeyboardInterrupt:
-            logger.error(f"Recommendation compression stopped.")
+            logger.error("Recommendation compression stopped.")
             metadata.update_status(status=Status.STOPPED)
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
 
@@ -486,7 +486,7 @@ class CompressorV2:
             self.check_credit_balance(service_credit=ServiceCredit.AUTOMATIC_COMPRESSION)
 
             model_info = self.upload_model(framework=framework, input_model_path=input_model_path, input_shapes=input_shapes)
-           
+
             logger.info("Compressing model...")
             automatic_compression_request = RequestAutomaticCompressionParams(compression_ratio=compression_ratio)
             automatic_compression_response = compressor_client_v2.compress_model_with_automatic(
@@ -535,6 +535,6 @@ class CompressorV2:
             raise e
 
         except KeyboardInterrupt:
-            logger.error(f"Automatic compression stopped.")
+            logger.error("Automatic compression stopped.")
             metadata.update_status(status=Status.STOPPED)
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)

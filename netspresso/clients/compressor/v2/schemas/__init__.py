@@ -16,12 +16,12 @@ from .compression import (
     RequestCreateCompression,
     RequestCreateRecommendation,
     RequestUpdateCompression,
-    ResponseSelectMethodItem,
-    ResponseSelectMethod,
     ResponseCompression,
     ResponseCompressionItem,
     ResponseCompressionItems,
     ResponseRecommendationItem,
+    ResponseSelectMethod,
+    ResponseSelectMethodItem,
 )
 from .model import (
     InputLayer,
