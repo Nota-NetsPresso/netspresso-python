@@ -401,9 +401,6 @@ class CompressorV2:
                 verify_ssl=self.token_handler.verify_ssl,
             )
 
-            for layer in create_recommendation_response.data.available_layers:
-                layer.use = True
-
             logger.info("Compressing model...")
             update_compression_request = RequestUpdateCompression(
                 available_layers=create_recommendation_response.data.available_layers,
