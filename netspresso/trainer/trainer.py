@@ -353,7 +353,7 @@ class Trainer:
         self.augmentation.train.mix_transforms = self._change_transforms(self.augmentation.train.mix_transforms)
         self.augmentation.inference.transforms = self._change_transforms(self.augmentation.inference.transforms)
 
-    def train(self, gpus: str, project_name: str) -> Dict:
+    def train(self, gpus: str, project_name: str, output_dir: Optional[str] = "./outputs") -> Dict:
         """Train the model with the specified configuration.
 
         Args:
@@ -367,7 +367,7 @@ class Trainer:
         self._validate_config()
         self._apply_img_size()
 
-        destination_folder = Path(self.logging.output_dir) / project_name
+        destination_folder = Path(output_dir) / project_name
         destination_folder = FileHandler.create_unique_folder(folder_path=destination_folder)
         metadata = MetadataHandler.init_metadata(folder_path=destination_folder, task_type=TaskType.TRAIN)
         self.logging.project_id = Path(destination_folder).name
