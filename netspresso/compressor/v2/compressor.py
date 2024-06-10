@@ -340,6 +340,26 @@ class CompressorV2:
             metadata.update_status(status=Status.STOPPED)
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
 
+    def check_trainer_model(self, input_model_path, metadata, framework, input_shapes):
+        if (Path(input_model_path).parent / "metadata.json").exists():
+            trained_data = FileHandler.load_json(Path(input_model_path).parent / "metadata.json")
+            metadata.update_model_info(
+                task=trained_data["model_info"]["task"],
+                model=trained_data["model_info"]["model"],
+                dataset=trained_data["model_info"]["dataset"],
+                framework=framework,
+                input_shapes=input_shapes,
+            )
+            metadata.update_training_info(
+                epochs=trained_data["training_info"]["epochs"],
+                batch_size=trained_data["training_info"]["batch_size"],
+                learning_rate=trained_data["training_info"]["learning_rate"],
+                optimizer=trained_data["training_info"]["optimizer"],
+            )
+            metadata.update_is_retrainable(is_retrainable=True)
+        
+        return metadata
+
     def recommendation_compression(
         self,
         compression_method: CompressionMethod,
@@ -360,6 +380,8 @@ class CompressorV2:
             output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
             metadata = self.create_metadata(folder_path=output_dir)
             metadata.update_input_model_path(input_model_path=input_model_path)
+            metadata = self.check_trainer_model(input_model_path, metadata, framework, input_shapes)
+            MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
 
             default_model_path, extension = FileHandler.get_path_and_extension(
                 folder_path=output_dir, framework=framework
@@ -435,7 +457,6 @@ class CompressorV2:
             metadata.update_compressed_model_path(
                 compressed_model_path=default_model_path.with_suffix(extension).as_posix()
             )
-            metadata.update_model_info(framework=framework, input_shapes=input_shapes)
             metadata.update_compression_info(
                 method=compression_info.compression_method,
                 ratio=recommendation_ratio,
@@ -477,6 +498,8 @@ class CompressorV2:
             output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
             metadata = self.create_metadata(folder_path=output_dir)
             metadata.update_input_model_path(input_model_path=input_model_path)
+            metadata = self.check_trainer_model(input_model_path, metadata, framework, input_shapes)
+            MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
 
             default_model_path, extension = FileHandler.get_path_and_extension(
                 folder_path=output_dir, framework=framework
@@ -512,7 +535,6 @@ class CompressorV2:
             if compressed_model_info.detail.framework in [Framework.PYTORCH, Framework.ONNX]:
                 metadata.update_compressed_onnx_model_path(default_model_path.with_suffix(".onnx").as_posix())
             metadata.update_compressed_model_path(default_model_path.with_suffix(extension).as_posix())
-            metadata.update_model_info(framework=framework, input_shapes=input_shapes)
             metadata.update_compression_info(
                 method=compression_info.compression_method,
                 ratio=compression_ratio,

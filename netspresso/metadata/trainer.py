@@ -16,10 +16,10 @@ class ModelInfo:
 
 @dataclass
 class TrainingInfo:
-    epoch: int = 0
+    epochs: int = 0
     batch_size: int = 0
-    learning_rate: float
-    optimizer: str
+    learning_rate: float = 0.001
+    optimizer: str = "adam"
 
 
 @dataclass
@@ -49,8 +49,8 @@ class TrainerMetadata:
         self.model_info.dataset = dataset
         self.model_info.input_shapes = input_shapes
 
-    def update_training_info(self, epoch, batch_size, learning_rate, optimizer):
-        self.training_info.epoch = epoch
+    def update_training_info(self, epochs, batch_size, learning_rate, optimizer):
+        self.training_info.epochs = epochs
         self.training_info.batch_size = batch_size
         self.training_info.learning_rate = learning_rate
         self.training_info.optimizer = optimizer
