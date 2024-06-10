@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 
 from netspresso.enums.metadata import Status, TaskType
 from netspresso.enums.model import DataType, Framework
-from netspresso.metadata.common import AvailableOption, ModelInfo, InputShape
+from netspresso.metadata.common import AvailableOption, InputShape
 from netspresso.metadata.trainer import TrainingInfo
 
 
@@ -86,7 +86,7 @@ class CompressorMetadata:
         self.compression_info.ratio = ratio
         self.compression_info.options = options
         self.compression_info.layers = layers
-    
+
     def update_input_model_path(self, input_model_path):
         self.input_model_path = input_model_path
 

@@ -357,7 +357,7 @@ class CompressorV2:
                 optimizer=trained_data["training_info"]["optimizer"],
             )
             metadata.update_is_retrainable(is_retrainable=True)
-        
+
         return metadata
 
     def recommendation_compression(

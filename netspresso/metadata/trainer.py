@@ -3,7 +3,7 @@ from dataclasses import asdict, dataclass, field
 from typing import Dict, List
 
 from netspresso.enums.metadata import Status, TaskType
-from netspresso.metadata.common import AvailableOption, ModelInfo, InputShape
+from netspresso.metadata.common import AvailableOption, InputShape
 
 
 @dataclass
