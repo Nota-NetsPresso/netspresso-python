@@ -146,6 +146,9 @@ class ConverterV2:
                 ai_model_id=presigned_url_response.data.ai_model_id,
             )
 
+            if input_layer is None and validate_model_response.data.detail.input_layer is not None:
+                input_layer = validate_model_response.data.detail.input_layer
+
             # START convert task
             response = launcher_client_v2.converter.start_task(
                 access_token=self.token_handler.tokens.access_token,

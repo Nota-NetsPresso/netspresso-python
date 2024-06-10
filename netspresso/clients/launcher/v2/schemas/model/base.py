@@ -7,9 +7,13 @@ from netspresso.metadata.common import InputShape, ModelInfo
 @dataclass
 class InputLayer:
     name: Optional[str] = None
-    batch: Optional[int] = None
+    batch: Optional[int] = 1
     channel: Optional[int] = None
     dimension: Optional[list] = None
+
+    def __post_init__(self):
+        if self.batch is None:
+            self.batch = 1
 
     def to(self) -> InputShape:
         input_shape = InputShape()
