@@ -109,7 +109,7 @@ class ConverterV2:
         default_model_path, extension = FileHandler.get_path_and_extension(
             folder_path=output_dir, framework=target_framework
         )
-        FileHandler.create_unique_folder(folder_path=output_dir)
+        output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
         converter_metadata = ConverterMetadata()
         MetadataHandler.save_json(
             data=asdict(converter_metadata), folder_path=output_dir
