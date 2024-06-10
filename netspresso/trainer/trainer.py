@@ -13,6 +13,7 @@ from netspresso.enums import Status, Task, Framework
 from netspresso.metadata.trainer import TrainerMetadata
 from netspresso.metadata.common import InputShape
 from netspresso.utils.metadata import MetadataHandler
+from netspresso.clients.auth import TokenHandler
 from netspresso.clients.launcher import launcher_client_v2
 from netspresso.utils import FileHandler
 from .registries import (
@@ -27,13 +28,15 @@ from .trainer_configs import TrainerConfigs
 
 
 class Trainer:
-    def __init__(self, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None) -> None:
+    def __init__(self, token_handler: TokenHandler, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None) -> None:
         """Initialize the Trainer.
 
         Args:
             task (Union[str, Task]], optional): The type of task (classification, detection, segmentation). Either 'task' or 'yaml_path' must be provided, but not both.
             yaml_path (str, optional): Path to the YAML configuration file. Either 'task' or 'yaml_path' must be provided, but not both.
         """
+
+        self.token_handler = token_handler
 
         if (task is not None) == (yaml_path is not None):
             raise ValueError("Either 'task' or 'yaml_path' must be provided, but not both.")

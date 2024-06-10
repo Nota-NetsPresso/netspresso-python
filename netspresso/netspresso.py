@@ -48,7 +48,7 @@ class NetsPresso:
         Returns:
             Trainer: Initialized Trainer instance.
         """
-        return Trainer(task=task, yaml_path=yaml_path)
+        return Trainer(token_handler=self.token_handler, task=task, yaml_path=yaml_path)
 
     def compressor(self) -> Compressor:
         """Initialize and return a Compressor instance.
