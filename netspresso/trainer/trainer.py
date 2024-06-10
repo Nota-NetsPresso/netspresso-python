@@ -9,11 +9,14 @@ from netspresso_trainer.cfg.data import ImageLabelPathConfig, PathConfig
 from netspresso_trainer.cfg.model import CheckpointConfig
 from omegaconf import OmegaConf
 
-from netspresso.enums import Status, Task, TaskType
+from netspresso.clients.auth import TokenHandler
+from netspresso.clients.launcher import launcher_client_v2
+from netspresso.enums import Framework, Status, Task
+from netspresso.metadata.common import InputShape
+from netspresso.metadata.trainer import TrainerMetadata
+from netspresso.utils import FileHandler
+from netspresso.utils.metadata import MetadataHandler
 
-from ..utils import FileHandler
-from ..utils.metadata import MetadataHandler
-from ..utils.metadata.default.trainer import InputShape
 from .registries import (
     AUGMENTATION_CONFIG_TYPE,
     CLASSIFICATION_MODELS,
@@ -26,13 +29,15 @@ from .trainer_configs import TrainerConfigs
 
 
 class Trainer:
-    def __init__(self, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None) -> None:
+    def __init__(self, token_handler: TokenHandler, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None) -> None:
         """Initialize the Trainer.
 
         Args:
             task (Union[str, Task]], optional): The type of task (classification, detection, segmentation). Either 'task' or 'yaml_path' must be provided, but not both.
             yaml_path (str, optional): Path to the YAML configuration file. Either 'task' or 'yaml_path' must be provided, but not both.
         """
+
+        self.token_handler = token_handler
 
         if (task is not None) == (yaml_path is not None):
             raise ValueError("Either 'task' or 'yaml_path' must be provided, but not both.")
@@ -353,6 +358,16 @@ class Trainer:
         self.augmentation.train.mix_transforms = self._change_transforms(self.augmentation.train.mix_transforms)
         self.augmentation.inference.transforms = self._change_transforms(self.augmentation.inference.transforms)
 
+    def _get_available_options(self):
+        options_response = launcher_client_v2.converter.read_framework_options(
+            access_token=self.token_handler.tokens.access_token,
+            framework=Framework.ONNX,
+        )
+
+        available_options = options_response.data
+
+        return available_options
+
     def train(self, gpus: str, project_name: str, output_dir: Optional[str] = "./outputs") -> Dict:
         """Train the model with the specified configuration.
 
@@ -369,7 +384,21 @@ class Trainer:
 
         destination_folder = Path(output_dir) / project_name
         destination_folder = FileHandler.create_unique_folder(folder_path=destination_folder)
-        metadata = MetadataHandler.init_metadata(folder_path=destination_folder, task_type=TaskType.TRAIN)
+        metadata = TrainerMetadata()
+        metadata.update_logging_dir(logging_dir=destination_folder)
+        metadata.update_model_info(
+            task=self.task,
+            model=self.model.name,
+            dataset=self.data.name,
+            input_shapes=[InputShape(batch=1, channel=3, dimension=[self.img_size, self.img_size])],
+        )
+        metadata.update_training_info(
+            epoch=self.training.epochs,
+            batch_size=self.training.batch_size,
+            learning_rate=self.training.optimizer["lr"],
+            optimizer=self.training.optimizer["name"],
+        )
+        MetadataHandler.save_json(data=metadata.asdict(), folder_path=destination_folder)
         self.logging.project_id = Path(destination_folder).name
 
         configs = TrainerConfigs(
@@ -406,21 +435,17 @@ class Trainer:
         best_onnx_paths = list(Path(destination_folder).glob("*best.onnx"))
         hparams_path = destination_folder / "hparams.yaml"
 
+        available_options = self._get_available_options()
+
         if best_fx_paths:
             metadata.update_best_fx_model_path(best_fx_model_path=best_fx_paths[0].as_posix())
         if best_onnx_paths:
             metadata.update_best_onnx_model_path(best_onnx_model_path=best_onnx_paths[0].as_posix())
-        metadata.update_model_info(
-            task=self.task,
-            model=self.model.name,
-            dataset=self.data.name,
-            input_shapes=[InputShape(batch=1, channel=3, dimension=[self.img_size, self.img_size])],
-        )
-        metadata.update_training_info(epoch=self.training.epochs, batch_size=self.training.batch_size)
         metadata.update_training_result(training_summary=training_summary)
-        metadata.update_logging_dir(logging_dir=destination_folder.as_posix())
         metadata.update_hparams(hparams=hparams_path.as_posix())
         metadata.update_status(status=status)
+        metadata.update_available_options(available_options)
+
         MetadataHandler.save_json(data=metadata.asdict(), folder_path=destination_folder)
 
         return metadata.asdict()
