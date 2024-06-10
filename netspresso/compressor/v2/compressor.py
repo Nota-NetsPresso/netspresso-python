@@ -359,6 +359,7 @@ class CompressorV2:
 
             output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
             metadata = self.create_metadata(folder_path=output_dir)
+            metadata.update_input_model_path(input_model_path=input_model_path)
 
             default_model_path, extension = FileHandler.get_path_and_extension(
                 folder_path=output_dir, framework=framework
@@ -475,6 +476,7 @@ class CompressorV2:
 
             output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
             metadata = self.create_metadata(folder_path=output_dir)
+            metadata.update_input_model_path(input_model_path=input_model_path)
 
             default_model_path, extension = FileHandler.get_path_and_extension(
                 folder_path=output_dir, framework=framework

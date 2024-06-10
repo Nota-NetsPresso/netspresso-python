@@ -61,6 +61,9 @@ class CompressorMetadata:
         self.compression_info.ratio = ratio
         self.compression_info.options = options
         self.compression_info.layers = layers
+    
+    def update_input_model_path(self, input_model_path):
+        self.input_model_path = input_model_path
 
     def update_compressed_model_path(self, compressed_model_path):
         self.compressed_model_path = compressed_model_path
