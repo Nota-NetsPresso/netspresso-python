@@ -393,7 +393,7 @@ class Trainer:
             input_shapes=[InputShape(batch=1, channel=3, dimension=[self.img_size, self.img_size])],
         )
         metadata.update_training_info(
-            epoch=self.training.epochs,
+            epochs=self.training.epochs,
             batch_size=self.training.batch_size,
             learning_rate=self.training.optimizer["lr"],
             optimizer=self.training.optimizer["name"],
