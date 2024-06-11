@@ -153,7 +153,7 @@ class ConverterV2:
                 target_device_name=target_device_name,
                 target_framework=target_framework,
                 data_type=target_data_type,
-                input_layer=input_layer if input_layer else validate_model_response.data.detail.input_layer,
+                input_layer=input_layer if input_layer else validate_model_response.data.detail.input_layers[0],
                 software_version=target_software_version,
                 dataset_path=dataset_path,
             )
