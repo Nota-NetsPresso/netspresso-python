@@ -133,7 +133,7 @@ class BenchmarkerV2:
                 data_type=validate_model_response.data.detail.data_type,
                 target_device_name=target_device_name,
                 hardware_type=target_hardware_type,
-                input_layer=validate_model_response.data.detail.input_layer,
+                input_layer=validate_model_response.data.detail.input_layers[0],
                 software_version=target_software_version,
             )
 
