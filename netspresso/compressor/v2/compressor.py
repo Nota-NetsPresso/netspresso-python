@@ -65,7 +65,7 @@ class CompressorV2:
 
     def _get_available_options(self, compressed_model_info, default_model_path: str):
         if compressed_model_info.detail.framework in [Framework.PYTORCH, Framework.ONNX]:
-            export_onnx(default_model_path, [compressed_model_info.detail.input_layer])
+            export_onnx(default_model_path, compressed_model_info.detail.input_layers)
             options_response = launcher_client_v2.converter.read_framework_options(
                 access_token=self.token_handler.tokens.access_token,
                 framework=Framework.ONNX,
@@ -315,7 +315,7 @@ class CompressorV2:
             metadata.update_compressed_model_path(
                 compressed_model_path=default_model_path.with_suffix(extension).as_posix()
             )
-            metadata.update_model_info(framework=model_info.detail.framework, input_shapes=[model_info.detail.input_layer])
+            metadata.update_model_info(framework=model_info.detail.framework, input_shapes=model_info.detail.input_layers)
             metadata.update_compression_info(
                 method=compression.compression_method,
                 options=compression.options,

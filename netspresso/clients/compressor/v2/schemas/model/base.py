@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import List, Optional
 
 from netspresso.metadata.common import InputShape, ModelInfo
 
@@ -10,6 +10,10 @@ class InputLayer:
     batch: Optional[int] = None
     channel: Optional[int] = None
     dimension: Optional[list] = None
+
+    def __post_init__(self):
+        if self.batch is None:
+            self.batch = 1
 
     def to(self) -> InputShape:
         input_shape = InputShape()
@@ -29,10 +33,11 @@ class ModelDetail:
     non_trainable_parameters: Optional[int] = 0
     number_of_layers: Optional[int] = None
     graph_info: Optional[dict] = None
-    input_layer: Optional[InputLayer] = None
+    input_layers: Optional[List[InputLayer]] = field(default_factory=list)
 
     def __post_init__(self):
-        self.input_layer = InputLayer(**self.input_layer)
+        if self.input_layers:
+            self.input_layers = [InputLayer(**input_layer) for input_layer in self.input_layers]
 
         if self.trainable_parameters is None:
             self.trainable_parameters = 0
@@ -72,5 +77,11 @@ class ModelBase:
         model_info = ModelInfo()
         model_info.data_type = self.detail.data_type
         model_info.framework = self.detail.framework
-        model_info.input_shapes.append(self.detail.input_layer.to())
+        model_info.input_shapes = [
+            InputShape(
+                batch=input_layer.batch,
+                channel=input_layer.channel,
+                dimension=input_layer.dimension
+            ) for input_layer in self.detail.input_layers
+        ]
         return model_info
