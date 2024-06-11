@@ -382,6 +382,7 @@ class Trainer:
         self._validate_config()
         self._apply_img_size()
 
+        self.logging.output_dir = output_dir
         destination_folder = Path(output_dir) / project_name
         destination_folder = FileHandler.create_unique_folder(folder_path=destination_folder)
         metadata = TrainerMetadata()
