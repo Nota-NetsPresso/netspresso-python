@@ -344,11 +344,13 @@ class CompressorV2:
         if (Path(input_model_path).parent / "metadata.json").exists():
             trained_data = FileHandler.load_json(Path(input_model_path).parent / "metadata.json")
             metadata.update_model_info(
+                framework=framework,
+                input_shapes=input_shapes,
+            )
+            metadata.update_model_info_for_trainer(
                 task=trained_data["model_info"]["task"],
                 model=trained_data["model_info"]["model"],
                 dataset=trained_data["model_info"]["dataset"],
-                framework=framework,
-                input_shapes=input_shapes,
             )
             metadata.update_training_info(
                 epochs=trained_data["training_info"]["epochs"],

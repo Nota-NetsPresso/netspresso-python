@@ -68,12 +68,14 @@ class CompressorMetadata:
     def update_is_retrainable(self, is_retrainable):
         self.is_retrainable = is_retrainable
 
-    def update_model_info(self, task, model, dataset, framework, input_shapes):
+    def update_model_info(self, framework, input_shapes):
+        self.model_info.framework = framework
+        self.model_info.input_shapes = input_shapes
+
+    def update_model_info_for_trainer(self, task, model, dataset):
         self.model_info.task = task
         self.model_info.model = model
         self.model_info.dataset = dataset
-        self.model_info.framework = framework
-        self.model_info.input_shapes = input_shapes
 
     def update_training_info(self, epochs, batch_size, learning_rate, optimizer):
         self.training_info.epochs = epochs
