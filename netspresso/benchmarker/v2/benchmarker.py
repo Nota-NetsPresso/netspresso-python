@@ -174,7 +174,7 @@ class BenchmarkerV2:
             benchmarker_metadata.task_type = TaskType.BENCHMARK
             benchmarker_metadata.input_model_path = input_model_path
             benchmarker_metadata.benchmark_task_info = benchmark_task.to()
-            benchmarker_metadata.convert_task_info = benchmark_task.benchmark_result.to(
+            benchmarker_metadata.benchmark_result = benchmark_task.benchmark_result.to(
                 file_size=input_model_info.file_size_in_mb
             )
 
