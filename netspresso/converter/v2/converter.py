@@ -79,7 +79,7 @@ class ConverterV2:
         input_layer: Optional[InputLayer] = None,
         dataset_path: Optional[str] = None,
         wait_until_done: bool = True,
-    ) -> ConvertTask:
+    ) -> ConverterMetadata:
         """Convert a model to the specified framework.
 
         Args:
@@ -214,7 +214,7 @@ class ConverterV2:
                 data=asdict(converter_metadata), folder_path=output_dir
             )
 
-            return response.data
+            return converter_metadata
 
         except Exception as e:
             logger.error(f"Convert failed. Error: {e}")

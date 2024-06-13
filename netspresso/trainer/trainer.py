@@ -368,7 +368,7 @@ class Trainer:
 
         return available_options
 
-    def train(self, gpus: str, project_name: str, output_dir: Optional[str] = "./outputs") -> Dict:
+    def train(self, gpus: str, project_name: str, output_dir: Optional[str] = "./outputs") -> TrainerMetadata:
         """Train the model with the specified configuration.
 
         Args:
@@ -449,4 +449,4 @@ class Trainer:
 
         MetadataHandler.save_json(data=metadata.asdict(), folder_path=destination_folder)
 
-        return metadata.asdict()
+        return metadata

@@ -58,7 +58,7 @@ class BenchmarkerV2:
         target_software_version: Optional[Union[str, SoftwareVersion]] = None,
         target_hardware_type: Optional[Union[str, HardwareType]] = None,
         wait_until_done: bool = True,
-    ) -> BenchmarkTask:
+    ) -> BenchmarkerMetadata:
         """Benchmark the specified model on the specified device.
 
         Args:
@@ -191,7 +191,7 @@ class BenchmarkerV2:
                 file_name=file_name,
             )
 
-            return response.data
+            return benchmarker_metadata
 
         except Exception as e:
             logger.error(f"Benchmark failed. Error: {e}")

@@ -249,7 +249,7 @@ class CompressorV2:
         compression: ResponseSelectMethod,
         output_dir: str,
         dataset_path: Optional[str] = None,
-    ) -> Dict:
+    ) -> CompressorMetadata:
         self.token_handler.validate_token()
 
         try:
@@ -329,7 +329,7 @@ class CompressorV2:
 
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
 
-            return compression_info
+            return metadata
 
         except Exception as e:
             logger.error(f"Compress model failed. Error: {e}")
@@ -374,7 +374,7 @@ class CompressorV2:
         framework: Framework = Framework.PYTORCH,
         options: RecommendationOptions = RecommendationOptions(),
         dataset_path: Optional[str] = None,
-    ) -> Dict:
+    ) -> CompressorMetadata:
         self.token_handler.validate_token()
 
         try:
@@ -469,7 +469,7 @@ class CompressorV2:
 
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
 
-            return compression_info
+            return metadata
 
         except Exception as e:
             logger.error(f"Recommendation compression failed. Error: {e}")
@@ -489,7 +489,7 @@ class CompressorV2:
         input_shapes: List[Dict[str, int]],
         framework: Framework = Framework.PYTORCH,
         compression_ratio: float = 0.5,
-    ) -> Dict:
+    ) -> CompressorMetadata:
         self.token_handler.validate_token()
 
         try:
@@ -544,7 +544,7 @@ class CompressorV2:
 
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
 
-            return compression_info
+            return metadata
 
         except Exception as e:
             logger.error(f"Automatic compression failed. Error: {e}")
