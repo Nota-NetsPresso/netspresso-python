@@ -111,9 +111,8 @@ class ConverterV2:
         )
         output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
         converter_metadata = ConverterMetadata()
-        MetadataHandler.save_json(
-            data=asdict(converter_metadata), folder_path=output_dir
-        )
+        converter_metadata.input_model_path = input_model_path
+        MetadataHandler.save_json(data=asdict(converter_metadata), folder_path=output_dir)
 
         try:
             current_credit = auth_client.get_credit(
@@ -146,6 +145,8 @@ class ConverterV2:
                 ai_model_id=presigned_url_response.data.ai_model_id,
             )
 
+            input_model_info = validate_model_response.data
+
             # START convert task
             response = launcher_client_v2.converter.start_task(
                 access_token=self.token_handler.tokens.access_token,
@@ -153,10 +154,14 @@ class ConverterV2:
                 target_device_name=target_device_name,
                 target_framework=target_framework,
                 data_type=target_data_type,
-                input_layer=input_layer if input_layer else validate_model_response.data.detail.input_layers[0],
+                input_layer=input_layer if input_layer else input_model_info.detail.input_layers[0],
                 software_version=target_software_version,
                 dataset_path=dataset_path,
             )
+
+            converter_metadata.model_info = input_model_info.to()
+            converter_metadata.convert_task_info = response.data.to(input_model_info.uploaded_file_name)
+            MetadataHandler.save_json(data=asdict(converter_metadata), folder_path=output_dir)
 
             if wait_until_done:
                 while True:
@@ -189,8 +194,6 @@ class ConverterV2:
 
             convert_task = response.data
 
-            input_model_info = validate_model_response.data
-
             task_options = launcher_client_v2.converter.read_model_task_options(
                 access_token=self.token_handler.tokens.access_token,
                 ai_model_id=convert_task.input_model_id,
@@ -203,12 +206,7 @@ class ConverterV2:
                 converter_metadata.status = Status.ERROR
                 logger.info("Convert task failed with an error.")
 
-            converter_metadata.input_model_path = input_model_path
-            converter_metadata.converted_model_path = output_dir
-            converter_metadata.model_info = input_model_info.to()
-            converter_metadata.convert_task_info = convert_task.to(
-                input_model_info.uploaded_file_name
-            )
+            converter_metadata.converted_model_path = str(default_model_path.with_suffix(extension))
             for task_option in task_options:
                 converter_metadata.available_options.append(task_option.to())
 
