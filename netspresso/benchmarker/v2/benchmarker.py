@@ -86,6 +86,7 @@ class BenchmarkerV2:
             folder_path = Path(input_model_path).parent
 
             benchmarker_metadata = BenchmarkerMetadata()
+            benchmarker_metadata.input_model_path = input_model_path
             metadatas = []
 
             file_path = folder_path / f"{file_name}.json"
@@ -137,6 +138,14 @@ class BenchmarkerV2:
                 software_version=target_software_version,
             )
 
+            benchmarker_metadata.benchmark_task_info = response.data.to()
+            metadatas.append(asdict(benchmarker_metadata))
+            MetadataHandler.save_json(
+                data=metadatas,
+                folder_path=folder_path,
+                file_name=file_name,
+            )
+
             if wait_until_done:
                 while True:
                     # Poll Benchmark Task status
@@ -171,14 +180,11 @@ class BenchmarkerV2:
                 benchmarker_metadata.status = Status.ERROR
                 logger.info("Benchmark task failed with an error.")
 
-            benchmarker_metadata.task_type = TaskType.BENCHMARK
-            benchmarker_metadata.input_model_path = input_model_path
-            benchmarker_metadata.benchmark_task_info = benchmark_task.to()
             benchmarker_metadata.benchmark_result = benchmark_task.benchmark_result.to(
                 file_size=input_model_info.file_size_in_mb
             )
 
-            metadatas.append(asdict(benchmarker_metadata))
+            metadatas[-1] = asdict(benchmarker_metadata)
             MetadataHandler.save_json(
                 data=metadatas,
                 folder_path=folder_path,
@@ -190,7 +196,7 @@ class BenchmarkerV2:
         except Exception as e:
             logger.error(f"Benchmark failed. Error: {e}")
             benchmarker_metadata.status = Status.ERROR
-            metadatas.append(asdict(benchmarker_metadata))
+            metadatas[-1] = asdict(benchmarker_metadata)
             MetadataHandler.save_json(
                 data=metadatas,
                 folder_path=folder_path,
@@ -200,7 +206,7 @@ class BenchmarkerV2:
 
         except KeyboardInterrupt:
             benchmarker_metadata.status = Status.STOPPED
-            metadatas.append(asdict(benchmarker_metadata))
+            metadatas[-1] = asdict(benchmarker_metadata)
             MetadataHandler.save_json(
                 data=metadatas,
                 folder_path=folder_path,
