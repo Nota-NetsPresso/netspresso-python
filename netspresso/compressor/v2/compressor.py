@@ -357,7 +357,7 @@ class CompressorV2:
                 optimizer=trained_data["training_info"]["optimizer"],
             )
             metadata.update_is_retrainable(is_retrainable=True)
-        
+
         metadata.update_input_model_path(input_model_path=input_model_path)
         metadata.update_model_info(framework=framework, input_shapes=input_shapes)
 

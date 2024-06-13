@@ -55,14 +55,9 @@ print(conversion_task)
 # 4. Declare benchmarker
 benchmarker = netspresso.benchmarker_v2()
 
-# 5. Set variables for benchmark
-CONVERTED_MODEL_PATH = (
-    "./outputs/converted/ARDUINO_NICLA_VISION/ARDUINO_NICLA_VISION.tflite"
-)
-
-# 6. Run benchmark
+# 5. Run benchmark
 benchmark_task = benchmarker.benchmark_model(
-    input_model_path=CONVERTED_MODEL_PATH,
+    input_model_path=conversion_task.converted_model_path,
     target_device_name=TARGET_DEVICE_NAME,
 
 )
