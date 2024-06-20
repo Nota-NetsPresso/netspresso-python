@@ -1,7 +1,10 @@
-from netspresso_trainer.cfg import (
+from netspresso.trainer.data.data import (
+    DatasetConfig,
+    ImageLabelPathConfig,
     LocalClassificationDatasetConfig,
     LocalDetectionDatasetConfig,
     LocalSegmentationDatasetConfig,
+    PathConfig,
 )
 
 DATA_CONFIG_TYPE = {
@@ -9,3 +12,5 @@ DATA_CONFIG_TYPE = {
     "detection": LocalDetectionDatasetConfig,
     "segmentation": LocalSegmentationDatasetConfig,
 }
+
+__all__ = ["ImageLabelPathConfig", "PathConfig", "DATA_CONFIG_TYPE", "DatasetConfig"]

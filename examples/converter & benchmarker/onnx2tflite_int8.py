@@ -15,6 +15,8 @@ from netspresso.enums import DataType, DeviceName, Framework
 # DeviceName.RASPBERRY_PI_ZERO_2W
 # DeviceName.ALIF_ENSEMBLE_E7_DEVKIT_GEN2
 # DeviceName.RENESAS_RA8D1
+# DeviceName.NXP_iMX93
+# DeviceName.ARDUINO_NICLA_VISION
 #
 
 ###
@@ -25,6 +27,8 @@ from netspresso.enums import DataType, DeviceName, Framework
 # DeviceName.RASPBERRY_PI_ZERO_2W
 # DeviceName.ALIF_ENSEMBLE_E7_DEVKIT_GEN2
 # DeviceName.RENESAS_RA8D1
+# DeviceName.NXP_iMX93
+# DeviceName.ARDUINO_NICLA_VISION
 #
 
 EMAIL = "YOUR_EMAIL"
@@ -58,7 +62,7 @@ print(conversion_result)
 benchmarker = netspresso.benchmarker()
 
 # 5. Set variables for benchmark
-CONVERTED_MODEL_PATH = "./outputs/converted/TFLITE_INT8_RASPBERRY_PI_4B/TFLITE_INT8_RASPBERRY_PI_4B.tflite"
+CONVERTED_MODEL_PATH = conversion_result["converted_model_path"]
 
 # 6. Run benchmark
 benchmark_result = benchmarker.benchmark_model(

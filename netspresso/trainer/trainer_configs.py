@@ -3,15 +3,12 @@ from dataclasses import is_dataclass
 from pathlib import Path
 from typing import Union
 
-from netspresso_trainer.cfg import (
-    AugmentationConfig,
-    DatasetConfig,
-    EnvironmentConfig,
-    LoggingConfig,
-    ModelConfig,
-    ScheduleConfig,
-)
 from omegaconf import OmegaConf
+
+from netspresso.trainer.augmentations import AugmentationConfig
+from netspresso.trainer.data import DatasetConfig
+from netspresso.trainer.models import ModelConfig
+from netspresso.trainer.training import EnvironmentConfig, LoggingConfig, ScheduleConfig
 
 
 class TrainerConfigs:

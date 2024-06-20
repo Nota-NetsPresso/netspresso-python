@@ -3,26 +3,23 @@ from typing import Any, Dict, List, Optional, Union
 
 from loguru import logger
 from netspresso_trainer import train_with_yaml
-from netspresso_trainer.cfg import AugmentationConfig, EnvironmentConfig, LoggingConfig, ModelConfig, ScheduleConfig
-from netspresso_trainer.cfg.augmentation import Inference, Train, Transform
-from netspresso_trainer.cfg.data import ImageLabelPathConfig, PathConfig
-from netspresso_trainer.cfg.model import CheckpointConfig
 from omegaconf import OmegaConf
 
 from netspresso.enums import Status, Task, TaskType
-
-from ..utils import FileHandler
-from ..utils.metadata import MetadataHandler
-from ..utils.metadata.default.trainer import InputShape
-from .registries import (
-    AUGMENTATION_CONFIG_TYPE,
+from netspresso.trainer.augmentations import AUGMENTATION_CONFIG_TYPE, AugmentationConfig, Inference, Train, Transform
+from netspresso.trainer.data import DATA_CONFIG_TYPE, ImageLabelPathConfig, PathConfig
+from netspresso.trainer.models import (
     CLASSIFICATION_MODELS,
-    DATA_CONFIG_TYPE,
     DETECTION_MODELS,
     SEGMENTATION_MODELS,
-    TRAINING_CONFIG_TYPE,
+    CheckpointConfig,
+    ModelConfig,
 )
-from .trainer_configs import TrainerConfigs
+from netspresso.trainer.trainer_configs import TrainerConfigs
+from netspresso.trainer.training import TRAINING_CONFIG_TYPE, EnvironmentConfig, LoggingConfig, ScheduleConfig
+from netspresso.utils import FileHandler
+from netspresso.utils.metadata import MetadataHandler
+from netspresso.utils.metadata.default.trainer import InputShape
 
 
 class Trainer:
@@ -366,11 +363,11 @@ class Trainer:
 
         self._validate_config()
         self._apply_img_size()
-        self.logging.project_id = project_name
 
-        destination_folder = Path(self.logging.output_dir) / self.logging.project_id
-        FileHandler.create_unique_folder(folder_path=destination_folder)
+        destination_folder = Path(self.logging.output_dir) / project_name
+        destination_folder = FileHandler.create_unique_folder(folder_path=destination_folder)
         metadata = MetadataHandler.init_metadata(folder_path=destination_folder, task_type=TaskType.TRAIN)
+        self.logging.project_id = Path(destination_folder).name
 
         configs = TrainerConfigs(
             self.data,
