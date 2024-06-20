@@ -1,4 +1,5 @@
-from netspresso_trainer.cfg.model import (
+from netspresso.trainer.models.model import (
+    CheckpointConfig,
     ClassificationEfficientFormerModelConfig,
     ClassificationMixNetLargeModelConfig,
     ClassificationMixNetMediumModelConfig,
@@ -14,6 +15,7 @@ from netspresso_trainer.cfg.model import (
     DetectionMobileNetV3ModelConfig,
     DetectionResNetModelConfig,
     DetectionYoloXModelConfig,
+    ModelConfig,
     PIDNetModelConfig,
     SegmentationEfficientFormerModelConfig,
     SegmentationMixNetLargeModelConfig,
@@ -55,3 +57,12 @@ SEGMENTATION_MODELS = {
     "MixNetL": SegmentationMixNetLargeModelConfig,
     "PIDNet": PIDNetModelConfig,
 }
+
+
+__all__ = [
+    "CLASSIFICATION_MODELS",
+    "DETECTION_MODELS",
+    "SEGMENTATION_MODELS",
+    "CheckpointConfig",
+    "ModelConfig",
+]
