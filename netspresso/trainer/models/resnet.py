@@ -9,7 +9,7 @@ class ResNet18ArchitectureConfig(ArchitectureConfig):
     backbone: Dict[str, Any] = field(default_factory=lambda: {
         "name": "resnet",
         "params": {
-            "block_type": "bottleneck",
+            "block_type": "basicblock",
             "norm_type": "batch_norm",
         },
         "stage_params": [
@@ -26,7 +26,7 @@ class ResNet34ArchitectureConfig(ArchitectureConfig):
     backbone: Dict[str, Any] = field(default_factory=lambda: {
         "name": "resnet",
         "params": {
-            "block_type": "bottleneck",
+            "block_type": "basicblock",
             "norm_type": "batch_norm",
         },
         "stage_params": [
