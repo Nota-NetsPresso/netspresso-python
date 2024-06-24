@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 from loguru import logger
-from netspresso_trainer import train_with_yaml
 from omegaconf import OmegaConf
 
 from netspresso.enums import Status, Task, TaskType
@@ -360,6 +359,8 @@ class Trainer:
         Returns:
             Dict: A dictionary containing information about the training.
         """
+
+        from netspresso_trainer import train_with_yaml
 
         self._validate_config()
         self._apply_img_size()
