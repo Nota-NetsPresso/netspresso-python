@@ -15,6 +15,7 @@ class ArchitectureConfig:
     def __post_init__(self):
         assert bool(self.full) != bool(self.backbone), "Only one of full or backbone should be given."
 
+
 @dataclass
 class CheckpointConfig:
     use_pretrained: bool = True
@@ -22,6 +23,7 @@ class CheckpointConfig:
     path: Optional[Union[Path, str]] = None
     fx_model_path: Optional[Union[Path, str]] = None
     optimizer_path: Optional[Union[Path, str]] = None
+
 
 @dataclass
 class ModelConfig:

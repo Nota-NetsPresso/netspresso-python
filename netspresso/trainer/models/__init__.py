@@ -1,7 +1,4 @@
-from netspresso.trainer.models.base import (
-    CheckpointConfig,
-    ModelConfig,
-)
+from netspresso.trainer.models.base import CheckpointConfig, ModelConfig
 from netspresso.trainer.models.efficientformer import (
     ClassificationEfficientFormerModelConfig,
     DetectionEfficientFormerModelConfig,
