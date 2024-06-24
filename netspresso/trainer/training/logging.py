@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Union
-
-from omegaconf import MISSING, MissingMandatoryValue
+from typing import List, Optional, Union
 
 
 @dataclass
@@ -10,10 +8,10 @@ class LoggingConfig:
     project_id: Optional[str] = None
     output_dir: Union[Path, str] = "./outputs"
     tensorboard: bool = True
-    csv: bool = False
     image: bool = True
     stdout: bool = True
     save_optimizer_state: bool = True
+    onnx_input_size: List[int, int] = [512, 512]
     validation_epoch: int = 10
     save_checkpoint_epoch: Optional[int] = None
 
