@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
-from netspresso.trainer.models.model import ModelConfig, ArchitectureConfig, CheckpointConfig
+from netspresso.trainer.models.base import ArchitectureConfig, CheckpointConfig, ModelConfig
 
 
 @dataclass

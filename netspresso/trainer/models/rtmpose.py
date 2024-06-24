@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
-from netspresso.trainer.models.model import ModelConfig, ArchitectureConfig
+from netspresso.trainer.models.base import ArchitectureConfig, ModelConfig
 from netspresso.trainer.models.mobilenetv3 import MobileNetV3SmallArchitectureConfig
 
 

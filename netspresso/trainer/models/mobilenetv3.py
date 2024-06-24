@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
-from netspresso.trainer.models.model import ModelConfig, ArchitectureConfig, CheckpointConfig
+from netspresso.trainer.models.base import ArchitectureConfig, CheckpointConfig, ModelConfig
 
 
 @dataclass
@@ -98,7 +98,7 @@ class MobileNetV3LargeArchitectureConfig(ArchitectureConfig):
 
 
 @dataclass
-class ClassificationMobileNetV3SmallModelConfig(ModelConfig):
+class ClassificationMobileNetV3LargeModelConfig(ModelConfig):
     task: str = "classification"
     name: str = "mobilenet_v3_large"
     architecture: ArchitectureConfig = field(default_factory=lambda: MobileNetV3LargeArchitectureConfig(

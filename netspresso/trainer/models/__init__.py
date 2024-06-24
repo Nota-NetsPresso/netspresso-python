@@ -1,37 +1,57 @@
-from netspresso.trainer.models.model import (
+from netspresso.trainer.models.base import (
     CheckpointConfig,
+    ModelConfig,
+)
+from netspresso.trainer.models.efficientformer import (
     ClassificationEfficientFormerModelConfig,
+    DetectionEfficientFormerModelConfig,
+    SegmentationEfficientFormerModelConfig,
+)
+from netspresso.trainer.models.mixnet import (
     ClassificationMixNetLargeModelConfig,
     ClassificationMixNetMediumModelConfig,
     ClassificationMixNetSmallModelConfig,
-    ClassificationMobileNetV3ModelConfig,
-    ClassificationMobileViTModelConfig,
-    ClassificationResNetModelConfig,
-    ClassificationViTModelConfig,
-    DetectionEfficientFormerModelConfig,
     DetectionMixNetLargeModelConfig,
     DetectionMixNetMediumModelConfig,
     DetectionMixNetSmallModelConfig,
-    DetectionMobileNetV3ModelConfig,
-    DetectionResNetModelConfig,
-    DetectionYoloXModelConfig,
-    ModelConfig,
-    PIDNetModelConfig,
-    SegmentationEfficientFormerModelConfig,
     SegmentationMixNetLargeModelConfig,
     SegmentationMixNetMediumModelConfig,
     SegmentationMixNetSmallModelConfig,
-    SegmentationMobileNetV3ModelConfig,
-    SegmentationResNetModelConfig,
-    SegmentationSegFormerModelConfig,
+)
+from netspresso.trainer.models.mobilenetv3 import (
+    ClassificationMobileNetV3LargeModelConfig,
+    ClassificationMobileNetV3SmallModelConfig,
+    DetectionMobileNetV3SmallModelConfig,
+    SegmentationMobileNetV3SmallModelConfig,
+)
+from netspresso.trainer.models.mobilevit import ClassificationMobileViTModelConfig
+from netspresso.trainer.models.pidnet import PIDNetModelConfig
+from netspresso.trainer.models.resnet import (
+    ClassificationResNet18ModelConfig,
+    ClassificationResNet34ModelConfig,
+    ClassificationResNet50ModelConfig,
+    DetectionResNet50ModelConfig,
+    SegmentationResNet50ModelConfig,
+)
+from netspresso.trainer.models.rtmpose import PoseEstimationMobileNetV3SmallModelConfig
+from netspresso.trainer.models.segformer import SegmentationSegFormerB0ModelConfig
+from netspresso.trainer.models.vit import ClassificationViTTinyModelConfig
+from netspresso.trainer.models.yolox import (
+    DetectionYoloXLModelConfig,
+    DetectionYoloXMModelConfig,
+    DetectionYoloXSModelConfig,
+    DetectionYoloXXModelConfig,
 )
 
 CLASSIFICATION_MODELS = {
     "EfficientFormer": ClassificationEfficientFormerModelConfig,
-    "MobileNetV3": ClassificationMobileNetV3ModelConfig,
+    "MobileNetV3_Small": ClassificationMobileNetV3SmallModelConfig,
+    "MobileNetV3_Large": ClassificationMobileNetV3LargeModelConfig,
     "MobileViT": ClassificationMobileViTModelConfig,
-    "ResNet": ClassificationResNetModelConfig,
-    "ViT": ClassificationViTModelConfig,
+    "ResNet18": ClassificationResNet18ModelConfig,
+    "ResNet34": ClassificationResNet34ModelConfig,
+    "ResNet50": ClassificationResNet50ModelConfig,
+    "ViT_Tiny": ClassificationViTTinyModelConfig,
     "MixNetS": ClassificationMixNetSmallModelConfig,
     "MixNetM": ClassificationMixNetMediumModelConfig,
     "MixNetL": ClassificationMixNetLargeModelConfig,
@@ -39,9 +59,12 @@ CLASSIFICATION_MODELS = {
 
 DETECTION_MODELS = {
     "EfficientFormer": DetectionEfficientFormerModelConfig,
-    "YOLOX-S": DetectionYoloXModelConfig,
-    "ResNet": DetectionResNetModelConfig,
-    "MobileNetV3": DetectionMobileNetV3ModelConfig,
+    "MobileNetV3_Small": DetectionMobileNetV3SmallModelConfig,
+    "YOLOX-S": DetectionYoloXSModelConfig,
+    "YOLOX-M": DetectionYoloXMModelConfig,
+    "YOLOX-L": DetectionYoloXLModelConfig,
+    "YOLOX-X": DetectionYoloXXModelConfig,
+    "ResNet50": DetectionResNet50ModelConfig,
     "MixNetL": DetectionMixNetLargeModelConfig,
     "MixNetM": DetectionMixNetMediumModelConfig,
     "MixNetS": DetectionMixNetSmallModelConfig,
@@ -49,13 +72,17 @@ DETECTION_MODELS = {
 
 SEGMENTATION_MODELS = {
     "EfficientFormer": SegmentationEfficientFormerModelConfig,
-    "MobileNetV3": SegmentationMobileNetV3ModelConfig,
-    "ResNet": SegmentationResNetModelConfig,
-    "SegFormer": SegmentationSegFormerModelConfig,
+    "MobileNetV3_Small": SegmentationMobileNetV3SmallModelConfig,
+    "ResNet50": SegmentationResNet50ModelConfig,
+    "SegFormer-B0": SegmentationSegFormerB0ModelConfig,
     "MixNetS": SegmentationMixNetSmallModelConfig,
     "MixNetM": SegmentationMixNetMediumModelConfig,
     "MixNetL": SegmentationMixNetLargeModelConfig,
     "PIDNet": PIDNetModelConfig,
+}
+
+POSEESTIMATION_MODELS = {
+    "MobileNetV3_Small": PoseEstimationMobileNetV3SmallModelConfig,
 }
 
 
