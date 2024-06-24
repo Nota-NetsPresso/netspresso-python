@@ -13,21 +13,10 @@ class Transform:
 
 
 @dataclass
-class Train:
-    transforms: Optional[List] = None
-    mix_transforms: Optional[List] = None
-
-
-@dataclass
-class Inference:
-    transforms: Optional[List] = None
-
-
-@dataclass
 class AugmentationConfig:
     img_size: int = DEFAULT_IMG_SIZE
-    train: Train = field(default_factory=lambda: Train())
-    inference: Inference = field(default_factory=lambda: Inference())
+    train: Optional[List] = None
+    inference: Optional[List] = None
 
 
 @dataclass
@@ -57,8 +46,8 @@ class HSVJitter(Transform):
 @dataclass
 class Mixing(Transform):
     name: str = "mixing"
-    mixup: Optional[List[float, float]] = None
-    cutmix: Optional[List[float, float]] = None
+    mixup: Optional[List[float]] = field(default=None)
+    cutmix: Optional[List[float]] = field(default=None)
     inplace: bool = False
 
 
@@ -67,13 +56,13 @@ class MosaicDetection(Transform):
     name: str = "mosaicdetection"
     size: List = field(default_factory=lambda: [DEFAULT_IMG_SIZE, DEFAULT_IMG_SIZE])
     mosaic_prob: float = 1.0
-    affine_scale: List[float, float] = [0.5, 1.5]
+    affine_scale: List = field(default_factory=lambda: [0.5, 1.5])
     degrees: float = 10.0
     translate: float = 0.1
     shear: float = 2.0
     enable_mixup: bool = True
     mixup_prob: float = 1.0
-    mixup_scale: List[float, float] = [0.5, 1.5]
+    mixup_scale: List = field(default_factory=lambda: [0.5, 1.5])
     fill: int = 114
     mosaic_off_epoch: int = 10
 
@@ -89,7 +78,7 @@ class Pad(Transform):
 @dataclass
 class PoseTopDownAffine(Transform):
     name: str = "posetopdownaffine"
-    scale: List[float, float] = [0.75, 1.25]
+    scale: List = field(default_factory=lambda: [0.75, 1.25])
     scale_prob: float = 1.
     translate: float = 0.1
     translate_prob: float = 1.
@@ -108,8 +97,8 @@ class RandomCrop(Transform):
 class RandomErasing(Transform):
     name: str = "randomerasing"
     p: float = 0.5
-    scale: List[float, float] = [0.02, 0.33]
-    ratio: List[float, float] = [0.3, 3.3]
+    scale: List = field(default_factory=lambda: [0.02, 0.33])
+    scale: List = field(default_factory=lambda: [0.3, 3.3])
     value: Optional[int] = 0
     inplace: bool = False
 
@@ -123,7 +112,7 @@ class RandomHorizontalFlip(Transform):
 @dataclass
 class RandomResize(Transform):
     name: str = "randomresize"
-    base_size: List = [256, 256]
+    base_size: List = field(default_factory=lambda: [256, 256])
     stride: int = 32
     random_range: int = 4
     interpolation: str = "bilinear"
@@ -150,6 +139,7 @@ class Resize(Transform):
     size: List = field(default_factory=lambda: [DEFAULT_IMG_SIZE, DEFAULT_IMG_SIZE])
     interpolation: Optional[str] = 'bilinear'
     max_size: Optional[int] =  None
+    resize_criteria: Optional[int] =  None
 
 
 class TrivialAugmentWide(Transform):
@@ -178,34 +168,35 @@ class RandomCutmix(Transform):
 @dataclass
 class ClassificationAugmentationConfig(AugmentationConfig):
     img_size: int = 256
-    train: Train = field(default_factory=lambda: Train(
-        transforms=[RandomResizedCrop(size=256), RandomHorizontalFlip()],
-        mix_transforms=[RandomCutmix()]
-    ))
-    inference: Inference = field(default_factory=lambda: Inference(
-        transforms=[Resize(size=[256, 256])]
-    ))
+    train: Optional[List] = field(default_factory=lambda: [
+        RandomResizedCrop(size=256),
+        RandomHorizontalFlip(),
+        Mixing(mixup=[0.25, 1.0])
+    ])
+    inference: Optional[List] = field(default_factory=lambda: [
+        Resize(size=[256, 256])
+    ])
 
 
 @dataclass
 class SegmentationAugmentationConfig(AugmentationConfig):
     img_size: int = 512
-    train: Train = field(default_factory=lambda: Train(
-        transforms=[RandomResizedCrop(size=512), RandomHorizontalFlip(), ColorJitter()],
-        mix_transforms=None
-    ))
-    inference: Inference = field(default_factory=lambda: Inference(
-        transforms=[Resize(size=[512, 512])]
-    ))
+    train: Optional[List] = field(default_factory=lambda: [
+        RandomResizedCrop(size=512),
+        RandomHorizontalFlip(),
+        ColorJitter()
+    ])
+    inference: Optional[List] = field(default_factory=lambda: [
+        Resize(size=[512, 512])
+    ])
 
 
 @dataclass
 class DetectionAugmentationConfig(AugmentationConfig):
     img_size: int = 512
-    train: Train = field(default_factory=lambda: Train(
-        transforms=[Resize(size=[512, 512])],
-        mix_transforms=None
-    ))
-    inference: Inference = field(default_factory=lambda: Inference(
-        transforms=[Resize(size=[512, 512])],
-    ))
+    train: Optional[List] = field(default_factory=lambda: [
+        Resize(size=[512, 512])
+    ])
+    inference: Optional[List] = field(default_factory=lambda: [
+        Resize(size=[512, 512])
+    ])

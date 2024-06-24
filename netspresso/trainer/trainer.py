@@ -5,7 +5,7 @@ from loguru import logger
 from omegaconf import OmegaConf
 
 from netspresso.enums import Status, Task, TaskType
-from netspresso.trainer.augmentations import AUGMENTATION_CONFIG_TYPE, AugmentationConfig, Inference, Train, Transform
+from netspresso.trainer.augmentations import AUGMENTATION_CONFIG_TYPE, AugmentationConfig, Transform
 from netspresso.trainer.data import DATA_CONFIG_TYPE, ImageLabelPathConfig, PathConfig
 from netspresso.trainer.models import (
     CLASSIFICATION_MODELS,
@@ -131,9 +131,9 @@ class Trainer:
         root_path: str,
         train_image: str = "images/train",
         train_label: str = "labels/train",
-        valid_image: str = "images/val",
-        valid_label: str = "labels/val",
-        id_mapping: Optional[Union[List[str], Dict[str, str]]] = None,
+        valid_image: str = "images/valid",
+        valid_label: str = "labels/valid",
+        id_mapping: Optional[Union[List[str], Dict[str, str], str]] = None,
     ):
         """Set the dataset configuration for the Trainer.
 
@@ -157,6 +157,33 @@ class Trainer:
             "id_mapping": id_mapping,
         }
         self.data = DATA_CONFIG_TYPE[self.task](**common_config)
+
+    def check_paths_exist(self, base_path):
+        paths = [
+            "images/train",
+            "labels/train",
+            "images/valid",
+            "labels/valid",
+            "id_mapping.json",
+        ]
+
+        for relative_path in paths:
+            path = Path(base_path) / relative_path
+            if not path.exists():
+                if path.suffix:
+                    raise FileNotFoundError(f"The required file '{relative_path}' does not exist. Please check and make sure it is in the correct location.")
+                else:
+                    raise FileNotFoundError(f"The required directory '{relative_path}' does not exist. Please check and make sure it is in the correct location.")
+
+    def set_dataset(self, dataset_root_path: str):
+        dataset_name = Path(dataset_root_path).name
+
+        self.check_paths_exist(dataset_root_path)
+        self.set_dataset_config(
+            name=dataset_name,
+            root_path=dataset_root_path,
+            id_mapping="id_mapping.json",
+        )
 
     def set_model_config(
         self,
@@ -235,33 +262,26 @@ class Trainer:
 
         self.training = ScheduleConfig(
             epochs=epochs,
-            batch_size=batch_size,
             optimizer=optimizer.asdict(),
             scheduler=scheduler.asdict(),
         )
+        self.environment.batch_size = batch_size
 
     def set_augmentation_config(
         self,
         train_transforms: Optional[List] = None,
-        train_mix_transforms: Optional[List] = None,
         inference_transforms: Optional[List] = None,
     ):
         """Set the augmentation configuration for training.
 
         Args:
             train_transforms (List, optional): List of transforms for training. Defaults to None.
-            train_mix_transforms (List, optional): List of mix transforms for training. Defaults to None.
             inference_transforms (List, optional): List of transforms for inference. Defaults to None.
         """
 
         self.augmentation = AugmentationConfig(
-            train=Train(
-                transforms=train_transforms,
-                mix_transforms=train_mix_transforms,
-            ),
-            inference=Inference(
-                transforms=inference_transforms,
-            ),
+            train=train_transforms,
+            inference=inference_transforms,
         )
 
     def set_logging_config(
@@ -345,9 +365,8 @@ class Trainer:
         """
 
         self.augmentation.img_size = self.img_size
-        self.augmentation.train.transforms = self._change_transforms(self.augmentation.train.transforms)
-        self.augmentation.train.mix_transforms = self._change_transforms(self.augmentation.train.mix_transforms)
-        self.augmentation.inference.transforms = self._change_transforms(self.augmentation.inference.transforms)
+        self.augmentation.train = self._change_transforms(self.augmentation.train)
+        self.augmentation.inference = self._change_transforms(self.augmentation.inference)
 
     def train(self, gpus: str, project_name: str) -> Dict:
         """Train the model with the specified configuration.
@@ -414,7 +433,7 @@ class Trainer:
             dataset=self.data.name,
             input_shapes=[InputShape(batch=1, channel=3, dimension=[self.img_size, self.img_size])],
         )
-        metadata.update_training_info(epoch=self.training.epochs, batch_size=self.training.batch_size)
+        metadata.update_training_info(epoch=self.training.epochs, batch_size=self.environment.batch_size)
         metadata.update_training_result(training_summary=training_summary)
         metadata.update_logging_dir(logging_dir=destination_folder.as_posix())
         metadata.update_hparams(hparams=hparams_path.as_posix())

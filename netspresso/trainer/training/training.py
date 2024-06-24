@@ -1,10 +1,11 @@
 from dataclasses import dataclass, field
-from typing import Dict
+from typing import Dict, Optional
 
 
 @dataclass
 class ScheduleConfig:
     epochs: int = 3
+    ema: Optional[Dict] = field(default=None)
     optimizer: Dict = field(default_factory=lambda: {
         "name": "adamw",
         "lr": 6e-5,
@@ -21,7 +22,7 @@ class ScheduleConfig:
 
 @dataclass
 class ClassificationScheduleConfig(ScheduleConfig):
-    batch_size: int = 32
+    pass
 
 
 @dataclass
