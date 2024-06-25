@@ -33,7 +33,7 @@ class DeviceInfo:
     device_name: DeviceName = ""
     display_device_name: str = ""
     display_brand_name: str = ""
-    software_versions: SoftwareVersions = field(default_factory=SoftwareVersions)
+    software_versions: List[SoftwareVersions] = field(default_factory=list)
     data_types: List[DataType] = field(default_factory=list)
     hardware_types: List[HardwareType] = field(default_factory=list)
 

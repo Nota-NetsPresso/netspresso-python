@@ -10,7 +10,7 @@ from netspresso.enums import (
     SoftwareVersion,
 )
 from netspresso.metadata import common
-from netspresso.metadata.common import AvailableOption
+from netspresso.metadata.common import AvailableOption, SoftwareVersions
 
 
 class Order(str, Enum):
@@ -75,6 +75,14 @@ class SoftwareVersionInfo:
 
     software_version: Optional[Union[None, SoftwareVersion]] = None
     display_software_version: Optional[Union[None, DisplaySoftwareVersion]] = None
+
+    def to(self) -> SoftwareVersions:
+        software_version = SoftwareVersions()
+
+        software_version.software_version = self.software_version
+        software_version.display_software_versions = self.display_software_version
+
+        return software_version
 
 
 @dataclass
