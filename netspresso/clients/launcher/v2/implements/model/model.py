@@ -29,13 +29,13 @@ class ModelAPI(ModelInterface):
     ) -> ResponseModelUploadUrl:
         endpoint = f"{self.model_base_url}/upload_url"
         response = Requester().get(
-            url=endpoint, headers=asdict(headers), params=asdict(request_params)
+            url=endpoint, headers=headers.to_dict(), params=asdict(request_params)
         )
         return ResponseModelUploadUrl(**response.json())
 
     def get_download_url(self, headers: AuthorizationHeader, ai_model_id: str) -> str:
         endpoint = f"{self.model_base_url}/{ai_model_id}/download_url"
-        response = Requester().get(url=endpoint, headers=asdict(headers))
+        response = Requester().get(url=endpoint, headers=headers.to_dict())
         return response.text
 
     def upload(
@@ -47,7 +47,7 @@ class ModelAPI(ModelInterface):
         endpoint = f"{self.model_base_url}/upload"
         response = Requester().post_as_form(
             url=endpoint,
-            headers=asdict(headers),
+            headers=headers.to_dict(),
             binary=file.files,
             request_body=asdict(request_body),
         )
@@ -58,7 +58,7 @@ class ModelAPI(ModelInterface):
     ) -> ResponseModelItem:
         endpoint = f"{self.model_base_url}/validate"
         response = Requester().post_as_json(
-            url=endpoint, request_body=asdict(request_body), headers=asdict(headers)
+            url=endpoint, request_body=asdict(request_body), headers=headers.to_dict()
         )
         return ResponseModelItem(**response.json())
 
@@ -70,7 +70,7 @@ class ModelAPI(ModelInterface):
     ) -> ResponseModelItem:
         endpoint = f"{self.model_base_url}/{ai_model_id}"
         response = Requester().get(
-            url=endpoint, params=asdict(request_params), headers=asdict(headers)
+            url=endpoint, params=asdict(request_params), headers=headers.to_dict()
         )
         return ResponseModelItem(**response.json())
 
@@ -79,7 +79,7 @@ class ModelAPI(ModelInterface):
     ) -> ResponseModelItems:
         endpoint = f"{self.model_base_url}"
         response = Requester().get(
-            url=endpoint, headers=asdict(headers), params=asdict(request_params)
+            url=endpoint, headers=headers.to_dict(), params=asdict(request_params)
         )
         return ResponseModelItems(**response.json())
 
@@ -87,19 +87,19 @@ class ModelAPI(ModelInterface):
         self, headers: AuthorizationHeader, ai_model_id: str
     ) -> ResponseModelItem:
         endpoint = f"{self.model_base_url}/{ai_model_id}"
-        response = Requester().delete(url=endpoint, headers=asdict(headers))
+        response = Requester().delete(url=endpoint, headers=headers.to_dict())
         return ResponseModelItem(**response.json())
 
     def status(
         self, headers: AuthorizationHeader, ai_model_id: str
     ) -> ResponseModelStatus:
         endpoint = f"{self.model_base_url}/{ai_model_id}"
-        response = Requester().get(url=endpoint, headers=asdict(headers))
+        response = Requester().get(url=endpoint, headers=headers.to_dict())
         return ResponseModelStatus(**response.json())
 
     def options(
         self, headers: AuthorizationHeader, ai_model_id: str
     ) -> ResponseModelOptions:
         endpoint = f"{self.model_base_url}/{ai_model_id}/options"
-        response = Requester().get(url=endpoint, headers=asdict(headers))
+        response = Requester().get(url=endpoint, headers=headers.to_dict())
         return ResponseModelOptions(**response.json())

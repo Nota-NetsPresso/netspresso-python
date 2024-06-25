@@ -1,7 +1,9 @@
+from pathlib import Path
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import List, Optional, Union
 
+from netspresso.clients.utils.system import ENV_STR
 from netspresso.enums import (
     DataType,
     DisplaySoftwareVersion,
@@ -11,6 +13,8 @@ from netspresso.enums import (
 )
 from netspresso.metadata import common
 from netspresso.metadata.common import AvailableOption, SoftwareVersions
+
+version = (Path(__file__).parent.parent.parent.parent.parent / "VERSION").read_text().strip()
 
 
 class Order(str, Enum):
@@ -27,6 +31,11 @@ class AuthorizationHeader:
     def __init__(self, access_token):
         self.Authorization = f"Bearer {access_token}"
 
+    def to_dict(self):
+        return {
+            "Authorization": self.Authorization,
+            "User-Agent": f"NetsPresso Python Package v{version} ({ENV_STR})"
+        }
 
 @dataclass
 class UploadFile:
@@ -120,13 +129,12 @@ class DeviceInfo:
         device_info.data_types = self.data_types
         device_info.hardware_types = self.hardware_types
 
-        device_info.software_versions.software_version = self.software_versions[
-            0
-        ].software_version
-        device_info.software_versions.display_software_versions = (
-            self.software_versions[0].display_software_version
-        )
-
+        device_info.software_versions = [
+            SoftwareVersions(
+                software_version=self.software_versions[0].software_version,
+                display_software_versions=self.software_versions[0].display_software_version
+            )
+        ]
         return device_info
 
 @dataclass
