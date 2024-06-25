@@ -27,8 +27,8 @@ from netspresso.enums import DeviceName, Framework, DataType
 # DeviceName.RASPBERRY_PI_ZERO_2W
 #
 
-EMAIL = "nppd_test_002@nota.ai"
-PASSWORD = "Nota180928!"
+EMAIL = "YOUR_EMAIL"
+PASSWORD = "YOUR_PASSWORD"
 
 netspresso = NetsPresso(email=EMAIL, password=PASSWORD)
 
