@@ -194,9 +194,9 @@ class ConverterV2:
 
             convert_task = response.data
 
-            task_options = launcher_client_v2.converter.read_model_task_options(
+            available_options = launcher_client_v2.benchmarker.read_framework_options(
                 access_token=self.token_handler.tokens.access_token,
-                ai_model_id=convert_task.input_model_id,
+                framework=target_framework,
             ).data
 
             if convert_task.status == TaskStatusForDisplay.FINISHED:
@@ -207,8 +207,8 @@ class ConverterV2:
                 logger.info("Convert task failed with an error.")
 
             converter_metadata.converted_model_path = str(default_model_path.with_suffix(extension))
-            for task_option in task_options:
-                converter_metadata.available_options.append(task_option.to())
+            for available_option in available_options:
+                converter_metadata.available_options.append(available_option.to())
 
             MetadataHandler.save_json(
                 data=asdict(converter_metadata), folder_path=output_dir
