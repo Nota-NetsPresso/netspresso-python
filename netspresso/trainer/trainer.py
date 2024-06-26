@@ -388,6 +388,7 @@ class Trainer:
         destination_folder = FileHandler.create_unique_folder(folder_path=destination_folder)
         metadata = MetadataHandler.init_metadata(folder_path=destination_folder, task_type=TaskType.TRAIN)
         self.logging.project_id = Path(destination_folder).name
+        self.environment.gpus = gpus
 
         configs = TrainerConfigs(
             self.data,
