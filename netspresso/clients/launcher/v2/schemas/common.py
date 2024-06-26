@@ -129,12 +129,8 @@ class DeviceInfo:
         device_info.data_types = self.data_types
         device_info.hardware_types = self.hardware_types
 
-        device_info.software_versions = [
-            SoftwareVersions(
-                software_version=self.software_versions[0].software_version,
-                display_software_versions=self.software_versions[0].display_software_version
-            )
-        ]
+        device_info.software_versions = [item.to() for item in self.software_versions]
+
         return device_info
 
 @dataclass
