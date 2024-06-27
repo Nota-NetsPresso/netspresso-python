@@ -1,7 +1,7 @@
 Get Compression Information
 ===========================
 
-.. autofunction:: netspresso.compressor.__init__.Compressor.get_compression
+.. autofunction:: netspresso.compressor.__init__.CompressorV2.get_compression
 
 
 Details of Returns
@@ -21,7 +21,7 @@ Example
 
     netspresso = NetsPresso(email="YOUR_EMAIL", password="YOUR_PASSWORD")
 
-    compressor = netspresso.compressor()
+    compressor = netspresso.compressor_v2()
     compressed_info = compressor.get_compression(compression_id="YOUR_COMPRESSION_ID")
 
 Output

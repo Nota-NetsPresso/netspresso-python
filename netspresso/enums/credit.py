@@ -1,4 +1,4 @@
-from enum import IntEnum
+from enum import Enum, IntEnum
 
 
 class ServiceCredit(IntEnum):
@@ -6,3 +6,9 @@ class ServiceCredit(IntEnum):
     AUTOMATIC_COMPRESSION = 25
     MODEL_CONVERT = 50
     MODEL_BENCHMARK = 25
+
+
+class MembershipType(str, Enum):
+    BASIC = "BASIC"
+    PRO = "PRO"
+    PREMIUM = "PREMIUM"

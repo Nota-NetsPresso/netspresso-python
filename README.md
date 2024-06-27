@@ -277,7 +277,7 @@ The compressed model will be saved in the specified output directory (`output_di
 
 ```python
 # 1. Declare compressor
-compressor = netspresso.compressor()
+compressor = netspresso.compressor_v2()
 
 # 2. Run automatic compression
 compression_result = compressor.automatic_compression(
@@ -302,7 +302,7 @@ The converted model will be saved in the specified output directory (`output_dir
 from netspresso.enums import DeviceName, Framework, SoftwareVersion
 
 # 1. Declare converter
-converter = netspresso.converter()
+converter = netspresso.converter_v2()
 
 # 2. Run convert
 conversion_result = converter.convert_model(
@@ -328,7 +328,7 @@ TensorRT Model has strong dependency with the device type and its jetpack versio
 from netspresso.enums import DeviceName, SoftwareVersion
 
 # 1. Declare benchmarker
-benchmarker = netspresso.benchmarker()
+benchmarker = netspresso.benchmarker_v2()
 
 # 2. Run benchmark
 benchmark_result = benchmarker.benchmark_model(

@@ -4,7 +4,7 @@ Manual Compression
 Upload Model
 ------------
 
-.. autofunction:: netspresso.compressor.__init__.Compressor.upload_model
+.. autofunction:: netspresso.compressor.__init__.CompressorV2.upload_model
 
 
 Details of Parameters
@@ -91,7 +91,7 @@ Example
 
     netspresso = NetsPresso(email="YOUR_EMAIL", password="YOUR_PASSWORD")
 
-    compressor = netspresso.compressor()
+    compressor = netspresso.compressor_v2()
     model = compressor.upload_model(
         input_model_path="./examples/sample_models/mobilenetv1.h5",
         input_shapes=[{"batch": 1, "channel": 3, "dimension": [224, 224]}],
@@ -100,7 +100,7 @@ Example
 Select Compression Method
 -------------------------
 
-.. autofunction:: netspresso.compressor.__init__.Compressor.select_compression_method
+.. autofunction:: netspresso.compressor.__init__.CompressorV2.select_compression_method
 
 
 Details of Parameters
@@ -200,7 +200,7 @@ Example
 
     netspresso = NetsPresso(email="YOUR_EMAIL", password="YOUR_PASSWORD")
 
-    compressor = netspresso.compressor()
+    compressor = netspresso.compressor_v2()
     compression_info = compressor.select_compression_method(
         model_id="YOUR_UPLOADED_MODEL_ID",
         compression_method=CompressionMethod.PR_L2,
@@ -321,7 +321,7 @@ Output
 Compress Model
 --------------
 
-.. autofunction:: netspresso.compressor.__init__.Compressor.compress_model
+.. autofunction:: netspresso.compressor.__init__.CompressorV2.compress_model
 
 
 Example
@@ -348,7 +348,7 @@ Pull Example
     netspresso = NetsPresso(email="YOUR_EMAIL", password="YOUR_PASSWORD")
 
     # 1. Declare compressor
-    compressor = netspresso.compressor()
+    compressor = netspresso.compressor_v2()
 
     # 2. Upload model
     model = compressor.upload_model(

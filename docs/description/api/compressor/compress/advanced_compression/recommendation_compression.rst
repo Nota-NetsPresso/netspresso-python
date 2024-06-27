@@ -1,7 +1,7 @@
 Recommendation Compression
 ==========================
 
-.. autofunction:: netspresso.compressor.__init__.Compressor.recommendation_compression
+.. autofunction:: netspresso.compressor.__init__.CompressorV2.recommendation_compression
 
 
 Details of Parameters
@@ -157,7 +157,7 @@ Example
 
     netspresso = NetsPresso(email="YOUR_EMAIL", password="YOUR_PASSWORD")
 
-    compressor = netspresso.compressor()
+    compressor = netspresso.compressor_v2()
     compressed_model = compressor.recommendation_compression(
         compression_method=CompressionMethod.PR_L2,
         recommendation_method=RecommendationMethod.SLAMP,

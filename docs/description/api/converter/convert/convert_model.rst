@@ -1,7 +1,7 @@
 Convert Model
 =============
 
-.. autofunction:: netspresso.converter.__init__.Converter.convert_model
+.. autofunction:: netspresso.converter.__init__.ConverterV2.convert_model
 
 
 Example
@@ -15,7 +15,7 @@ Example
 
     netspresso = NetsPresso(email="YOUR_EMAIL", password="YOUR_PASSWORD")
 
-    converter = netspresso.converter()
+    converter = netspresso.converter_v2()
     conversion_task = converter.convert_model(
         input_model_path="./examples/sample_models/test.onnx",
         output_dir="./outputs/converted/TENSORRT_JETSON_AGX_ORIN_JETPACK_5_0_1",
