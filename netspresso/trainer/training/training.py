@@ -1,13 +1,11 @@
 from dataclasses import dataclass, field
-from typing import Dict
-
-from omegaconf import MISSING, MissingMandatoryValue
+from typing import Dict, Optional
 
 
 @dataclass
 class ScheduleConfig:
     epochs: int = 3
-    batch_size: int = 8
+    ema: Optional[Dict] = field(default=None)
     optimizer: Dict = field(default_factory=lambda: {
         "name": "adamw",
         "lr": 6e-5,
@@ -24,7 +22,7 @@ class ScheduleConfig:
 
 @dataclass
 class ClassificationScheduleConfig(ScheduleConfig):
-    batch_size: int = 32
+    pass
 
 
 @dataclass
