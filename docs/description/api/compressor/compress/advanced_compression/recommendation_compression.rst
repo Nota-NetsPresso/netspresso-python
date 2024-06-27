@@ -157,7 +157,7 @@ Example
 
     netspresso = NetsPresso(email="YOUR_EMAIL", password="YOUR_PASSWORD")
 
-    compressor = netspresso.compressor()
+    compressor = netspresso.compressor_v2()
     compressed_model = compressor.recommendation_compression(
         compression_method=CompressionMethod.PR_L2,
         recommendation_method=RecommendationMethod.SLAMP,

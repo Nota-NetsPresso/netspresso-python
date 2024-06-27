@@ -91,7 +91,7 @@ Example
 
     netspresso = NetsPresso(email="YOUR_EMAIL", password="YOUR_PASSWORD")
 
-    compressor = netspresso.compressor()
+    compressor = netspresso.compressor_v2()
     model = compressor.upload_model(
         input_model_path="./examples/sample_models/mobilenetv1.h5",
         input_shapes=[{"batch": 1, "channel": 3, "dimension": [224, 224]}],
@@ -200,7 +200,7 @@ Example
 
     netspresso = NetsPresso(email="YOUR_EMAIL", password="YOUR_PASSWORD")
 
-    compressor = netspresso.compressor()
+    compressor = netspresso.compressor_v2()
     compression_info = compressor.select_compression_method(
         model_id="YOUR_UPLOADED_MODEL_ID",
         compression_method=CompressionMethod.PR_L2,
