@@ -73,7 +73,7 @@ class BenchmarkerV2:
             e: If an error occurs during the benchmarking of the model.
 
         Returns:
-            Dict: Model benchmark task dictionary.
+            BenchmarkerMetadata: Benchmark metadata.
         """
 
         FileHandler.check_input_model_path(input_model_path)

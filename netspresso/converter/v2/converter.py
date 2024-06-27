@@ -99,7 +99,7 @@ class ConverterV2:
             e: If an error occurs during the model conversion.
 
         Returns:
-            ResponseConvertTaskItem: Model conversion task result.
+            ConverterMetadata: Convert metadata.
         """
 
         FileHandler.check_input_model_path(input_model_path)

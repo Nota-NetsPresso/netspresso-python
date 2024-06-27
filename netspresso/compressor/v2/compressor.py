@@ -86,6 +86,20 @@ class CompressorV2:
         input_shapes: List[Dict[str, int]] = None,
         framework: Framework = Framework.PYTORCH,
     ) -> ModelBase:
+        """Upload a model for compression.
+
+        Args:
+            input_model_path (str): The file path where the model is located.
+            input_shapes (List[Dict[str, int]], optional): Input shapes of the model. Defaults to [].
+            framework (Framework): The framework of the model.
+
+        Raises:
+            e: If an error occurs while uploading the model.
+
+        Returns:
+            ModelBase: Uploaded model object.
+        """
+
         self.token_handler.validate_token()
 
         try:
@@ -177,6 +191,20 @@ class CompressorV2:
         compression_method: CompressionMethod,
         options: Optional[Options] = Options(),
     ) -> ResponseSelectMethod:
+        """Select a compression method for a model.
+
+        Args:
+            model_id (str): The ID of the model.
+            compression_method (CompressionMethod): The selected compression method.
+            options(Options, optional): The options for pruning method.
+
+        Raises:
+            e: If an error occurs while selecting the compression method.
+
+        Returns:
+            ResponseSelectMethod: The compression information for the selected compression method.
+        """
+
         self.token_handler.validate_token()
 
         try:
@@ -250,6 +278,20 @@ class CompressorV2:
         output_dir: str,
         dataset_path: Optional[str] = None,
     ) -> CompressorMetadata:
+        """Compress a model using the provided compression information.
+
+        Args:
+            compression (CompressionInfo): The information about the compression.
+            output_dir (str): The local path to save the compressed model.
+            dataset_path (str, optional): The path of the dataset used for nuclear norm compression method. Default is None.
+
+        Raises:
+            e: If an error occurs while compressing the model.
+
+        Returns:
+            CompressorMetadata: Compress metadata.
+        """
+
         self.token_handler.validate_token()
 
         try:
@@ -375,6 +417,26 @@ class CompressorV2:
         options: RecommendationOptions = RecommendationOptions(),
         dataset_path: Optional[str] = None,
     ) -> CompressorMetadata:
+        """Compress a recommendation-based model using the given compression and recommendation methods.
+
+        Args:
+            compression_method (CompressionMethod): The selected compression method.
+            recommendation_method (RecommendationMethod): The selected recommendation method.
+            recommendation_ratio (float): The compression ratio recommended by the recommendation method.
+            input_model_path (str): The file path where the model is located.
+            output_dir (str): The local path to save the compressed model.
+            input_shapes (List[Dict[str, int]]): Input shapes of the model.
+            framework (Framework, optional): The framework of the model.
+            options(Options, optional): The options for pruning method.
+            dataset_path (str, optional): The path of the dataset used for nuclear norm compression method. Default is None.
+
+        Raises:
+            e: If an error occurs while performing recommendation compression.
+
+        Returns:
+            CompressorMetadata: Compress metadata.
+        """
+
         self.token_handler.validate_token()
 
         try:
@@ -490,6 +552,21 @@ class CompressorV2:
         framework: Framework = Framework.PYTORCH,
         compression_ratio: float = 0.5,
     ) -> CompressorMetadata:
+        """Compress a model automatically based on the given compression ratio.
+
+        Args:
+            input_model_path (str): The file path where the model is located.
+            output_dir (str): The local path to save the compressed model.
+            input_shapes (List[Dict[str, int]]): Input shapes of the model.
+            framework (Framework, optional): The framework of the model.
+            compression_ratio (float, optional): The compression ratio for automatic compression. Defaults to 0.5.
+
+        Raises:
+            e: If an error occurs while performing automatic compression.
+
+        Returns:
+            CompressorMetadata: Compress metadata.
+        """
         self.token_handler.validate_token()
 
         try:
