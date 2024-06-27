@@ -48,10 +48,10 @@ CLASSIFICATION_MODELS = {
     "ResNet18": ClassificationResNet18ModelConfig,
     "ResNet34": ClassificationResNet34ModelConfig,
     "ResNet50": ClassificationResNet50ModelConfig,
-    "ViT_Tiny": ClassificationViTTinyModelConfig,
-    "MixNetS": ClassificationMixNetSmallModelConfig,
-    "MixNetM": ClassificationMixNetMediumModelConfig,
-    "MixNetL": ClassificationMixNetLargeModelConfig,
+    "ViT-Tiny": ClassificationViTTinyModelConfig,
+    "MixNet-S": ClassificationMixNetSmallModelConfig,
+    "MixNet-M": ClassificationMixNetMediumModelConfig,
+    "MixNet-L": ClassificationMixNetLargeModelConfig,
 }
 
 DETECTION_MODELS = {
@@ -62,9 +62,9 @@ DETECTION_MODELS = {
     "YOLOX-L": DetectionYoloXLModelConfig,
     "YOLOX-X": DetectionYoloXXModelConfig,
     "ResNet50": DetectionResNet50ModelConfig,
-    "MixNetL": DetectionMixNetLargeModelConfig,
-    "MixNetM": DetectionMixNetMediumModelConfig,
-    "MixNetS": DetectionMixNetSmallModelConfig,
+    "MixNet-S": DetectionMixNetSmallModelConfig,
+    "MixNet-M": DetectionMixNetMediumModelConfig,
+    "MixNet-L": DetectionMixNetLargeModelConfig,
 }
 
 SEGMENTATION_MODELS = {
@@ -72,9 +72,9 @@ SEGMENTATION_MODELS = {
     "MobileNetV3_Small": SegmentationMobileNetV3SmallModelConfig,
     "ResNet50": SegmentationResNet50ModelConfig,
     "SegFormer-B0": SegmentationSegFormerB0ModelConfig,
-    "MixNetS": SegmentationMixNetSmallModelConfig,
-    "MixNetM": SegmentationMixNetMediumModelConfig,
-    "MixNetL": SegmentationMixNetLargeModelConfig,
+    "MixNet-S": SegmentationMixNetSmallModelConfig,
+    "MixNet-M": SegmentationMixNetMediumModelConfig,
+    "MixNet-L": SegmentationMixNetLargeModelConfig,
     "PIDNet": PIDNetModelConfig,
 }
 
