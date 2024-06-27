@@ -1,7 +1,7 @@
 Recommendation Compression
 ==========================
 
-.. autofunction:: netspresso.compressor.__init__.Compressor.recommendation_compression
+.. autofunction:: netspresso.compressor.v2.compressor.__init__.Compressor.recommendation_compression
 
 
 Details of Parameters

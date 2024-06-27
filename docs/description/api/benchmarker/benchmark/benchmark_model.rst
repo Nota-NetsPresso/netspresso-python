@@ -1,7 +1,7 @@
 Benchmark Model
 ===============
 
-.. autofunction:: netspresso.benchmarker.__init__.Benchmarker.benchmark_model
+.. autofunction:: netspresso.benchmarker.v2.benchmarker.__init__.Benchmarker.benchmark_model
 
 
 Example
@@ -15,7 +15,7 @@ Example
 
     netspresso = NetsPresso(email="YOUR_EMAIL", password="YOUR_PASSWORD")
 
-    benchmarker = netspresso.benchmarker()
+    benchmarker = netspresso.benchmarker_v2()
     benchmark_task = benchmarker.benchmark_model(
         input_model_path="./outputs/converted/TENSORRT_JETSON_AGX_ORIN_JETPACK_5_0_1/TENSORRT_JETSON_AGX_ORIN_JETPACK_5_0_1.trt",
         target_device_name=DeviceName.JETSON_AGX_ORIN,
