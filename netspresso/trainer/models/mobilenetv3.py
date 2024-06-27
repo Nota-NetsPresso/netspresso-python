@@ -168,7 +168,6 @@ class SegmentationMobileNetV3SmallModelConfig(ModelConfig):
 class DetectionMobileNetV3SmallModelConfig(ModelConfig):
     task: str = "detection"
     name: str = "mobilenet_v3_small"
-    checkpoint: CheckpointConfig = field(default_factory=lambda: CheckpointConfig(load_head=True))
     architecture: ArchitectureConfig = field(
         default_factory=lambda: MobileNetV3SmallArchitectureConfig(
             neck={

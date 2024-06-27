@@ -75,7 +75,6 @@ class SegmentationEfficientFormerModelConfig(ModelConfig):
 class DetectionEfficientFormerModelConfig(ModelConfig):
     task: str = "detection"
     name: str = "efficientformer_l1"
-    checkpoint: CheckpointConfig = field(default_factory=lambda: CheckpointConfig(load_head=True))
     architecture: ArchitectureConfig = field(
         default_factory=lambda: EfficientFormerArchitectureConfig(
             neck={

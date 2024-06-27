@@ -233,7 +233,6 @@ class SegmentationMixNetSmallModelConfig(ModelConfig):
 class DetectionMixNetSmallModelConfig(ModelConfig):
     task: str = "detection"
     name: str = "mixnet_s"
-    checkpoint: CheckpointConfig = field(default_factory=lambda: CheckpointConfig(load_head=True))
     architecture: ArchitectureConfig = field(
         default_factory=lambda: MixNetSmallArchitectureConfig(
             neck={
@@ -330,7 +329,6 @@ class SegmentationMixNetMediumModelConfig(ModelConfig):
 class DetectionMixNetMediumModelConfig(ModelConfig):
     task: str = "detection"
     name: str = "mixnet_m"
-    checkpoint: CheckpointConfig = field(default_factory=lambda: CheckpointConfig(load_head=True))
     architecture: ArchitectureConfig = field(
         default_factory=lambda: MixNetMediumArchitectureConfig(
             neck={
@@ -427,7 +425,6 @@ class SegmentationMixNetLargeModelConfig(ModelConfig):
 class DetectionMixNetLargeModelConfig(ModelConfig):
     task: str = "detection"
     name: str = "mixnet_l"
-    checkpoint: CheckpointConfig = field(default_factory=lambda: CheckpointConfig(load_head=True))
     architecture: ArchitectureConfig = field(
         default_factory=lambda: MixNetLargeArchitectureConfig(
             neck={

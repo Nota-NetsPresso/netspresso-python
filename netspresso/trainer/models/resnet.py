@@ -151,7 +151,6 @@ class SegmentationResNet50ModelConfig(ModelConfig):
 class DetectionResNet50ModelConfig(ModelConfig):
     task: str = "detection"
     name: str = "resnet50"
-    checkpoint: CheckpointConfig = field(default_factory=lambda: CheckpointConfig(load_head=True))
     architecture: ArchitectureConfig = field(
         default_factory=lambda: ResNet50ArchitectureConfig(
             neck={

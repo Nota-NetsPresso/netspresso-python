@@ -161,7 +161,6 @@ class DetectionYoloXMModelConfig(ModelConfig):
 class DetectionYoloXSModelConfig(ModelConfig):
     task: str = "detection"
     name: str = "yolox_s"
-    checkpoint: CheckpointConfig = field(default_factory=lambda: CheckpointConfig(load_head=True))
     architecture: ArchitectureConfig = field(
         default_factory=lambda: CSPDarkNetSArchitectureConfig(
             neck={
