@@ -15,10 +15,10 @@ config_parser.read(f"{BASE_DIR}/configs/config-{DEPLOYMENT_MODE.lower()}.ini")
 class EnvironmentType(str, Enum):
     V1_PROD = "v1-prod"
     V1_STAGING = "v1-staging"
-    # V2_PROD_CLOUD = "v2-prod-cloud"
-    # V2_PROD_ON_PREM = "v2-prod-on-prem"
-    # V2_STAGING_CLOUD = "v2-staging-cloud"
-    # V2_STAGING_ON_PREM = "v2-staging-on-prem"
+    V2_PROD_CLOUD = "v2-prod-cloud"
+    V2_PROD_ON_PREM = "v2-prod-on-prem"
+    V2_STAGING_CLOUD = "v2-staging-cloud"
+    V2_STAGING_ON_PREM = "v2-staging-on-prem"
     V2_DEV_CLOUD = "v2-dev-cloud"
     V2_DEV_ON_PREM = "v2-dev-on-prem"
 
