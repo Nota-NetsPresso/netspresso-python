@@ -1,7 +1,7 @@
 Automatic Compression
 =====================
 
-.. autofunction:: netspresso.compressor.__init__.Compressor.automatic_compression
+.. autofunction:: netspresso.compressor.__init__.CompressorV2.automatic_compression
 
 
 Details of Parameters
@@ -32,7 +32,7 @@ Example
 
     netspresso = NetsPresso(email="YOUR_EMAIL", password="YOUR_PASSWORD")
 
-    compressor = netspresso.compressor()
+    compressor = netspresso.compressor_v2()
     compressed_model = compressor.automatic_compression(
         input_shapes=[{"batch": 1, "channel": 3, "dimension": [224, 224]}],
         input_model_path="./examples/sample_models/graphmodule.pt",
