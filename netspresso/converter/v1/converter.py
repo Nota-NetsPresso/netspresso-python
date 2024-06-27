@@ -183,6 +183,7 @@ class Converter:
                     TaskStatus.IN_PROGRESS,
                 ]:
                     conversion_task = self.get_conversion_task(conversion_task)
+                    self.token_handler.validate_token()
                     time.sleep(1)
 
             self._download_converted_model(conversion_task, default_model_path.with_suffix(extension))
