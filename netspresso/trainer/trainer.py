@@ -9,9 +9,6 @@ from netspresso.clients.launcher import launcher_client_v2
 from netspresso.enums import Framework, Status, Task
 from netspresso.metadata.common import InputShape
 from netspresso.metadata.trainer import TrainerMetadata
-from netspresso.utils import FileHandler
-from netspresso.utils.metadata import MetadataHandler
-from netspresso.enums import Status, Task, TaskType
 from netspresso.trainer.augmentations import AUGMENTATION_CONFIG_TYPE, AugmentationConfig, Transform
 from netspresso.trainer.data import DATA_CONFIG_TYPE, ImageLabelPathConfig, PathConfig
 from netspresso.trainer.models import (
@@ -25,11 +22,12 @@ from netspresso.trainer.trainer_configs import TrainerConfigs
 from netspresso.trainer.training import TRAINING_CONFIG_TYPE, EnvironmentConfig, LoggingConfig, ScheduleConfig
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
-from netspresso.utils.metadata.default.trainer import InputShape
 
 
 class Trainer:
-    def __init__(self, token_handler: TokenHandler, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None) -> None:
+    def __init__(
+        self, token_handler: TokenHandler, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None
+    ) -> None:
         """Initialize the Trainer.
 
         Args:
@@ -180,9 +178,13 @@ class Trainer:
             path = Path(base_path) / relative_path
             if not path.exists():
                 if path.suffix:
-                    raise FileNotFoundError(f"The required file '{relative_path}' does not exist. Please check and make sure it is in the correct location.")
+                    raise FileNotFoundError(
+                        f"The required file '{relative_path}' does not exist. Please check and make sure it is in the correct location."
+                    )
                 else:
-                    raise FileNotFoundError(f"The required directory '{relative_path}' does not exist. Please check and make sure it is in the correct location.")
+                    raise FileNotFoundError(
+                        f"The required directory '{relative_path}' does not exist. Please check and make sure it is in the correct location."
+                    )
 
     def set_dataset(self, dataset_root_path: str):
         dataset_name = Path(dataset_root_path).name
