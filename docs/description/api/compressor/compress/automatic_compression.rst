@@ -1,7 +1,7 @@
 Automatic Compression
 =====================
 
-.. autofunction:: netspresso.compressor.v2.compressor.__init__.Compressor.automatic_compression
+.. autofunction:: netspresso.compressor.__init__.CompressorV2.automatic_compression
 
 
 Details of Parameters

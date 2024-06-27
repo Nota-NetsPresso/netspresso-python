@@ -1,7 +1,7 @@
 Convert Model
 =============
 
-.. autofunction:: netspresso.converter.v2.converter.__init__.Converter.convert_model
+.. autofunction:: netspresso.converter.__init__.ConverterV2.convert_model
 
 
 Example

@@ -4,7 +4,7 @@ Manual Compression
 Upload Model
 ------------
 
-.. autofunction:: netspresso.compressor.v2.compressor.__init__.Compressor.upload_model
+.. autofunction:: netspresso.compressor.__init__.CompressorV2.upload_model
 
 
 Details of Parameters
@@ -100,7 +100,7 @@ Example
 Select Compression Method
 -------------------------
 
-.. autofunction:: netspresso.compressor.v2.compressor.__init__.Compressor.select_compression_method
+.. autofunction:: netspresso.compressor.__init__.CompressorV2.select_compression_method
 
 
 Details of Parameters
@@ -321,7 +321,7 @@ Output
 Compress Model
 --------------
 
-.. autofunction:: netspresso.compressor.v2.compressor.__init__.Compressor.compress_model
+.. autofunction:: netspresso.compressor.__init__.CompressorV2.compress_model
 
 
 Example

@@ -1,7 +1,7 @@
 Get Compression Information
 ===========================
 
-.. autofunction:: netspresso.compressor.v2.compressor.__init__.Compressor.get_compression
+.. autofunction:: netspresso.compressor.__init__.CompressorV2.get_compression
 
 
 Details of Returns

@@ -1,7 +1,7 @@
 Benchmark Model
 ===============
 
-.. autofunction:: netspresso.benchmarker.v2.benchmarker.__init__.Benchmarker.benchmark_model
+.. autofunction:: netspresso.benchmarker.__init__.BenchmarkerV2.benchmark_model
 
 
 Example
