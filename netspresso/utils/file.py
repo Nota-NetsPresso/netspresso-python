@@ -8,7 +8,7 @@ from urllib import request
 FRAMEWORK_EXTENSION_MAP = {
     "tensorflow_keras": ".h5",
     "pytorch": ".pt",
-    "onnx": ".onnx",
+    "onnx": ".pt",
     "tensorflow_lite": ".tflite",
     "drpai": ".zip",
     "openvino": ".zip",

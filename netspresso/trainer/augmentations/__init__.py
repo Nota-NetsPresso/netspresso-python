@@ -1,17 +1,43 @@
-from netspresso_trainer.cfg.augmentation import (
+from netspresso.trainer.augmentations.augmentation import (
+    AugmentationConfig,
+    CenterCrop,
+    ClassificationAugmentationConfig,
     ColorJitter,
+    DetectionAugmentationConfig,
+    HSVJitter,
+    Mixing,
+    MosaicDetection,
     Pad,
+    PoseTopDownAffine,
     RandomCrop,
     RandomCutmix,
+    RandomErasing,
     RandomHorizontalFlip,
     RandomMixup,
+    RandomResize,
     RandomResizedCrop,
     RandomVerticalFlip,
     Resize,
+    SegmentationAugmentationConfig,
+    Transform,
     TrivialAugmentWide,
 )
 
+AUGMENTATION_CONFIG_TYPE = {
+    "classification": ClassificationAugmentationConfig,
+    "detection": DetectionAugmentationConfig,
+    "segmentation": SegmentationAugmentationConfig,
+}
+
+
 __all__ = [
+    "CenterCrop",
+    "HSVJitter",
+    "Mixing",
+    "MosaicDetection",
+    "PoseTopDownAffine",
+    "RandomErasing",
+    "RandomResize",
     "ColorJitter",
     "Pad",
     "RandomCrop",
@@ -22,4 +48,7 @@ __all__ = [
     "TrivialAugmentWide",
     "RandomMixup",
     "RandomCutmix",
+    "Transform",
+    "AugmentationConfig",
+    "AUGMENTATION_CONFIG_TYPE",
 ]
