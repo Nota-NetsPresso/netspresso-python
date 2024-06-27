@@ -159,6 +159,7 @@ class BenchmarkerV2:
                         TaskStatusForDisplay.TIMEOUT,
                     ]:
                         break
+                    self.token_handler.validate_token()
                     time.sleep(3)
 
             if launcher_client_v2.is_cloud():

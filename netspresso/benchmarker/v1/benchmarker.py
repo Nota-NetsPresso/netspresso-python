@@ -138,6 +138,7 @@ class Benchmarker:
                     TaskStatus.IN_PROGRESS,
                 ]:
                     model_benchmark = self.get_benchmark_task(benchmark_task=model_benchmark)
+                    self.token_handler.validate_token()
                     time.sleep(1)
 
             metadata.update_benchmark_info(

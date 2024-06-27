@@ -176,6 +176,7 @@ class ConverterV2:
                         TaskStatusForDisplay.TIMEOUT,
                     ]:
                         break
+                    self.token_handler.validate_token()
                     time.sleep(3)
 
             self._download_converted_model(
