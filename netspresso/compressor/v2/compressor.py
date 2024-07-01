@@ -400,7 +400,7 @@ class CompressorV2:
             )
             metadata.update_is_retrainable(is_retrainable=True)
 
-        metadata.update_input_model_path(input_model_path=input_model_path)
+        metadata.update_input_model_path(input_model_path=Path(input_model_path).resolve().as_posix())
         metadata.update_model_info(framework=framework, input_shapes=input_shapes)
 
         return metadata
