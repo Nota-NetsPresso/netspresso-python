@@ -86,7 +86,7 @@ class BenchmarkerV2:
             folder_path = Path(input_model_path).parent
 
             benchmarker_metadata = BenchmarkerMetadata()
-            benchmarker_metadata.input_model_path = input_model_path
+            benchmarker_metadata.input_model_path = Path(input_model_path).resolve().as_posix()
             metadatas = []
 
             file_path = folder_path / f"{file_name}.json"

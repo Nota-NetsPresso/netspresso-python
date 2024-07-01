@@ -111,7 +111,7 @@ class ConverterV2:
             folder_path=output_dir, framework=target_framework
         )
         converter_metadata = ConverterMetadata()
-        converter_metadata.input_model_path = input_model_path
+        converter_metadata.input_model_path = Path(input_model_path).resolve().as_posix()
         MetadataHandler.save_json(data=asdict(converter_metadata), folder_path=output_dir)
 
         try:
@@ -207,7 +207,7 @@ class ConverterV2:
                 converter_metadata.status = Status.ERROR
                 logger.info("Convert task failed with an error.")
 
-            converter_metadata.converted_model_path = str(default_model_path.with_suffix(extension))
+            converter_metadata.converted_model_path = default_model_path.with_suffix(extension).as_posix()
             for available_option in available_options:
                 converter_metadata.available_options.append(available_option.to())
 
