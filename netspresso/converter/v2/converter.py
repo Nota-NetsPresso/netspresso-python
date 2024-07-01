@@ -106,10 +106,10 @@ class ConverterV2:
 
         self.token_handler.validate_token()
 
+        output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
         default_model_path, extension = FileHandler.get_path_and_extension(
             folder_path=output_dir, framework=target_framework
         )
-        output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
         converter_metadata = ConverterMetadata()
         converter_metadata.input_model_path = input_model_path
         MetadataHandler.save_json(data=asdict(converter_metadata), folder_path=output_dir)
