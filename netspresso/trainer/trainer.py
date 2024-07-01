@@ -409,7 +409,7 @@ class Trainer:
         destination_folder = Path(output_dir) / project_name
         destination_folder = FileHandler.create_unique_folder(folder_path=destination_folder)
         metadata = TrainerMetadata()
-        metadata.update_logging_dir(logging_dir=destination_folder)
+        metadata.update_logging_dir(logging_dir=Path(destination_folder).resolve().as_posix())
         metadata.update_model_info(
             task=self.task,
             model=self.model.name,
@@ -463,11 +463,11 @@ class Trainer:
         available_options = self._get_available_options()
 
         if best_fx_paths:
-            metadata.update_best_fx_model_path(best_fx_model_path=best_fx_paths[0].as_posix())
+            metadata.update_best_fx_model_path(best_fx_model_path=best_fx_paths[0].resolve().as_posix())
         if best_onnx_paths:
-            metadata.update_best_onnx_model_path(best_onnx_model_path=best_onnx_paths[0].as_posix())
+            metadata.update_best_onnx_model_path(best_onnx_model_path=best_onnx_paths[0].resolve().as_posix())
         metadata.update_training_result(training_summary=training_summary)
-        metadata.update_hparams(hparams=hparams_path.as_posix())
+        metadata.update_hparams(hparams=hparams_path.resolve().as_posix())
         metadata.update_status(status=status)
         metadata.update_available_options(available_options)
 
