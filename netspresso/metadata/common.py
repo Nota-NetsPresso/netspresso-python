@@ -1,5 +1,5 @@
-from dataclasses import dataclass, field
-from typing import List
+from dataclasses import asdict, dataclass, field
+from typing import Dict, List, Optional, Union
 
 from netspresso.enums.device import DeviceName, HardwareType, SoftwareVersion
 from netspresso.enums.model import (
@@ -43,3 +43,22 @@ class AvailableOption:
     framework: Framework = ""
     display_framework: str = ""
     devices: List[DeviceInfo] = field(default_factory=list)
+
+
+
+@dataclass
+class ErrorFormat:
+    raw_message: Union[str, Dict] = field(repr=False, compare=False)
+    message: Optional[str] = ""
+    error_log: Optional[str] = ""
+
+    def __post_init__(self):
+        if isinstance(self.raw_message, str):
+            self.message = self.raw_message
+        else:
+            self.message = self.raw_message["message"]
+            self.error_log = self.raw_message["data"]["error_log"]
+
+    def asdict(self) -> Dict:
+        _dict = {k: v for k, v in asdict(self).items() if k != 'raw_message'}
+        return _dict

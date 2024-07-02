@@ -46,7 +46,7 @@ class Results:
 @dataclass
 class CompressorMetadata:
     status: Status = Status.IN_PROGRESS
-    message: str = ""
+    message: Dict = field(default_factory=dict)
     task_type: TaskType = TaskType.COMPRESS
     input_model_path: str = ""
     compressed_model_path: str = ""

@@ -1,3 +1,4 @@
+from dataclasses import asdict
 import sys
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -29,6 +30,7 @@ from netspresso.compressor.utils.file import read_file_bytes
 from netspresso.compressor.utils.onnx import export_onnx
 from netspresso.enums import CompressionMethod, Framework, Module, RecommendationMethod, ServiceCredit, Status, TaskType
 from netspresso.metadata.compressor import CompressorMetadata
+from netspresso.metadata.common import ErrorFormat
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
 
@@ -626,6 +628,7 @@ class CompressorV2:
         except Exception as e:
             logger.error(f"Automatic compression failed. Error: {e}")
             metadata.update_status(status=Status.ERROR)
+            metadata.message = ErrorFormat(raw_message=e.args[0]).asdict()
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
             raise e
 

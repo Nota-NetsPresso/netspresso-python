@@ -23,6 +23,7 @@ from netspresso.enums import (
     TaskStatusForDisplay,
 )
 from netspresso.metadata.converter import ConverterMetadata
+from netspresso.metadata.common import ErrorFormat
 from netspresso.utils import FileHandler, check_credit_balance
 from netspresso.utils.metadata import MetadataHandler
 
@@ -220,6 +221,7 @@ class ConverterV2:
         except Exception as e:
             logger.error(f"Convert failed. Error: {e}")
             converter_metadata.status = Status.ERROR
+            converter_metadata.message = ErrorFormat(raw_message=e.args[0]).asdict()
             MetadataHandler.save_json(
                 data=asdict(converter_metadata), folder_path=output_dir
             )
