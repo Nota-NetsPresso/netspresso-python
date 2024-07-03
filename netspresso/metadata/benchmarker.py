@@ -9,6 +9,7 @@ from netspresso.enums import (
     Status,
     TaskType,
 )
+from netspresso.metadata.common import ExceptionDetail
 
 
 @dataclass
@@ -51,3 +52,9 @@ class BenchmarkerMetadata:
     input_model_path: str = ""
     benchmark_task_info: BenchmarkTaskInfo = field(default_factory=BenchmarkTaskInfo)
     benchmark_result: BenchmarkResult = field(default_factory=BenchmarkResult)
+
+    def update_message(self, exception_detail):
+        if isinstance(exception_detail, str):
+            self.message.message = exception_detail
+        else:
+            self.message = ExceptionDetail(**exception_detail)

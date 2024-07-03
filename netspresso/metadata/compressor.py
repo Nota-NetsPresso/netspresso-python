@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 
 from netspresso.enums.metadata import Status, TaskType
 from netspresso.enums.model import DataType, Framework
-from netspresso.metadata.common import AvailableOption, InputShape
+from netspresso.metadata.common import AvailableOption, ExceptionDetail, InputShape
 from netspresso.metadata.trainer import TrainingInfo
 
 
@@ -46,7 +46,7 @@ class Results:
 @dataclass
 class CompressorMetadata:
     status: Status = Status.IN_PROGRESS
-    message: Dict = field(default_factory=dict)
+    message: ExceptionDetail = field(default_factory=ExceptionDetail)
     task_type: TaskType = TaskType.COMPRESS
     input_model_path: str = ""
     compressed_model_path: str = ""
@@ -61,6 +61,12 @@ class CompressorMetadata:
     def asdict(self) -> Dict:
         _dict = json.loads(json.dumps(asdict(self)))
         return _dict
+
+    def update_message(self, exception_detail):
+        if isinstance(exception_detail, str):
+            self.message.message = exception_detail
+        else:
+            self.message = ExceptionDetail(**exception_detail)
 
     def update_status(self, status: Status):
         self.status = status

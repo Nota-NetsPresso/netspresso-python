@@ -19,7 +19,6 @@ from netspresso.enums.device import (
     SoftwareVersion,
 )
 from netspresso.metadata.benchmarker import BenchmarkerMetadata
-from netspresso.metadata.common import ErrorFormat
 from netspresso.utils import FileHandler, check_credit_balance
 from netspresso.utils.metadata import MetadataHandler
 
@@ -198,7 +197,7 @@ class BenchmarkerV2:
         except Exception as e:
             logger.error(f"Benchmark failed. Error: {e}")
             benchmarker_metadata.status = Status.ERROR
-            benchmarker_metadata.message = ErrorFormat(raw_message=e.args[0]).asdict()
+            benchmarker_metadata.update_message(exception_detail=e.args[0])
             metadatas[-1] = asdict(benchmarker_metadata)
             MetadataHandler.save_json(
                 data=metadatas,

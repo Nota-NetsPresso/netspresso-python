@@ -62,3 +62,24 @@ class ErrorFormat:
     def asdict(self) -> Dict:
         _dict = {k: v for k, v in asdict(self).items() if k != 'raw_message'}
         return _dict
+
+
+@dataclass
+class LinkInfo:
+    type: str
+    value: str
+
+
+@dataclass
+class AdditionalData:
+    origin: Optional[str] = ""
+    error_log: Optional[str] = ""
+    link: Optional[LinkInfo] = None
+
+
+@dataclass
+class ExceptionDetail:
+    data: Optional[AdditionalData] = field(default_factory=AdditionalData)
+    error_code: Optional[str] = ""
+    name: Optional[str] = ""
+    message: Optional[str] = ""
