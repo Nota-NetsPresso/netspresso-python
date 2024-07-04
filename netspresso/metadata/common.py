@@ -1,9 +1,9 @@
-from dataclasses import asdict, dataclass, field
 import json
+from dataclasses import asdict, dataclass, field
 from typing import Dict, List, Optional
 
-from netspresso.enums.metadata import Status
 from netspresso.enums.device import DeviceName, HardwareType, SoftwareVersion
+from netspresso.enums.metadata import Status
 from netspresso.enums.model import DataType, Framework
 
 

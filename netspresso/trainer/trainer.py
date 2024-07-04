@@ -363,7 +363,7 @@ class Trainer:
 
             if field_type == List:
                 transform.size = [self.img_size, self.img_size]
-            elif field_type == int:
+            elif isinstance(field_type, int):
                 transform.size = self.img_size
 
         return transforms
@@ -393,11 +393,8 @@ class Trainer:
         if training_summary.get("success"):
             status = Status.COMPLETED
         else:
-            if training_summary.get("error_stat", None) is None:
-                status = Status.STOPPED
-            else:
-                status = Status.ERROR
-        
+            status = Status.STOPPED if training_summary.get("error_stat", None) is None else Status.ERROR
+
         return status
 
     def train(self, gpus: str, project_name: str, output_dir: Optional[str] = "./outputs") -> TrainerMetadata:
