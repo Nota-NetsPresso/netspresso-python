@@ -3,7 +3,7 @@ from dataclasses import asdict, dataclass, field
 from typing import Dict, List
 
 from netspresso.enums.metadata import Status, TaskType
-from netspresso.metadata.common import AvailableOption, InputShape
+from netspresso.metadata.common import AvailableOption, ExceptionDetail, InputShape
 
 
 @dataclass
@@ -25,7 +25,7 @@ class TrainingInfo:
 @dataclass
 class TrainerMetadata:
     status: Status = Status.IN_PROGRESS
-    message: str = ""
+    message: ExceptionDetail = field(default_factory=ExceptionDetail)
     task_type: TaskType = TaskType.TRAIN
     logging_dir: str = ""
     best_fx_model_path: str = ""
@@ -42,6 +42,12 @@ class TrainerMetadata:
 
     def update_status(self, status: Status):
         self.status = status
+
+    def update_message(self, exception_detail):
+        if isinstance(exception_detail, str):
+            self.message.message = exception_detail
+        else:
+            self.message = ExceptionDetail(**exception_detail)
 
     def update_model_info(self, task, model, dataset, input_shapes):
         self.model_info.task = task
