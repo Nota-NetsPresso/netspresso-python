@@ -1,11 +1,10 @@
 from dataclasses import asdict, dataclass, field
-from typing import Dict, List, Optional, Union
+import json
+from typing import Dict, List, Optional
 
+from netspresso.enums.metadata import Status
 from netspresso.enums.device import DeviceName, HardwareType, SoftwareVersion
-from netspresso.enums.model import (
-    DataType,
-    Framework,
-)
+from netspresso.enums.model import DataType, Framework
 
 
 @dataclass
@@ -45,25 +44,6 @@ class AvailableOption:
     devices: List[DeviceInfo] = field(default_factory=list)
 
 
-
-@dataclass
-class ErrorFormat:
-    raw_message: Union[str, Dict] = field(repr=False, compare=False)
-    message: Optional[str] = ""
-    error_log: Optional[str] = ""
-
-    def __post_init__(self):
-        if isinstance(self.raw_message, str):
-            self.message = self.raw_message
-        else:
-            self.message = self.raw_message["message"]
-            self.error_log = self.raw_message["data"]["error_log"]
-
-    def asdict(self) -> Dict:
-        _dict = {k: v for k, v in asdict(self).items() if k != 'raw_message'}
-        return _dict
-
-
 @dataclass
 class LinkInfo:
     type: str
@@ -83,3 +63,22 @@ class ExceptionDetail:
     error_code: Optional[str] = ""
     name: Optional[str] = ""
     message: Optional[str] = ""
+
+
+@dataclass
+class BaseMetadata:
+    status: Status = Status.IN_PROGRESS
+    message: ExceptionDetail = field(default_factory=ExceptionDetail)
+
+    def asdict(self) -> Dict:
+        _dict = json.loads(json.dumps(asdict(self)))
+        return _dict
+
+    def update_message(self, exception_detail):
+        if isinstance(exception_detail, str):
+            self.message.message = exception_detail
+        else:
+            self.message = ExceptionDetail(**exception_detail)
+
+    def update_status(self, status: Status):
+        self.status = status

@@ -6,10 +6,9 @@ from netspresso.enums import (
     DeviceName,
     Framework,
     SoftwareVersion,
-    Status,
     TaskType,
 )
-from netspresso.metadata.common import AvailableOption, ExceptionDetail, ModelInfo
+from netspresso.metadata.common import AvailableOption, BaseMetadata, ModelInfo
 
 
 @dataclass
@@ -29,18 +28,10 @@ class ConvertInfo:
 
 
 @dataclass
-class ConverterMetadata:
-    status: Status = Status.IN_PROGRESS
-    message: str = ""
+class ConverterMetadata(BaseMetadata):
     task_type: TaskType = TaskType.CONVERT
     input_model_path: str = ""
     converted_model_path: str = ""
     model_info: ModelInfo = field(default_factory=ModelInfo)
     convert_task_info: ConvertInfo = field(default_factory=ConvertInfo)
     available_options: List[AvailableOption] = field(default_factory=list)
-
-    def update_message(self, exception_detail):
-        if isinstance(exception_detail, str):
-            self.message.message = exception_detail
-        else:
-            self.message = ExceptionDetail(**exception_detail)

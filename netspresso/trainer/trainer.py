@@ -455,7 +455,6 @@ class Trainer:
             logging=configs.logging,
             environment=configs.environment,
         )
-        import ipdb; ipdb.set_trace()
         training_summary = FileHandler.load_json(file_path=logging_dir / "training_summary.json")
         FileHandler.remove_folder(configs.temp_folder)
         logger.info(f"Removed {configs.temp_folder} folder.")

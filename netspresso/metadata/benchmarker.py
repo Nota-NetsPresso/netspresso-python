@@ -6,10 +6,9 @@ from netspresso.enums import (
     DeviceName,
     HardwareType,
     SoftwareVersion,
-    Status,
     TaskType,
 )
-from netspresso.metadata.common import ExceptionDetail
+from netspresso.metadata.common import BaseMetadata
 
 
 @dataclass
@@ -45,16 +44,8 @@ class BenchmarkEnvironment:
 
 
 @dataclass
-class BenchmarkerMetadata:
-    status: Status = Status.IN_PROGRESS
-    message: str = ""
+class BenchmarkerMetadata(BaseMetadata):
     task_type: TaskType = TaskType.BENCHMARK
     input_model_path: str = ""
     benchmark_task_info: BenchmarkTaskInfo = field(default_factory=BenchmarkTaskInfo)
     benchmark_result: BenchmarkResult = field(default_factory=BenchmarkResult)
-
-    def update_message(self, exception_detail):
-        if isinstance(exception_detail, str):
-            self.message.message = exception_detail
-        else:
-            self.message = ExceptionDetail(**exception_detail)
