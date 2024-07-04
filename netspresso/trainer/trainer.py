@@ -363,7 +363,7 @@ class Trainer:
 
             if field_type == List:
                 transform.size = [self.img_size, self.img_size]
-            elif field_type == int:
+            elif isinstance(field_type, int):
                 transform.size = self.img_size
 
         return transforms
@@ -388,6 +388,14 @@ class Trainer:
         available_options = options_response.data
 
         return available_options
+
+    def _check_status(self, training_summary):
+        if training_summary.get("success"):
+            status = Status.COMPLETED
+        else:
+            status = Status.STOPPED if training_summary.get("error_stat", None) is None else Status.ERROR
+
+        return status
 
     def train(self, gpus: str, project_name: str, output_dir: Optional[str] = "./outputs") -> TrainerMetadata:
         """Train the model with the specified configuration.
@@ -444,11 +452,7 @@ class Trainer:
             logging=configs.logging,
             environment=configs.environment,
         )
-        training_summary_path = logging_dir / "training_summary.json"
-        training_summary = FileHandler.load_json(file_path=training_summary_path)
-        is_success = training_summary["success"]
-        status = Status.COMPLETED if is_success else Status.STOPPED
-
+        training_summary = FileHandler.load_json(file_path=logging_dir / "training_summary.json")
         FileHandler.remove_folder(configs.temp_folder)
         logger.info(f"Removed {configs.temp_folder} folder.")
 
@@ -459,6 +463,8 @@ class Trainer:
         best_fx_paths = list(Path(destination_folder).glob("*best_fx.pt"))
         best_onnx_paths = list(Path(destination_folder).glob("*best.onnx"))
         hparams_path = destination_folder / "hparams.yaml"
+        status = self._check_status(training_summary)
+        error_stat = training_summary.get("error_stat", "")
 
         available_options = self._get_available_options()
 
@@ -469,6 +475,7 @@ class Trainer:
         metadata.update_training_result(training_summary=training_summary)
         metadata.update_hparams(hparams=hparams_path.resolve().as_posix())
         metadata.update_status(status=status)
+        metadata.update_message(exception_detail=error_stat)
         metadata.update_available_options(available_options)
 
         MetadataHandler.save_json(data=metadata.asdict(), folder_path=destination_folder)

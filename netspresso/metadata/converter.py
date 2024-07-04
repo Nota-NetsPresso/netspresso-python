@@ -6,10 +6,9 @@ from netspresso.enums import (
     DeviceName,
     Framework,
     SoftwareVersion,
-    Status,
     TaskType,
 )
-from netspresso.metadata.common import AvailableOption, ModelInfo
+from netspresso.metadata.common import AvailableOption, BaseMetadata, ModelInfo
 
 
 @dataclass
@@ -29,9 +28,7 @@ class ConvertInfo:
 
 
 @dataclass
-class ConverterMetadata:
-    status: Status = Status.IN_PROGRESS
-    message: str = ""
+class ConverterMetadata(BaseMetadata):
     task_type: TaskType = TaskType.CONVERT
     input_model_path: str = ""
     converted_model_path: str = ""

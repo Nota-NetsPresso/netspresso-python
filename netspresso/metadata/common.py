@@ -1,11 +1,10 @@
-from dataclasses import dataclass, field
-from typing import List
+import json
+from dataclasses import asdict, dataclass, field
+from typing import Dict, List, Optional
 
 from netspresso.enums.device import DeviceName, HardwareType, SoftwareVersion
-from netspresso.enums.model import (
-    DataType,
-    Framework,
-)
+from netspresso.enums.metadata import Status
+from netspresso.enums.model import DataType, Framework
 
 
 @dataclass
@@ -43,3 +42,43 @@ class AvailableOption:
     framework: Framework = ""
     display_framework: str = ""
     devices: List[DeviceInfo] = field(default_factory=list)
+
+
+@dataclass
+class LinkInfo:
+    type: str
+    value: str
+
+
+@dataclass
+class AdditionalData:
+    origin: Optional[str] = ""
+    error_log: Optional[str] = ""
+    link: Optional[LinkInfo] = None
+
+
+@dataclass
+class ExceptionDetail:
+    data: Optional[AdditionalData] = field(default_factory=AdditionalData)
+    error_code: Optional[str] = ""
+    name: Optional[str] = ""
+    message: Optional[str] = ""
+
+
+@dataclass
+class BaseMetadata:
+    status: Status = Status.IN_PROGRESS
+    message: ExceptionDetail = field(default_factory=ExceptionDetail)
+
+    def asdict(self) -> Dict:
+        _dict = json.loads(json.dumps(asdict(self)))
+        return _dict
+
+    def update_message(self, exception_detail):
+        if isinstance(exception_detail, str):
+            self.message.message = exception_detail
+        else:
+            self.message = ExceptionDetail(**exception_detail)
+
+    def update_status(self, status: Status):
+        self.status = status

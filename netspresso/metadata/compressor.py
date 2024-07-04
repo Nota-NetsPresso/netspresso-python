@@ -1,10 +1,9 @@
-import json
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
-from netspresso.enums.metadata import Status, TaskType
+from netspresso.enums.metadata import TaskType
 from netspresso.enums.model import DataType, Framework
-from netspresso.metadata.common import AvailableOption, InputShape
+from netspresso.metadata.common import AvailableOption, BaseMetadata, InputShape
 from netspresso.metadata.trainer import TrainingInfo
 
 
@@ -44,9 +43,7 @@ class Results:
 
 
 @dataclass
-class CompressorMetadata:
-    status: Status = Status.IN_PROGRESS
-    message: str = ""
+class CompressorMetadata(BaseMetadata):
     task_type: TaskType = TaskType.COMPRESS
     input_model_path: str = ""
     compressed_model_path: str = ""
@@ -57,13 +54,6 @@ class CompressorMetadata:
     compression_info: CompressionInfo = field(default_factory=CompressionInfo)
     results: Results = field(default_factory=Results)
     available_options: List[AvailableOption] = field(default_factory=list)
-
-    def asdict(self) -> Dict:
-        _dict = json.loads(json.dumps(asdict(self)))
-        return _dict
-
-    def update_status(self, status: Status):
-        self.status = status
 
     def update_is_retrainable(self, is_retrainable):
         self.is_retrainable = is_retrainable

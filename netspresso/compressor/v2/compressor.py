@@ -1,4 +1,5 @@
 import sys
+from dataclasses import asdict
 from pathlib import Path
 from typing import Dict, List, Optional
 from urllib import request
@@ -626,6 +627,7 @@ class CompressorV2:
         except Exception as e:
             logger.error(f"Automatic compression failed. Error: {e}")
             metadata.update_status(status=Status.ERROR)
+            metadata.update_message(exception_detail=e.args[0])
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
             raise e
 

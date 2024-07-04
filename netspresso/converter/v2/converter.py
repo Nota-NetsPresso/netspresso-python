@@ -220,6 +220,7 @@ class ConverterV2:
         except Exception as e:
             logger.error(f"Convert failed. Error: {e}")
             converter_metadata.status = Status.ERROR
+            converter_metadata.update_message(exception_detail=e.args[0])
             MetadataHandler.save_json(
                 data=asdict(converter_metadata), folder_path=output_dir
             )
