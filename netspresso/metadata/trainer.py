@@ -24,7 +24,7 @@ class TrainingInfo:
 @dataclass
 class TrainerMetadata(BaseMetadata):
     task_type: TaskType = TaskType.TRAIN
-    logging_dir: str = ""
+    output_dir: str = ""
     best_fx_model_path: str = ""
     best_onnx_model_path: str = ""
     hparams: str = ""
@@ -48,8 +48,8 @@ class TrainerMetadata(BaseMetadata):
     def update_training_result(self, training_summary):
         self.traning_result = training_summary
 
-    def update_logging_dir(self, logging_dir):
-        self.logging_dir = logging_dir
+    def update_output_dir(self, output_dir):
+        self.output_dir = output_dir
 
     def update_best_fx_model_path(self, best_fx_model_path):
         self.best_fx_model_path = best_fx_model_path
