@@ -420,7 +420,7 @@ class Trainer:
         destination_folder = Path(output_dir) / project_name
         destination_folder = FileHandler.create_unique_folder(folder_path=destination_folder)
         metadata = TrainerMetadata()
-        metadata.update_logging_dir(logging_dir=Path(destination_folder).resolve().as_posix())
+        metadata.update_output_dir(output_dir=Path(destination_folder).resolve().as_posix())
         metadata.update_model_info(
             task=self.task,
             model=self.model.name,
