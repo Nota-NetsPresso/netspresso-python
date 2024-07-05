@@ -221,6 +221,7 @@ class Trainer:
             ValueError: If the specified model is not supported for the current task.
         """
 
+        self.model_name = model_name
         model = self._get_available_models().get(model_name)
         self.img_size = img_size
 
@@ -397,6 +398,7 @@ class Trainer:
 
         return status
 
+
     def train(self, gpus: str, project_name: str, output_dir: Optional[str] = "./outputs") -> TrainerMetadata:
         """Train the model with the specified configuration.
 
@@ -413,6 +415,7 @@ class Trainer:
         self._validate_config()
         self._apply_img_size()
 
+        project_name = project_name if project_name else f"{self.task}_{self.model_name}".lower()
         self.logging.output_dir = output_dir
         destination_folder = Path(output_dir) / project_name
         destination_folder = FileHandler.create_unique_folder(folder_path=destination_folder)
