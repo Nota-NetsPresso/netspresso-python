@@ -296,6 +296,7 @@
 <span class="sd">            ValueError: If the specified model is not supported for the current task.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_available_models</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">img_size</span> <span class="o">=</span> <span class="n">img_size</span>
 
@@ -472,6 +473,7 @@
 
         <span class="k">return</span> <span class="n">status</span>
 
+
 <div class="viewcode-block" id="Trainer.train"><a class="viewcode-back" href="../../../description/api/trainer/train.html#netspresso.trainer.trainer.Trainer.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gpus</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">project_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;./outputs&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrainerMetadata</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Train the model with the specified configuration.</span>
 
@@ -488,6 +490,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_config</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_apply_img_size</span><span class="p">()</span>
 
+        <span class="n">project_name</span> <span class="o">=</span> <span class="n">project_name</span> <span class="k">if</span> <span class="n">project_name</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">output_dir</span> <span class="o">=</span> <span class="n">output_dir</span>
         <span class="n">destination_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span> <span class="o">/</span> <span class="n">project_name</span>
         <span class="n">destination_folder</span> <span class="o">=</span> <span class="n">FileHandler</span><span class="o">.</span><span class="n">create_unique_folder</span><span class="p">(</span><span class="n">folder_path</span><span class="o">=</span><span class="n">destination_folder</span><span class="p">)</span>
