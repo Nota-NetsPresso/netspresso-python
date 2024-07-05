@@ -69,6 +69,8 @@ class BenchmarkTask:
     def to(self) -> BenchmarkTaskInfo:
         device_info = self.benchmark_task_option.target_device
         benchmark_task_info = BenchmarkTaskInfo()
+        benchmark_task_info.framework = self.benchmark_task_option.framework
+        benchmark_task_info.display_framework = self.benchmark_task_option.display_framework
         benchmark_task_info.benchmark_task_uuid = self.benchmark_task_id
         benchmark_task_info.device_name = device_info.device_name
         benchmark_task_info.display_device_name = device_info.display_device_name

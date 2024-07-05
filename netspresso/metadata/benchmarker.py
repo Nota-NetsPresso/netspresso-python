@@ -4,6 +4,7 @@ from typing import List
 from netspresso.enums import (
     DataType,
     DeviceName,
+    Framework,
     HardwareType,
     SoftwareVersion,
     TaskType,
@@ -14,6 +15,8 @@ from netspresso.metadata.common import BaseMetadata
 @dataclass
 class BenchmarkTaskInfo:
     benchmark_task_uuid: str = ""
+    framework: Framework = ""
+    display_framework: str = ""
     device_name: DeviceName = ""
     display_device_name: str = ""
     display_brand_name: str = ""
