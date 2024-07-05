@@ -1,11 +1,11 @@
 from typing import Optional, Union
 
-from netspresso.benchmarker import Benchmarker, BenchmarkerV2
+from netspresso.benchmarker import BenchmarkerV2
 from netspresso.clients.auth import TokenHandler, auth_client
 from netspresso.clients.auth.response_body import UserResponse
 from netspresso.clients.tao import TAOTokenHandler
-from netspresso.compressor import Compressor, CompressorV2
-from netspresso.converter import Converter, ConverterV2
+from netspresso.compressor import CompressorV2
+from netspresso.converter import ConverterV2
 from netspresso.enums import Task
 from netspresso.tao import TAOTrainer
 from netspresso.trainer import Trainer
@@ -50,14 +50,6 @@ class NetsPresso:
         """
         return Trainer(token_handler=self.token_handler, task=task, yaml_path=yaml_path)
 
-    def compressor(self) -> Compressor:
-        """Initialize and return a Compressor instance.
-
-        Returns:
-            Compressor: Initialized Compressor instance.
-        """
-        return Compressor(token_handler=self.token_handler)
-
     def compressor_v2(self) -> CompressorV2:
         """Initialize and return a Compressor instance.
 
@@ -66,14 +58,6 @@ class NetsPresso:
         """
         return CompressorV2(token_handler=self.token_handler)
 
-    def converter(self) -> Converter:
-        """Initialize and return a Converter instance.
-
-        Returns:
-            Converter: Initialized Converter instance.
-        """
-        return Converter(token_handler=self.token_handler, user_info=self.user_info)
-
     def converter_v2(self) -> ConverterV2:
         """Initialize and return a Converter instance.
 
@@ -81,14 +65,6 @@ class NetsPresso:
             Converter: Initialized Converter instance.
         """
         return ConverterV2(token_handler=self.token_handler, user_info=self.user_info)
-
-    def benchmarker(self) -> Benchmarker:
-        """Initialize and return a Benchmarker instance.
-
-        Returns:
-            Benchmarker: Initialized Benchmarker instance.
-        """
-        return Benchmarker(token_handler=self.token_handler, user_info=self.user_info)
 
     def benchmarker_v2(self) -> BenchmarkerV2:
         """Initialize and return a Benchmarker instance.
