@@ -168,7 +168,8 @@ Example
 
 .. code-block:: python
 
-    from netspresso.enums import Policy, LayerNorm, GroupPolicy, Options
+    from netspresso.enums import Policy, LayerNorm, GroupPolicy
+    from netspresso.clients.compressor.v2.schemas import Options
 
     OPTIONS = Options(
         policy=Policy.AVERAGE,
@@ -195,7 +196,8 @@ Example
 .. code-block:: python
 
     from netspresso import NetsPresso
-    from netspresso.enums import CompressionMethod, Policy, LayerNorm, GroupPolicy, Options
+    from netspresso.enums import CompressionMethod, Policy, LayerNorm, GroupPolicy
+    from netspresso.clients.compressor.v2.schemas import Options
 
 
     netspresso = NetsPresso(email="YOUR_EMAIL", password="YOUR_PASSWORD")
@@ -336,13 +338,14 @@ Example
     )
 
 
-Pull Example
+Full Example
 ~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
     from netspresso import NetsPresso
-    from netspresso.enums import CompressionMethod, GroupPolicy, LayerNorm, Options, Policy
+    from netspresso.enums import CompressionMethod, GroupPolicy, LayerNorm, Policy
+    from netspresso.clients.compressor.v2.schemas import Options
 
 
     netspresso = NetsPresso(email="YOUR_EMAIL", password="YOUR_PASSWORD")
@@ -358,7 +361,7 @@ Pull Example
 
     # 3. Select compression method
     compression_info = compressor.select_compression_method(
-        model_id=model.model_id,
+        model_id=model.ai_model_id,
         compression_method=CompressionMethod.PR_L2,
         options=Options(
             policy=Policy.AVERAGE,
