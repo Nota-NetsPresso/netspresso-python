@@ -86,7 +86,7 @@ class BenchmarkerV2:
             folder_path = Path(input_model_path).parent
 
             benchmarker_metadata = BenchmarkerMetadata()
-            benchmarker_metadata.input_model_path = input_model_path
+            benchmarker_metadata.input_model_path = Path(input_model_path).resolve().as_posix()
             metadatas = []
 
             file_path = folder_path / f"{file_name}.json"
@@ -197,6 +197,7 @@ class BenchmarkerV2:
         except Exception as e:
             logger.error(f"Benchmark failed. Error: {e}")
             benchmarker_metadata.status = Status.ERROR
+            benchmarker_metadata.update_message(exception_detail=e.args[0])
             metadatas[-1] = asdict(benchmarker_metadata)
             MetadataHandler.save_json(
                 data=metadatas,

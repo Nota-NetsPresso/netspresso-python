@@ -1,9 +1,8 @@
-import json
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from typing import Dict, List
 
-from netspresso.enums.metadata import Status, TaskType
-from netspresso.metadata.common import AvailableOption, InputShape
+from netspresso.enums.metadata import TaskType
+from netspresso.metadata.common import AvailableOption, BaseMetadata, InputShape
 
 
 @dataclass
@@ -23,11 +22,9 @@ class TrainingInfo:
 
 
 @dataclass
-class TrainerMetadata:
-    status: Status = Status.IN_PROGRESS
-    message: str = ""
+class TrainerMetadata(BaseMetadata):
     task_type: TaskType = TaskType.TRAIN
-    logging_dir: str = ""
+    output_dir: str = ""
     best_fx_model_path: str = ""
     best_onnx_model_path: str = ""
     hparams: str = ""
@@ -35,13 +32,6 @@ class TrainerMetadata:
     training_info: TrainingInfo = field(default_factory=TrainingInfo)
     traning_result: Dict = field(default_factory=dict)
     available_options: List[AvailableOption] = field(default_factory=list)
-
-    def asdict(self) -> Dict:
-        _dict = json.loads(json.dumps(asdict(self)))
-        return _dict
-
-    def update_status(self, status: Status):
-        self.status = status
 
     def update_model_info(self, task, model, dataset, input_shapes):
         self.model_info.task = task
@@ -58,8 +48,8 @@ class TrainerMetadata:
     def update_training_result(self, training_summary):
         self.traning_result = training_summary
 
-    def update_logging_dir(self, logging_dir):
-        self.logging_dir = logging_dir
+    def update_output_dir(self, output_dir):
+        self.output_dir = output_dir
 
     def update_best_fx_model_path(self, best_fx_model_path):
         self.best_fx_model_path = best_fx_model_path

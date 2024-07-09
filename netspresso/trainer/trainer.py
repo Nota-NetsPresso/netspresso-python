@@ -221,6 +221,7 @@ class Trainer:
             ValueError: If the specified model is not supported for the current task.
         """
 
+        self.model_name = model_name
         model = self._get_available_models().get(model_name)
         self.img_size = img_size
 
@@ -363,7 +364,7 @@ class Trainer:
 
             if field_type == List:
                 transform.size = [self.img_size, self.img_size]
-            elif field_type == int:
+            elif isinstance(field_type, int):
                 transform.size = self.img_size
 
         return transforms
@@ -389,6 +390,15 @@ class Trainer:
 
         return available_options
 
+    def _check_status(self, training_summary):
+        if training_summary.get("success"):
+            status = Status.COMPLETED
+        else:
+            status = Status.STOPPED if training_summary.get("error_stat", None) is None else Status.ERROR
+
+        return status
+
+
     def train(self, gpus: str, project_name: str, output_dir: Optional[str] = "./outputs") -> TrainerMetadata:
         """Train the model with the specified configuration.
 
@@ -405,11 +415,12 @@ class Trainer:
         self._validate_config()
         self._apply_img_size()
 
+        project_name = project_name if project_name else f"{self.task}_{self.model_name}".lower()
         self.logging.output_dir = output_dir
         destination_folder = Path(output_dir) / project_name
         destination_folder = FileHandler.create_unique_folder(folder_path=destination_folder)
         metadata = TrainerMetadata()
-        metadata.update_logging_dir(logging_dir=destination_folder)
+        metadata.update_output_dir(output_dir=Path(destination_folder).resolve().as_posix())
         metadata.update_model_info(
             task=self.task,
             model=self.model.name,
@@ -444,11 +455,7 @@ class Trainer:
             logging=configs.logging,
             environment=configs.environment,
         )
-        training_summary_path = logging_dir / "training_summary.json"
-        training_summary = FileHandler.load_json(file_path=training_summary_path)
-        is_success = training_summary["success"]
-        status = Status.COMPLETED if is_success else Status.STOPPED
-
+        training_summary = FileHandler.load_json(file_path=logging_dir / "training_summary.json")
         FileHandler.remove_folder(configs.temp_folder)
         logger.info(f"Removed {configs.temp_folder} folder.")
 
@@ -459,16 +466,19 @@ class Trainer:
         best_fx_paths = list(Path(destination_folder).glob("*best_fx.pt"))
         best_onnx_paths = list(Path(destination_folder).glob("*best.onnx"))
         hparams_path = destination_folder / "hparams.yaml"
+        status = self._check_status(training_summary)
+        error_stat = training_summary.get("error_stat", "")
 
         available_options = self._get_available_options()
 
         if best_fx_paths:
-            metadata.update_best_fx_model_path(best_fx_model_path=best_fx_paths[0].as_posix())
+            metadata.update_best_fx_model_path(best_fx_model_path=best_fx_paths[0].resolve().as_posix())
         if best_onnx_paths:
-            metadata.update_best_onnx_model_path(best_onnx_model_path=best_onnx_paths[0].as_posix())
+            metadata.update_best_onnx_model_path(best_onnx_model_path=best_onnx_paths[0].resolve().as_posix())
         metadata.update_training_result(training_summary=training_summary)
-        metadata.update_hparams(hparams=hparams_path.as_posix())
+        metadata.update_hparams(hparams=hparams_path.resolve().as_posix())
         metadata.update_status(status=status)
+        metadata.update_message(exception_detail=error_stat)
         metadata.update_available_options(available_options)
 
         MetadataHandler.save_json(data=metadata.asdict(), folder_path=destination_folder)

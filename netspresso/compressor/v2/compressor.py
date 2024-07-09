@@ -1,4 +1,5 @@
 import sys
+from dataclasses import asdict
 from pathlib import Path
 from typing import Dict, List, Optional
 from urllib import request
@@ -400,7 +401,7 @@ class CompressorV2:
             )
             metadata.update_is_retrainable(is_retrainable=True)
 
-        metadata.update_input_model_path(input_model_path=input_model_path)
+        metadata.update_input_model_path(input_model_path=Path(input_model_path).resolve().as_posix())
         metadata.update_model_info(framework=framework, input_shapes=input_shapes)
 
         return metadata
@@ -626,6 +627,7 @@ class CompressorV2:
         except Exception as e:
             logger.error(f"Automatic compression failed. Error: {e}")
             metadata.update_status(status=Status.ERROR)
+            metadata.update_message(exception_detail=e.args[0])
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
             raise e
 

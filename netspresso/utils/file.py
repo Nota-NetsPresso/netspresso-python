@@ -142,7 +142,7 @@ class FileHandler:
         Returns:
             Tuple[Path, str]: A tuple containing the default model path (Path) and the file extension (str).
         """
-        default_model_path = Path(folder_path) / f"{Path(folder_path).name}.ext"
+        default_model_path = (Path(folder_path) / f"{Path(folder_path).name}.ext").resolve()
         extension = FileHandler.get_extension_by_framework(framework=framework)
 
         return default_model_path, extension
