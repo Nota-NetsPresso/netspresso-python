@@ -16,6 +16,7 @@ class OptionsBase:
             )
 
 
+@dataclass
 class Options(OptionsBase):
     policy: Policy = Policy.AVERAGE
     layer_norm: LayerNorm = LayerNorm.STANDARD_SCORE
@@ -25,6 +26,7 @@ class Options(OptionsBase):
     reverse: bool = False
 
 
+@dataclass
 class RecommendationOptions(Options):
     min_num_of_value: int = 8
 
