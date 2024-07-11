@@ -5,7 +5,6 @@ import pytz
 from loguru import logger
 
 from netspresso.clients.auth.response_body import TokenResponse, UserResponse
-from netspresso.clients.auth.v1.client import AuthClientV1
 from netspresso.clients.auth.v2.client import AuthClientV2
 from netspresso.clients.config import Config, Module
 
@@ -16,14 +15,7 @@ class AuthClient:
         Initialize the UserSession.
         """
 
-        self.api_client = self.__get_api_client_by_env(config=config)
-
-    def __get_api_client_by_env(self, config: Config):
-        # return proper client version by env (cloud : v1, on-prem : v2)
-        if config.is_v1():
-            return AuthClientV1(config=config)
-        else:
-            return AuthClientV2(config=config)
+        self.api_client = AuthClientV2(config=config)
 
     def login(self, email, password, verify_ssl: bool = True) -> TokenResponse:
         return self.api_client.login(

@@ -1,5 +1,3 @@
-from netspresso.clients.compressor.v1.schemas.compression import Options
-
 from .compression import (
     CompressionMethod,
     GroupPolicy,
@@ -43,7 +41,6 @@ __all__ = [
     "HardwareType",
     "TaskStatus",
     "Module",
-    "Options",
     "ConvertAction",
     "ExperimentAction",
     "StepOp",
