@@ -12,7 +12,7 @@ Policy
 
 The policy of the NetsPresso Model Compressor allows for pruning connected filters or neurons identically using the given pruning criteria while preserving the information.
 
-To calculate the importance score of the connected neurons or filters, "Sum", "Average", or "Backward" can be used as policies (for more details, please refer to the following documents).
+To calculate the importance score of the connected neurons or filters, "Sum", "Average" can be used as policies (for more details, please refer to the following documents).
 
 Sum
 +++++++++++++++++++
@@ -29,15 +29,6 @@ Average
     - The "Average" policy calculates its importance score as the average value of the connected filters' importance scores.
 
     .. image:: ../../../../../_static/compression/options/average.png
-        :width: 500
-        :align: center
-
-Backward
-+++++++++++++++++++
-
-    - The "Backward" policy calculates its importance score as the importance of its feature map value after the residual connection.
-
-    .. image:: ../../../../../_static/compression/options/backward.png
         :width: 500
         :align: center
 

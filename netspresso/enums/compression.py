@@ -28,11 +28,10 @@ class RecommendationMethod(str, Enum):
 class Policy(str, Enum):
     SUM = "sum"
     AVERAGE = "average"
-    BACKWARD = "backward"
 
     @classmethod
     def create_literal(cls):
-        return Literal["sum", "average", "backward"]
+        return Literal["sum", "average"]
 
 
 class GroupPolicy(str, Enum):
