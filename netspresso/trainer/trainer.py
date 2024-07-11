@@ -381,6 +381,7 @@ class Trainer:
         self.augmentation.inference = self._change_transforms(self.augmentation.inference)
 
     def _get_available_options(self):
+        self.token_handler.validate_token()
         options_response = launcher_client_v2.converter.read_framework_options(
             access_token=self.token_handler.tokens.access_token,
             framework=Framework.ONNX,
