@@ -51,6 +51,7 @@ class AuthClientV2:
         summarized_credit_response = self.__get_credit(
             access_token=access_token, verify_ssl=verify_ssl
         )
+        logger.info("Successfully got user information")
         return user_response.to(summarized_credit_response=summarized_credit_response)
 
     def __get_user_info(self, access_token, verify_ssl: bool = True) -> UserResponse:
@@ -59,7 +60,6 @@ class AuthClientV2:
             headers = self.__make_bearer_header(token=access_token)
 
             response = Requester.get(url=url, headers=headers)
-            logger.info("Successfully got user information")
             return UserResponse(**response.json())
         except Exception as e:
             logger.error(f"Failed to get user information. Error: {e}")
@@ -69,6 +69,7 @@ class AuthClientV2:
         summarized_credit_response = self.__get_credit(
             access_token=access_token, verify_ssl=verify_ssl
         )
+        logger.info("Successfully got user credit")
         return summarized_credit_response.data.total_credit
 
     def __get_credit(
@@ -85,7 +86,6 @@ class AuthClientV2:
             headers = self.__make_bearer_header(token=access_token)
 
             response = Requester.get(url=url, headers=headers)
-            logger.info("Successfully got user credit")
             return SummarizedCreditResponse(**response.json())
         except Exception as e:
             logger.error(f"Failed to get user credit. Error: {e}")
