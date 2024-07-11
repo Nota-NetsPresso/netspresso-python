@@ -1,3 +1,5 @@
+from dataclasses import asdict
+
 from loguru import logger
 
 from netspresso.clients.auth import response_body
@@ -31,7 +33,7 @@ class AuthClientV2:
             url = f"{self.base_url}/auth/login"
             request_body = LoginRequest(username=email, password=password)
             response = Requester.post_as_form(
-                url=url, request_body=request_body.__dict__
+                url=url, request_body=asdict(request_body)
             )
             token_response = TokenResponse(**response.json())
             logger.info("Login successfully")
@@ -96,7 +98,7 @@ class AuthClientV2:
             request_body = TokenRefreshRequest(**{"refresh_token": refresh_token})
             url = f"{self.base_url}/auth/login_by_refresh_token"
             response = Requester.post_as_json(
-                url=url, request_body=request_body.model_dump()
+                url=url, request_body=asdict(request_body)
             )
             logger.info("Successfully reissued token")
             return TokenResponse(**response.json()).to()
