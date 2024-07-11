@@ -1,5 +1,10 @@
 from dataclasses import asdict
 
+import requests
+from requests_toolbelt import MultipartEncoderMonitor
+from requests_toolbelt.multipart.encoder import MultipartEncoder
+from tqdm import tqdm
+
 from netspresso.clients.compressor.v2.schemas.common import RequestPagination, UploadFile
 from netspresso.clients.compressor.v2.schemas.compression import (
     RequestAutomaticCompressionParams,
@@ -45,14 +50,43 @@ class CompressorAPIClient:
 
         return ResponseModelUrl(**response.json())
 
-    def upload_model(self, request_data: RequestUploadModel, file: UploadFile, access_token: str, verify_ssl: bool = True) -> bool:
+    def upload_model(
+        self, request_data: RequestUploadModel, file: UploadFile, access_token: str, verify_ssl: bool = True
+    ) -> bool:
         url = f"{self.url}/models/upload"
-        response = Requester.post_as_form(
-            url=url,
-            binary=file.files,
-            request_body=asdict(request_data),
-            headers=get_headers(access_token),
+
+        file_info = file.files[0][1]
+        file_name = file_info[0]
+        file_content = file_info[1]
+
+        # Prepare the multipart form data
+        multipart_data = MultipartEncoder(
+            fields={
+                "url": (None, request_data.url, "application/json"),
+                "file": (file_name, file_content, "application/octet-stream"),
+            }
         )
+
+        # Progress callback function
+        progress = tqdm(
+            total=multipart_data.len,
+            unit="B",
+            unit_scale=True,
+            unit_divisor=1024,
+            colour="blue",
+            desc="Uploading model",
+        )
+
+        def progress_callback(monitor):
+            progress.update(monitor.bytes_read - progress.n)
+
+        # Wrap the encoder with MultipartEncoderMonitor
+        monitor = MultipartEncoderMonitor(multipart_data, progress_callback)
+
+        headers = get_headers(access_token)
+        headers["Content-Type"] = monitor.content_type
+
+        response = requests.post(url=url, data=monitor, headers=headers, verify=verify_ssl)
 
         return response.text
 
