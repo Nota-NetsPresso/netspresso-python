@@ -1,4 +1,5 @@
 from dataclasses import asdict
+
 from loguru import logger
 
 from netspresso.clients.auth import response_body
