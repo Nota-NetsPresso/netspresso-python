@@ -43,4 +43,4 @@ class Config:
         self.URI_PREFIX = config_parser[self.MODULE][EndPointProperty.URI_PREFIX]
 
     def is_cloud(self) -> bool:
-        return self.ENVIRONMENT_TYPE == EnvironmentType.V2_DEV_CLOUD
+        return self.ENVIRONMENT_TYPE in [EnvironmentType.V2_PROD_CLOUD, EnvironmentType.V2_STAGING_CLOUD, EnvironmentType.V2_DEV_CLOUD]

@@ -1,3 +1,5 @@
+from dataclasses import asdict
+
 from loguru import logger
 
 from netspresso.clients.auth import response_body
@@ -31,7 +33,7 @@ class AuthClientV2:
             url = f"{self.base_url}/auth/login"
             request_body = LoginRequest(username=email, password=password)
             response = Requester.post_as_form(
-                url=url, request_body=request_body.__dict__
+                url=url, request_body=asdict(request_body)
             )
             token_response = TokenResponse(**response.json())
             logger.info("Login successfully")
@@ -49,6 +51,7 @@ class AuthClientV2:
         summarized_credit_response = self.__get_credit(
             access_token=access_token, verify_ssl=verify_ssl
         )
+        logger.info("Successfully got user information")
         return user_response.to(summarized_credit_response=summarized_credit_response)
 
     def __get_user_info(self, access_token, verify_ssl: bool = True) -> UserResponse:
@@ -57,7 +60,6 @@ class AuthClientV2:
             headers = self.__make_bearer_header(token=access_token)
 
             response = Requester.get(url=url, headers=headers)
-            logger.info("Successfully got user information")
             return UserResponse(**response.json())
         except Exception as e:
             logger.error(f"Failed to get user information. Error: {e}")
@@ -67,6 +69,7 @@ class AuthClientV2:
         summarized_credit_response = self.__get_credit(
             access_token=access_token, verify_ssl=verify_ssl
         )
+        logger.info("Successfully got user credit")
         return summarized_credit_response.data.total_credit
 
     def __get_credit(
@@ -83,7 +86,6 @@ class AuthClientV2:
             headers = self.__make_bearer_header(token=access_token)
 
             response = Requester.get(url=url, headers=headers)
-            logger.info("Successfully got user credit")
             return SummarizedCreditResponse(**response.json())
         except Exception as e:
             logger.error(f"Failed to get user credit. Error: {e}")
@@ -96,7 +98,7 @@ class AuthClientV2:
             request_body = TokenRefreshRequest(**{"refresh_token": refresh_token})
             url = f"{self.base_url}/auth/login_by_refresh_token"
             response = Requester.post_as_json(
-                url=url, request_body=request_body.model_dump()
+                url=url, request_body=asdict(request_body)
             )
             logger.info("Successfully reissued token")
             return TokenResponse(**response.json()).to()

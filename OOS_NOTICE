@@ -28,10 +28,6 @@ loguru
 https://github.com/Delgan/loguru
 MIT License
 
-pydantic
-https://github.com/pydantic/pydantic
-MIT License
-
 pytz
 http://pythonhosted.org/pytz
 MIT License
