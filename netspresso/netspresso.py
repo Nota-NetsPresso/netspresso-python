@@ -2,6 +2,7 @@ import subprocess
 from typing import Optional, Union
 
 from loguru import logger
+
 from netspresso.benchmarker import BenchmarkerV2
 from netspresso.clients.auth import TokenHandler, auth_client
 from netspresso.clients.auth.response_body import UserResponse
@@ -9,10 +10,10 @@ from netspresso.clients.tao import TAOTokenHandler
 from netspresso.compressor import CompressorV2
 from netspresso.converter import ConverterV2
 from netspresso.enums import Task
+from netspresso.qai_hub.benchmarker import QAIHubBenchmarker
+from netspresso.qai_hub.converter import QAIHubConverter
 from netspresso.tao import TAOTrainer
 from netspresso.trainer import Trainer
-from netspresso.qai_hub.converter import QAIHubConverter
-from netspresso.qai_hub.benchmarker import QAIHubBenchmarker
 
 
 class NetsPresso:
@@ -98,7 +99,7 @@ class TAO:
         return TAOTrainer(token_handler=self.token_handler)
 
 
-class QAI_HUB:
+class QAIHub:
     def __init__(self, api_token: str) -> None:
         # Define the command and arguments
         command = 'qai-hub'
