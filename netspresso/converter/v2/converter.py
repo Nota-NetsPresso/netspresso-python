@@ -46,6 +46,8 @@ class ConverterV2:
             e: If an error occurs while getting the conversion task information.
         """
 
+        self.token_handler.validate_token()
+
         try:
             if convert_task.status == TaskStatusForDisplay.ERROR:
                 raise FileNotFoundError(
@@ -166,6 +168,7 @@ class ConverterV2:
             if wait_until_done:
                 while True:
                     # Poll Convert Task status
+                    self.token_handler.validate_token()
                     response = launcher_client_v2.converter.read_task(
                         access_token=self.token_handler.tokens.access_token,
                         task_id=response.data.convert_task_id,
@@ -176,7 +179,6 @@ class ConverterV2:
                         TaskStatusForDisplay.TIMEOUT,
                     ]:
                         break
-                    self.token_handler.validate_token()
                     time.sleep(3)
 
             self._download_converted_model(

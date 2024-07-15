@@ -68,7 +68,7 @@ class ExceptionDetail:
 @dataclass
 class BaseMetadata:
     status: Status = Status.IN_PROGRESS
-    message: ExceptionDetail = field(default_factory=ExceptionDetail)
+    error_detail: ExceptionDetail = field(default_factory=ExceptionDetail)
 
     def asdict(self) -> Dict:
         _dict = json.loads(json.dumps(asdict(self)))
@@ -76,9 +76,9 @@ class BaseMetadata:
 
     def update_message(self, exception_detail):
         if isinstance(exception_detail, str):
-            self.message.message = exception_detail
+            self.error_detail.message = exception_detail
         else:
-            self.message = ExceptionDetail(**exception_detail)
+            self.error_detail = ExceptionDetail(**exception_detail)
 
     def update_status(self, status: Status):
         self.status = status
