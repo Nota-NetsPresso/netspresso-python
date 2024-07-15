@@ -149,6 +149,7 @@ class BenchmarkerV2:
             if wait_until_done:
                 while True:
                     # Poll Benchmark Task status
+                    self.token_handler.validate_token()
                     response = launcher_client_v2.benchmarker.read_task(
                         access_token=self.token_handler.tokens.access_token,
                         task_id=response.data.benchmark_task_id,
@@ -159,7 +160,6 @@ class BenchmarkerV2:
                         TaskStatusForDisplay.TIMEOUT,
                     ]:
                         break
-                    self.token_handler.validate_token()
                     time.sleep(3)
 
             if launcher_client_v2.is_cloud():
