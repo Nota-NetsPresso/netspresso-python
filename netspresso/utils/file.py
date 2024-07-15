@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 from typing import Tuple, Union
 from urllib import request
+from loguru import logger
 
 FRAMEWORK_EXTENSION_MAP = {
     "tensorflow_keras": ".h5",
@@ -67,6 +68,7 @@ class FileHandler:
         """
         if is_folder_check and not FileHandler.check_exists(folder_path=folder_path):
             Path(folder_path).mkdir(parents=parents, exist_ok=exist_ok)
+            logger.info(f"The folder has been created. Local Path: {Path(folder_path)}")
         elif is_folder_check:
             sys.exit(f"This folder already exists. Local Path: {Path(folder_path)}")
 
@@ -75,6 +77,7 @@ class FileHandler:
         folder_path = Path(folder_path)
         if not folder_path.exists():
             folder_path.mkdir(parents=True)
+            logger.info(f"The folder has been created. Local Path: {folder_path.as_posix()}")
         else:
             count = 1
             while True:
@@ -82,6 +85,7 @@ class FileHandler:
                 if not new_folder_path.exists():
                     new_folder_path.mkdir(parents=True)
                     folder_path = new_folder_path
+                    logger.info(f"The folder has been created. Local Path: {folder_path.as_posix()}")
                     break
                 count += 1
 
