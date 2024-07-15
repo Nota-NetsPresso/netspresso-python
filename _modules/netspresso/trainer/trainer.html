@@ -456,6 +456,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">augmentation</span><span class="o">.</span><span class="n">inference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_change_transforms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">augmentation</span><span class="o">.</span><span class="n">inference</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_available_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token_handler</span><span class="o">.</span><span class="n">validate_token</span><span class="p">()</span>
         <span class="n">options_response</span> <span class="o">=</span> <span class="n">launcher_client_v2</span><span class="o">.</span><span class="n">converter</span><span class="o">.</span><span class="n">read_framework_options</span><span class="p">(</span>
             <span class="n">access_token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token_handler</span><span class="o">.</span><span class="n">tokens</span><span class="o">.</span><span class="n">access_token</span><span class="p">,</span>
             <span class="n">framework</span><span class="o">=</span><span class="n">Framework</span><span class="o">.</span><span class="n">ONNX</span><span class="p">,</span>
