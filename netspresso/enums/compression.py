@@ -6,6 +6,7 @@ class CompressionMethod(str, Enum):
     PR_L2 = "PR_L2"
     PR_GM = "PR_GM"
     PR_NN = "PR_NN"
+    PR_SNP = "PR_SNP"
     PR_ID = "PR_ID"
     FD_TK = "FD_TK"
     FD_CP = "FD_CP"
@@ -13,7 +14,7 @@ class CompressionMethod(str, Enum):
 
     @classmethod
     def create_literal(cls):
-        return Literal["PR_L2", "PR_GM", "PR_NN", "PR_ID", "FD_TK", "FD_CP", "FD_SVD"]
+        return Literal["PR_L2", "PR_GM", "PR_NN", "PR_SNP", "PR_ID", "FD_TK", "FD_CP", "FD_SVD"]
 
 
 class RecommendationMethod(str, Enum):
