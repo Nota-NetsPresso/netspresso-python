@@ -35,7 +35,7 @@ class QAIHubBenchmarker(QAIHubBase):
         name: Optional[str] = None,
         options: str = "",
         retry: bool = True,
-    ) -> InferenceJob | List[InferenceJob]:
+    ) -> Union[InferenceJob, List[InferenceJob]]:
         inference_job = hub.submit_inference_job(
             model=model,
             device=device,
