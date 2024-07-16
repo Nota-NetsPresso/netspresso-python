@@ -26,7 +26,7 @@ from netspresso.clients.compressor.v2.schemas.model import (
     ResponseModelUrl,
 )
 from netspresso.clients.config import Config, Module
-from netspresso.clients.utils.common import get_headers
+from netspresso.clients.utils.common import create_multipart_data, create_progress_func, get_headers, progress_callback
 from netspresso.clients.utils.requester import Requester
 
 
@@ -56,32 +56,12 @@ class CompressorAPIClient:
         url = f"{self.url}/models/upload"
 
         file_info = file.files[0][1]
-        file_name = file_info[0]
-        file_content = file_info[1]
 
-        # Prepare the multipart form data
-        multipart_data = MultipartEncoder(
-            fields={
-                "url": (None, request_data.url, "application/json"),
-                "file": (file_name, file_content, "application/octet-stream"),
-            }
-        )
-
-        # Progress callback function
-        progress = tqdm(
-            total=multipart_data.len,
-            unit="B",
-            unit_scale=True,
-            unit_divisor=1024,
-            colour="blue",
-            desc="Uploading model",
-        )
-
-        def progress_callback(monitor):
-            progress.update(monitor.bytes_read - progress.n)
+        multipart_data = create_multipart_data(request_data.url, file_info)
+        progress = create_progress_func(multipart_data)
 
         # Wrap the encoder with MultipartEncoderMonitor
-        monitor = MultipartEncoderMonitor(multipart_data, progress_callback)
+        monitor = MultipartEncoderMonitor(multipart_data, lambda monitor: progress_callback(monitor, progress))
 
         headers = get_headers(access_token)
         headers["Content-Type"] = monitor.content_type
