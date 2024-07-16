@@ -18,7 +18,7 @@ Compression Ratio
     .. raw:: html
         
         <div align="center">
-            <img src="https://latex.codecogs.com/svg.image?0<&space;ratio&space;\leq&space;1" title="https://latex.codecogs.com/svg.image?0< ratio \leq 1" />
+            <img src="https://latex.codecogs.com/svg.image?0<&space;ratio&space;<&space;1" title="https://latex.codecogs.com/svg.image?0< ratio < 1" />
         </div>
 
 

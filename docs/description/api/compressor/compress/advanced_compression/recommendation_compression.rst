@@ -17,19 +17,21 @@ Compression Method
 
 Available Compression Method
 ++++++++++++++++++++++++++++
-+------------+------------------------------+
-| Name       | Description                  |
-+============+==============================+
-| PR_L2      | L2 Norm Pruning              |
-+------------+------------------------------+
-| PR_GM      | GM Pruning                   |
-+------------+------------------------------+
-| PR_NN      | Nuclear Norm Pruning         |
-+------------+------------------------------+
-| FD_TK      | Tucker Decomposition         |
-+------------+------------------------------+
-| FD_SVD     | Singular Value Decomposition |
-+------------+------------------------------+
++------------+----------------------------------+
+| Name       | Description                      |
++============+==================================+
+| PR_L2      | L2 Norm Pruning                  |
++------------+----------------------------------+
+| PR_GM      | GM Pruning                       |
++------------+----------------------------------+
+| PR_NN      | Nuclear Norm Pruning             |
++------------+----------------------------------+
+| PR_SNP     | Structured Neuron-level Pruning  |
++------------+----------------------------------+
+| FD_TK      | Tucker Decomposition             |
++------------+----------------------------------+
+| FD_SVD     | Singular Value Decomposition     |
++------------+----------------------------------+
 
 Example
 +++++++
@@ -41,7 +43,8 @@ Example
     COMPRESSION_METHOD = CompressionMethod.PR_L2
 
 .. warning::
-    - Nuclear Norm is only supported in the Tensorflow-Keras Framework.
+    - Nuclear Norm is only supported in the Tensorflow-Keras framework.
+    - Structured Neuron-level is only supported in the PyTorch and ONNX frameworks.
 
 .. note::
     - Click on the link to learn more about the information. (:ref:`compression_method_heading`)
@@ -73,7 +76,7 @@ Example
     RECOMMENDATION_METHOD = RecommendationMethod.SLAMP
 
 .. note::
-    - If you selected PR_L2, PR_GM, PR_NN for compression_method
+    - If you selected PR_L2, PR_GM, PR_NN, PR_SNP for compression_method
         - The recommended_method available is **SLAMP**.
     - If you selected FD_TK, FD_SVD for compression_method
         - The recommended_method available is **VBMF**.
@@ -93,7 +96,7 @@ Recommendation Ratio
         .. raw:: html
 
             <div align="center" style="padding: 20px;">
-                <img src="https://latex.codecogs.com/svg.image?0&space;<ratio&space;\leq&space;&space;1&space;" title="https://latex.codecogs.com/svg.image?0 <ratio \leq 1 " />
+                <img src="https://latex.codecogs.com/svg.image?0&space;<ratio&space;&space;<&space;1&space;" title="https://latex.codecogs.com/svg.image?0 <ratio < 1 " />
             </div>
         
         - Click the link for more information. (`SLAMP`_)
@@ -129,7 +132,8 @@ Example
 
 .. code-block:: python
 
-    from netspresso.enums import Policy, LayerNorm, GroupPolicy, Options
+    from netspresso.enums import Policy, LayerNorm, GroupPolicy
+    from netspresso.clients.compressor.v2.schemas import Options
 
     OPTIONS = Options(
         policy=Policy.AVERAGE,
@@ -144,7 +148,7 @@ Example
 
 .. note::
 
-    - This parameter applies only to the Pruning Method (PR_L2, PR_GM, PR_NN).
+    - This parameter applies only to the Pruning Method (PR_L2, PR_GM, PR_NN, PR_SNP).
 
 Example
 -------
