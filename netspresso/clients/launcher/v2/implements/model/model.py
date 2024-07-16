@@ -1,5 +1,8 @@
 from dataclasses import asdict
 
+import requests
+from requests_toolbelt import MultipartEncoderMonitor
+
 from netspresso.clients.launcher.v2.interfaces import ModelInterface
 from netspresso.clients.launcher.v2.schemas import (
     AuthorizationHeader,
@@ -14,6 +17,7 @@ from netspresso.clients.launcher.v2.schemas import (
     ResponseModelUploadUrl,
     UploadFile,
 )
+from netspresso.clients.utils.common import create_multipart_data, create_progress_func, progress_callback
 from netspresso.clients.utils.requester import Requester
 from netspresso.enums import LauncherTask
 
@@ -44,13 +48,21 @@ class ModelAPI(ModelInterface):
         file: UploadFile,
         headers: AuthorizationHeader,
     ) -> str:
-        endpoint = f"{self.model_base_url}/upload"
-        response = Requester().post_as_form(
-            url=endpoint,
-            headers=headers.to_dict(),
-            binary=file.files,
-            request_body=asdict(request_body),
-        )
+        url = f"{self.model_base_url}/upload"
+
+        file_info = file.files[0][1]
+
+        multipart_data = create_multipart_data(request_body.url, file_info)
+        progress = create_progress_func(multipart_data)
+
+        # Wrap the encoder with MultipartEncoderMonitor
+        monitor = MultipartEncoderMonitor(multipart_data, lambda monitor: progress_callback(monitor, progress))
+
+        headers = headers.to_dict()
+        headers["Content-Type"] = monitor.content_type
+
+        response = requests.post(url=url, data=monitor, headers=headers)
+
         return response.text
 
     def validate(
