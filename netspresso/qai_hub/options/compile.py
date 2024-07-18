@@ -23,7 +23,7 @@ class QuantizeFullType(str, Enum):
 
 @dataclass
 class CompileOptions(CommonOptions):
-    target_runtime: Optional[Runtime] = None
+    target_runtime: Optional[Runtime] = Runtime.TFLITE
     output_names: Optional[str] = None
     truncate_64bit_tensors: Optional[bool] = False
     truncate_64bit_io: Optional[bool] = False
