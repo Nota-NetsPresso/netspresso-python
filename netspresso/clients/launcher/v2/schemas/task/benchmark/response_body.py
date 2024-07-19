@@ -52,6 +52,7 @@ class BenchmarkTask:
     input_model_id: str
     input_layer: InputLayer
     status: TaskStatusForDisplay
+    error_log: Optional[dict] = None
     benchmark_task_option: Optional[TaskOption] = None
     benchmark_result: Optional[BenchmarkResult] = None
     benchmark_environment: Optional[BenchmarkEnvironment] = None
