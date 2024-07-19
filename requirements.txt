@@ -9,3 +9,4 @@ PyGithub>=2.1.1
 matplotlib>=3.7.4
 aenum==3.1.15
 requests-toolbelt>=1.0.0
+python-dotenv>=1.0.0

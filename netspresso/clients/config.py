@@ -4,6 +4,7 @@ from enum import Enum
 from pathlib import Path
 
 from loguru import logger
+from dotenv import load_dotenv, find_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent
 config_parser = configparser.ConfigParser()
@@ -22,9 +23,10 @@ class EnvironmentType(str, Enum):
 
 
 class Module(str, Enum):
-    GENERAL = "GENERAL"
+    AUTH = "AUTH"
     COMPRESSOR = "COMPRESSOR"
     LAUNCHER = "LAUNCHER"
+    NP = "NP"
     TAO = "TAO"
 
 
@@ -35,12 +37,22 @@ class EndPointProperty(str, Enum):
 
 
 class Config:
-    def __init__(self, module: Module = Module.GENERAL):
+    def __init__(self, module: Module):
         self.ENVIRONMENT_TYPE = EnvironmentType(DEPLOYMENT_MODE.lower())
         self.MODULE = module
-        self.HOST = config_parser[self.MODULE][EndPointProperty.HOST]
-        self.PORT = int(config_parser[self.MODULE][EndPointProperty.PORT])
-        self.URI_PREFIX = config_parser[self.MODULE][EndPointProperty.URI_PREFIX]
+
+        dotenv_path = find_dotenv(filename="netspresso.env")
+        if dotenv_path:
+            load_dotenv(dotenv_path)
+
+        if self.MODULE == Module.TAO:
+            self.HOST = config_parser[self.MODULE][EndPointProperty.HOST]
+            self.PORT = int(config_parser[self.MODULE][EndPointProperty.PORT])
+            self.URI_PREFIX = config_parser[self.MODULE][EndPointProperty.URI_PREFIX]
+        else:
+            self.HOST = os.environ.get("HOST", config_parser[Module.NP][EndPointProperty.HOST])
+            self.PORT = int(os.environ.get("PORT", config_parser[Module.NP][EndPointProperty.PORT]))
+            self.URI_PREFIX = config_parser[f"NP.{self.MODULE}"][EndPointProperty.URI_PREFIX]
 
     def is_cloud(self) -> bool:
         return self.ENVIRONMENT_TYPE in [EnvironmentType.V2_PROD_CLOUD, EnvironmentType.V2_STAGING_CLOUD, EnvironmentType.V2_DEV_CLOUD]
