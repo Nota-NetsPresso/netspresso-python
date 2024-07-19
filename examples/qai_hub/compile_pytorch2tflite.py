@@ -12,35 +12,33 @@ torch_model = torchvision.models.mobilenet_v2(pretrained=True)
 torch_model.eval()
 
 # Trace model
-input_shape: Tuple[int, ...] = (1, 3, 64, 64)
-example_input = torch.rand(input_shape)
-pt_model = torch.jit.trace(torch_model, example_input)
-
 qai_hub = QAIHub(api_token="660f4ed09d67e9931837db9f52ab48308415d360")
 converter = qai_hub.converter()
 
+input_shape: Tuple[int, ...] = (1, 3, 64, 64)
+# INPUT_SHAPES = [{"batch": 1, "channel": 3, "dimension": [224, 224]}]
 options = CompileOptions(
     target_runtime=Runtime.TFLITE,
 )
 
-# import ipdb; ipdb.set_trace()
-compile_job = converter.convert_model(
-    model="./examples/sample_models/pytorch_model_automatic_0.9.onnx",
+conversion_task = converter.convert_model(
+    input_model_path="./examples/sample_models/pytorch_model_automatic_0.9.onnx",
     output_dir="./outputs/qai_hub/qnn_context_binary",
-    name="MyMobileNet",
-    device=Device(name="Samsung Galaxy S23 (Family)"),
+    target_device_name=Device(name="Samsung Galaxy S23 (Family)"),
     options=options,
     input_shape=input_shape,
 )
-print(compile_job)
 
-benchmarker = qai_hub.benchmarker()
+import ipdb; ipdb.set_trace()
+print(conversion_task)
 
-profile_job = benchmarker.benchmark_model(
-    model=compile_job.get_target_model(),
-    output_dir="./outputs/qai_hub/qnn_context_binary",
-    device=Device("Samsung Galaxy S23 (Family)"),
-)
+# benchmarker = qai_hub.benchmarker()
+
+# profile_job = benchmarker.benchmark_model(
+#     model=conversion_task.converted_model_path,
+#     output_dir="./outputs/qai_hub/qnn_context_binary",
+#     device=Device("Samsung Galaxy S23 (Family)"),
+# )
 
 # input_tensor = np.random.random(input_shape).astype(np.float32)
 

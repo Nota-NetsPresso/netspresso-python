@@ -5,6 +5,20 @@ from typing import Optional
 from netspresso.qai_hub.options.common import CommonOptions
 
 
+class Framework(str, Enum):
+    PYTORCH = "pytorch"
+    ONNX = "onnx"
+    AIMET = "aimet"
+    TENSORFLOW = "tensorflow"
+
+
+class Extension(str, Enum):
+    ONNX = ".onnx"
+    PT = ".pt"
+    AIMET = ".aimet"
+    H5 = ".h5"
+
+
 class Runtime(str, Enum):
     TFLITE = "tflite"
     QNN_LIB_AARCH64_ANDROID = "qnn_lib_aarch64_android"
