@@ -464,7 +464,10 @@ class Trainer:
         FileHandler.move_and_cleanup_folders(source_folder=logging_dir, destination_folder=destination_folder)
         logger.info(f"Files in {logging_dir} were moved to {destination_folder}.")
 
-        best_fx_paths = list(Path(destination_folder).glob("*best_fx.pt"))
+        best_fx_paths_set = set()
+        for pattern in ["*best_fx.pt", "*best.pt"]:
+            best_fx_paths_set.update(destination_folder.glob(pattern))
+        best_fx_paths = list(best_fx_paths_set)
         best_onnx_paths = list(Path(destination_folder).glob("*best.onnx"))
         hparams_path = destination_folder / "hparams.yaml"
         status = self._check_status(training_summary)
