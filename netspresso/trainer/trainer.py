@@ -1,3 +1,4 @@
+import warnings
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -36,6 +37,14 @@ class Trainer:
         """
 
         self.token_handler = token_handler
+        self.deprecated_names = {
+            "MobileNetV3_Small": "MobileNetV3-S",
+            "MobileNetV3_Large": "MobileNetV3-L",
+            "ViT-Tiny": "ViT-T",
+            "MixNet-Small": "MixNet-S",
+            "MixNet-Medium": "MixNet-M",
+            "MixNet-Large": "MixNet-L"
+        }
 
         if (task is not None) == (yaml_path is not None):
             raise ValueError("Either 'task' or 'yaml_path' must be provided, but not both.")
@@ -220,6 +229,15 @@ class Trainer:
         Raises:
             ValueError: If the specified model is not supported for the current task.
         """
+
+        if model_name in self.deprecated_names:
+            warnings.filterwarnings("default", category=DeprecationWarning)
+            warnings.warn(
+                f"The model name '{model_name}' is deprecated and will be removed in a future version. "
+                f"Please use '{self.deprecated_names[model_name]}' instead.",
+                DeprecationWarning
+            )
+            warnings.filterwarnings("ignore", category=DeprecationWarning)
 
         self.model_name = model_name
         model = self._get_available_models().get(model_name)
