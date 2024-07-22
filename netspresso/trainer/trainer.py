@@ -235,7 +235,8 @@ class Trainer:
             warnings.warn(
                 f"The model name '{model_name}' is deprecated and will be removed in a future version. "
                 f"Please use '{self.deprecated_names[model_name]}' instead.",
-                DeprecationWarning
+                DeprecationWarning,
+                stacklevel=2,
             )
             warnings.filterwarnings("ignore", category=DeprecationWarning)
 
