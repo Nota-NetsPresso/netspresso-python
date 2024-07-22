@@ -424,7 +424,7 @@ class Trainer:
         metadata.update_output_dir(output_dir=Path(destination_folder).resolve().as_posix())
         metadata.update_model_info(
             task=self.task,
-            model=self.model.name,
+            model=self.model_name,
             dataset=self.data.name,
             input_shapes=[InputShape(batch=1, channel=3, dimension=[self.img_size, self.img_size])],
         )
