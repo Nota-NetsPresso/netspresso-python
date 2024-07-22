@@ -43,33 +43,32 @@ from netspresso.trainer.models.yolox import (
 CLASSIFICATION_MODELS = {
     "EfficientFormer": ClassificationEfficientFormerModelConfig,
     "MobileNetV3_Small": ClassificationMobileNetV3SmallModelConfig,
+    "MobileNetV3-S": ClassificationMobileNetV3SmallModelConfig,
     "MobileNetV3_Large": ClassificationMobileNetV3LargeModelConfig,
+    "MobileNetV3-L": ClassificationMobileNetV3LargeModelConfig,
     "MobileViT": ClassificationMobileViTModelConfig,
+    "MobileViT-S": ClassificationMobileViTModelConfig,
     "ResNet18": ClassificationResNet18ModelConfig,
     "ResNet34": ClassificationResNet34ModelConfig,
     "ResNet50": ClassificationResNet50ModelConfig,
     "ViT-Tiny": ClassificationViTTinyModelConfig,
+    "ViT-T": ClassificationViTTinyModelConfig,
     "MixNet-S": ClassificationMixNetSmallModelConfig,
     "MixNet-M": ClassificationMixNetMediumModelConfig,
     "MixNet-L": ClassificationMixNetLargeModelConfig,
 }
 
 DETECTION_MODELS = {
-    "EfficientFormer": DetectionEfficientFormerModelConfig,
-    "MobileNetV3_Small": DetectionMobileNetV3SmallModelConfig,
     "YOLOX-S": DetectionYoloXSModelConfig,
     "YOLOX-M": DetectionYoloXMModelConfig,
     "YOLOX-L": DetectionYoloXLModelConfig,
     "YOLOX-X": DetectionYoloXXModelConfig,
-    "ResNet50": DetectionResNet50ModelConfig,
-    "MixNet-S": DetectionMixNetSmallModelConfig,
-    "MixNet-M": DetectionMixNetMediumModelConfig,
-    "MixNet-L": DetectionMixNetLargeModelConfig,
 }
 
 SEGMENTATION_MODELS = {
     "EfficientFormer": SegmentationEfficientFormerModelConfig,
     "MobileNetV3_Small": SegmentationMobileNetV3SmallModelConfig,
+    "MobileNetV3-S": SegmentationMobileNetV3SmallModelConfig,
     "ResNet50": SegmentationResNet50ModelConfig,
     "SegFormer-B0": SegmentationSegFormerB0ModelConfig,
     "MixNet-S": SegmentationMixNetSmallModelConfig,
@@ -80,6 +79,7 @@ SEGMENTATION_MODELS = {
 
 POSEESTIMATION_MODELS = {
     "MobileNetV3_Small": PoseEstimationMobileNetV3SmallModelConfig,
+    "MobileNetV3-S": PoseEstimationMobileNetV3SmallModelConfig,
 }
 
 
