@@ -116,23 +116,25 @@ Compression Method
 
 Available Compression Method
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+------------+------------------------------+
-| Name       | Description                  |
-+============+==============================+
-| PR_L2      | L2 Norm Pruning              |
-+------------+------------------------------+
-| PR_GM      | GM Pruning                   |
-+------------+------------------------------+
-| PR_NN      | Nuclear Norm Pruning         |
-+------------+------------------------------+
-| PR_ID      | Pruning By Index             |
-+------------+------------------------------+
-| FD_TK      | Tucker Decomposition         |
-+------------+------------------------------+
-| FD_SVD     | Singular Value Decomposition |
-+------------+------------------------------+
-| FD_CP      | CP Decomposition             |
-+------------+------------------------------+
++------------+----------------------------------+
+| Name       | Description                      |
++============+==================================+
+| PR_L2      | L2 Norm Pruning                  |
++------------+----------------------------------+
+| PR_GM      | GM Pruning                       |
++------------+----------------------------------+
+| PR_NN      | Nuclear Norm Pruning             |
++------------+----------------------------------+
+| PR_SNP     | Structured Neuron-level Pruning  |
++------------+----------------------------------+
+| PR_ID      | Pruning By Index                 |
++------------+----------------------------------+
+| FD_TK      | Tucker Decomposition             |
++------------+----------------------------------+
+| FD_SVD     | Singular Value Decomposition     |
++------------+----------------------------------+
+| FD_CP      | CP Decomposition                 |
++------------+----------------------------------+
 
 Example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -144,7 +146,8 @@ Example
     COMPRESSION_METHOD = CompressionMethod.PR_L2
 
 .. warning::
-    - Nuclear Norm is only supported in the Tensorflow-Keras Framework.
+    - Nuclear Norm is only supported in the Tensorflow-Keras framework.
+    - Structured Neuron-level is only supported in the PyTorch and ONNX frameworks.
 
 .. note::
 
@@ -162,6 +165,8 @@ Options
 .. autoclass:: netspresso.enums.__init__.GroupPolicy
     :noindex:
 
+.. autoclass:: netspresso.enums.__init__.StepOp
+    :noindex:
 
 Example
 +++++++
@@ -184,7 +189,7 @@ Example
 
 .. note::
 
-    - This parameter applies only to the Pruning Method (PR_L2, PR_GM, PR_NN).
+    - This parameter applies only to the Pruning Method (PR_L2, PR_GM, PR_NN, PR_SNP).
 
 Details of Returns
 ~~~~~~~~~~~~~~~~~~
@@ -260,13 +265,15 @@ Values of available layer
 +--------------------+------------------+--------+---------------------------------------+
 | Compression Method | Number of Values | Type   | Range                                 |
 +====================+==================+========+=======================================+
-| PR_L2              | 1                | Float  | 0.0 < ratio ≤ 1.0                     |
+| PR_L2              | 1                | Float  | 0.0 < ratio < 1.0                     |
 +--------------------+------------------+--------+---------------------------------------+
-| PR_GM              | 1                | Float  | 0.0 < ratio ≤ 1.0                     |
+| PR_GM              | 1                | Float  | 0.0 < ratio < 1.0                     |
 +--------------------+------------------+--------+---------------------------------------+
-| PR_NN              | 1                | Float  | 0.0 < ratio ≤ 1.0                     |
+| PR_NN              | 1                | Float  | 0.0 < ratio < 1.0                     |
 +--------------------+------------------+--------+---------------------------------------+
-| PR_ID              | (Num of Out      | Int    | 0 < channels ≤ Num of Out Channels    |
+| PR_SNP             | 1                | Float  | 0.0 < ratio < 1.0                     |
++--------------------+------------------+--------+---------------------------------------+
+| PR_ID              | (Num of Out      | Int    | 0 ≤ channels < Num of Out Channels    |
 |                    | Channels - 1)    |        |                                       |
 +--------------------+------------------+--------+---------------------------------------+
 | FD_TK              | 2                | Int    | 0 < rank ≤ (Num of In Channels or     |

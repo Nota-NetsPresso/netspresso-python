@@ -15,6 +15,18 @@ Pruning by Criteria
 
 Difference of each pruning method is about measuring importance of filters in each layer. Filters in each layer will be automatically pruned based on certain criteria.
 
+
+Structured Neuron-level Pruning (SNP)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- SNP prunes graphically connected query and key layers having the least informative attention scores while preserving the overall attention scores. Value layers, which can be pruned independently, are pruned to eliminate inter-head redundancy.
+- Click the link for more information. (`Structured Neuron-level Pruning`_)
+
+.. image:: ../../../../../_static/compression/methods/pruning_snp.png
+    :width: 500
+    :align: center
+
+
 L2 Norm Pruning
 ^^^^^^^^^^^^^^^
 
@@ -109,3 +121,4 @@ CP Decomposition
 .. _Tucker Decomposition : https://docs.netspresso.ai/docs/mc-filter-decomposition#supported-method
 .. _Singular Value Decomposition : https://docs.netspresso.ai/docs/mc-filter-decomposition#supported-method
 .. _CP Decomposition : https://docs.netspresso.ai/docs/mc-filter-decomposition#supported-method
+.. _Structured Neuron-level Pruning : https://arxiv.org/abs/2404.11630
