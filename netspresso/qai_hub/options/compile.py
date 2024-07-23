@@ -57,7 +57,8 @@ class CompileOptions(CommonOptions):
     def to_cli_string(self) -> str:
         args = []
         if self.compute_unit is not None:
-            args.append(f"--compute_unit {self.compute_unit}")
+            compute_units = ",".join([unit.name.lower() for unit in self.compute_unit])
+            args.append(f"--compute_unit {compute_units}")
         if self.target_runtime is not None:
             args.append(f"--target_runtime {self.target_runtime}")
         if self.output_names is not None:
