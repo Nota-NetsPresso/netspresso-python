@@ -8,8 +8,13 @@ from netspresso.qai_hub.options.common import CommonOptions
 class Framework(str, Enum):
     PYTORCH = "pytorch"
     ONNX = "onnx"
+    ONNXRUNTIME = "onnxruntime"
     AIMET = "aimet"
     TENSORFLOW = "tensorflow"
+    TFLITE = "tensorflow_lite"
+    COREML = "coreml"
+    TENSORRT  = "tensorrt"
+    QNN = "qnn"
 
 
 class Extension(str, Enum):
