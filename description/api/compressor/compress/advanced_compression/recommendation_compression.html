@@ -117,10 +117,13 @@
 <tr class="row-even"><td><p>PR_NN</p></td>
 <td><p>Nuclear Norm Pruning</p></td>
 </tr>
-<tr class="row-odd"><td><p>FD_TK</p></td>
+<tr class="row-odd"><td><p>PR_SNP</p></td>
+<td><p>Structured Neuron-level Pruning</p></td>
+</tr>
+<tr class="row-even"><td><p>FD_TK</p></td>
 <td><p>Tucker Decomposition</p></td>
 </tr>
-<tr class="row-even"><td><p>FD_SVD</p></td>
+<tr class="row-odd"><td><p>FD_SVD</p></td>
 <td><p>Singular Value Decomposition</p></td>
 </tr>
 </tbody>
@@ -136,7 +139,8 @@
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <ul class="simple">
-<li><p>Nuclear Norm is only supported in the Tensorflow-Keras Framework.</p></li>
+<li><p>Nuclear Norm is only supported in the Tensorflow-Keras framework.</p></li>
+<li><p>Structured Neuron-level is only supported in the PyTorch and ONNX frameworks.</p></li>
 </ul>
 </div>
 <div class="admonition note">
@@ -178,7 +182,7 @@
 <p class="admonition-title">Note</p>
 <ul class="simple">
 <li><dl class="simple">
-<dt>If you selected PR_L2, PR_GM, PR_NN for compression_method</dt><dd><ul>
+<dt>If you selected PR_L2, PR_GM, PR_NN, PR_SNP for compression_method</dt><dd><ul>
 <li><p>The recommended_method available is <strong>SLAMP</strong>.</p></li>
 </ul>
 </dd>
@@ -207,7 +211,7 @@
 <li><p>Available ranges</p></li>
 </ul>
 <div align="center" style="padding: 20px;">
-    <img src="https://latex.codecogs.com/svg.image?0&space;<ratio&space;\leq&space;&space;1&space;" title="https://latex.codecogs.com/svg.image?0 <ratio \leq 1 " />
+    <img src="https://latex.codecogs.com/svg.image?0&space;<ratio&space;&space;<&space;1&space;" title="https://latex.codecogs.com/svg.image?0 <ratio < 1 " />
 </div><ul class="simple">
 <li><p>Click the link for more information. (<a class="reference external" href="https://docs.netspresso.ai/docs/mc-structured-pruning#supported-functions">SLAMP</a>)</p></li>
 </ul>
@@ -237,7 +241,8 @@
 <h3>Options<a class="headerlink" href="#options" title="Permalink to this heading"></a></h3>
 <section id="id2">
 <h4>Example<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">netspresso.enums</span> <span class="kn">import</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">LayerNorm</span><span class="p">,</span> <span class="n">GroupPolicy</span><span class="p">,</span> <span class="n">Options</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">netspresso.enums</span> <span class="kn">import</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">LayerNorm</span><span class="p">,</span> <span class="n">GroupPolicy</span>
+<span class="kn">from</span> <span class="nn">netspresso.clients.compressor.v2.schemas</span> <span class="kn">import</span> <span class="n">Options</span>
 
 <span class="n">OPTIONS</span> <span class="o">=</span> <span class="n">Options</span><span class="p">(</span>
     <span class="n">policy</span><span class="o">=</span><span class="n">Policy</span><span class="o">.</span><span class="n">AVERAGE</span><span class="p">,</span>
@@ -256,7 +261,7 @@
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
-<li><p>This parameter applies only to the Pruning Method (PR_L2, PR_GM, PR_NN).</p></li>
+<li><p>This parameter applies only to the Pruning Method (PR_L2, PR_GM, PR_NN, PR_SNP).</p></li>
 </ul>
 </div>
 </section>

@@ -114,3 +114,30 @@ Reshape channel axis represents which axis of the reshape operator will be prune
 
     - If the `reshape_channel_axis` is `-2` or `0` when the given pruning ratio is 50%, the output model will contain `6 (12*0.5)` channels of the given reshape operator.
 
+
+Step operator
+*************
+
+Step operator is the method of rounding applied to ensure that the amount remaining after pruning aligns with the step_size. 
+
+Options include Round, Round Up, Round Down, or None.
+
+Round
++++++++++++++++++++
+
+    - Rounds to the nearest step size, adjusting the remaining count of filters.
+
+Round Up
++++++++++++++++++++
+
+    - Always rounds up to the next step size, directly affecting the remaining filters.
+
+Round Down
++++++++++++++++++++
+
+    - Always rounds down to the closest lower step size, impacting the remaining filters.
+
+None
++++++++++++++++++++
+
+    - No rounding operation is applied; the exact amount is used for pruning.

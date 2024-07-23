@@ -234,16 +234,19 @@
 <tr class="row-even"><td><p>PR_NN</p></td>
 <td><p>Nuclear Norm Pruning</p></td>
 </tr>
-<tr class="row-odd"><td><p>PR_ID</p></td>
+<tr class="row-odd"><td><p>PR_SNP</p></td>
+<td><p>Structured Neuron-level Pruning</p></td>
+</tr>
+<tr class="row-even"><td><p>PR_ID</p></td>
 <td><p>Pruning By Index</p></td>
 </tr>
-<tr class="row-even"><td><p>FD_TK</p></td>
+<tr class="row-odd"><td><p>FD_TK</p></td>
 <td><p>Tucker Decomposition</p></td>
 </tr>
-<tr class="row-odd"><td><p>FD_SVD</p></td>
+<tr class="row-even"><td><p>FD_SVD</p></td>
 <td><p>Singular Value Decomposition</p></td>
 </tr>
-<tr class="row-even"><td><p>FD_CP</p></td>
+<tr class="row-odd"><td><p>FD_CP</p></td>
 <td><p>CP Decomposition</p></td>
 </tr>
 </tbody>
@@ -259,7 +262,8 @@
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <ul class="simple">
-<li><p>Nuclear Norm is only supported in the Tensorflow-Keras Framework.</p></li>
+<li><p>Nuclear Norm is only supported in the Tensorflow-Keras framework.</p></li>
+<li><p>Structured Neuron-level is only supported in the PyTorch and ONNX frameworks.</p></li>
 </ul>
 </div>
 <div class="admonition note">
@@ -295,7 +299,7 @@
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
-<li><p>This parameter applies only to the Pruning Method (PR_L2, PR_GM, PR_NN).</p></li>
+<li><p>This parameter applies only to the Pruning Method (PR_L2, PR_GM, PR_NN, PR_SNP).</p></li>
 </ul>
 </div>
 </section>
@@ -374,37 +378,42 @@ CompressionInfo<span class="o">(</span>
 <tr class="row-even"><td><p>PR_L2</p></td>
 <td><p>1</p></td>
 <td><p>Float</p></td>
-<td><p>0.0 &lt; ratio ≤ 1.0</p></td>
+<td><p>0.0 &lt; ratio &lt; 1.0</p></td>
 </tr>
 <tr class="row-odd"><td><p>PR_GM</p></td>
 <td><p>1</p></td>
 <td><p>Float</p></td>
-<td><p>0.0 &lt; ratio ≤ 1.0</p></td>
+<td><p>0.0 &lt; ratio &lt; 1.0</p></td>
 </tr>
 <tr class="row-even"><td><p>PR_NN</p></td>
 <td><p>1</p></td>
 <td><p>Float</p></td>
-<td><p>0.0 &lt; ratio ≤ 1.0</p></td>
+<td><p>0.0 &lt; ratio &lt; 1.0</p></td>
 </tr>
-<tr class="row-odd"><td><p>PR_ID</p></td>
+<tr class="row-odd"><td><p>PR_SNP</p></td>
+<td><p>1</p></td>
+<td><p>Float</p></td>
+<td><p>0.0 &lt; ratio &lt; 1.0</p></td>
+</tr>
+<tr class="row-even"><td><p>PR_ID</p></td>
 <td><p>(Num of Out
 Channels - 1)</p></td>
 <td><p>Int</p></td>
-<td><p>0 &lt; channels ≤ Num of Out Channels</p></td>
+<td><p>0 ≤ channels &lt; Num of Out Channels</p></td>
 </tr>
-<tr class="row-even"><td><p>FD_TK</p></td>
+<tr class="row-odd"><td><p>FD_TK</p></td>
 <td><p>2</p></td>
 <td><p>Int</p></td>
 <td><p>0 &lt; rank ≤ (Num of In Channels or
 Num of Out Channels)</p></td>
 </tr>
-<tr class="row-odd"><td><p>FD_CP</p></td>
+<tr class="row-even"><td><p>FD_CP</p></td>
 <td><p>1</p></td>
 <td><p>Int</p></td>
 <td><p>0 &lt; rank ≤ min(Num of In Channels or
 Num of Out Channels)</p></td>
 </tr>
-<tr class="row-even"><td><p>FD_SVD</p></td>
+<tr class="row-odd"><td><p>FD_SVD</p></td>
 <td><p>1</p></td>
 <td><p>Int</p></td>
 <td><p>0 &lt; rank ≤ min(Num of In Channels or
