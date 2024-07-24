@@ -13,7 +13,7 @@ class Framework(str, Enum):
     TENSORFLOW = "tensorflow"
     TFLITE = "tensorflow_lite"
     COREML = "coreml"
-    TENSORRT  = "tensorrt"
+    TENSORRT = "tensorrt"
     QNN = "qnn"
 
 
@@ -62,25 +62,25 @@ class CompileOptions(CommonOptions):
         if self.target_runtime is not None:
             args.append(f"--target_runtime {self.target_runtime}")
         if self.output_names is not None:
-            output_names_str = ','.join(self.output_names.split())  # Split and join to handle spaces
-            args.append(f"--output_names \"{output_names_str}\"")
+            output_names_str = ",".join(self.output_names.split())  # Split and join to handle spaces
+            args.append(f'--output_names "{output_names_str}"')
         if self.truncate_64bit_tensors:
             args.append("--truncate_64bit_tensors")
         if self.truncate_64bit_io:
             args.append("--truncate_64bit_io")
         if self.force_channel_last_input is not None:
-            args.append(f"--force_channel_last_input \"{self.force_channel_last_input}\"")
+            args.append(f'--force_channel_last_input "{self.force_channel_last_input}"')
         if self.force_channel_last_output is not None:
-            args.append(f"--force_channel_last_output \"{self.force_channel_last_output}\"")
+            args.append(f'--force_channel_last_output "{self.force_channel_last_output}"')
         if self.quantize_full_type is not None:
             args.append(f"--quantize_full_type {self.quantize_full_type}")
         if self.quantize_io:
             args.append("--quantize_io")
         if self.quantize_io_type is not None:
-            args.append(f"--quantize_io_type \"{self.quantize_io_type}\"")
+            args.append(f'--quantize_io_type "{self.quantize_io_type}"')
         if self.qnn_context_binary_vtcm is not None:
-            args.append(f"--qnn_context_binary_vtcm \"{self.qnn_context_binary_vtcm}\"")
+            args.append(f'--qnn_context_binary_vtcm "{self.qnn_context_binary_vtcm}"')
         if self.qnn_context_binary_optimization_level is not None:
             args.append(f"--qnn_context_binary_optimization_level {self.qnn_context_binary_optimization_level}")
 
-        return ' '.join(args)
+        return " ".join(args)

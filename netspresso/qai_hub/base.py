@@ -51,7 +51,7 @@ class QAIHubBase:
             Runtime.QNN_LIB_AARCH64_ANDROID: ".so",
             Runtime.QNN_CONTEXT_BINARY: ".bin",
             Runtime.ONNX: ".onnx",
-            Runtime.PRECOMPILED_QNN_ONNX: ".zip"
+            Runtime.PRECOMPILED_QNN_ONNX: ".zip",
         }
 
         return runtime_extensions.get(runtime)
@@ -63,7 +63,6 @@ class QAIHubBase:
             Runtime.QNN_CONTEXT_BINARY: "Qualcomm® AI Engine Direct context binary targeting the hardware specified in the compile job.",
             Runtime.ONNX: "ONNX",
             Runtime.PRECOMPILED_QNN_ONNX: "ONNX Runtime model with a pre-compiled QNN context binary.",
-
         }
         return RUNTIME_DISPLAY_MAP.get(runtime, "Unknown runtime")
 
@@ -106,6 +105,5 @@ class QAIHubBase:
             Framework.COREML: "CoreML",
             Framework.TENSORRT: "TensorRT",
             Framework.QNN: "QNN",
-
         }
         return RUNTIME_DISPLAY_MAP.get(framework, "Unknown runtime")

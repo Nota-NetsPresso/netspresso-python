@@ -3,12 +3,13 @@ from typing import List, Optional, Union
 
 import qai_hub as hub
 from loguru import logger
-from qai_hub.client import Dataset, Device, InferenceJob, Model, ProfileJob, TargetModel
+from qai_hub.client import Dataset, Device, InferenceJob, ProfileJob
 from qai_hub.public_rest_api import DatasetEntries
 
 from netspresso.enums import Status
 from netspresso.metadata.benchmarker import BenchmarkerMetadata
 from netspresso.qai_hub.base import QAIHubBase
+from netspresso.qai_hub.options import ProfileOptions
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
 
@@ -28,7 +29,7 @@ class QAIHubBenchmarker(QAIHubBase):
         self,
         input_model_path: Union[str, Path],
         target_device_name: Union[Device, List[Device]],
-        options: str = "",
+        options: ProfileOptions = ProfileOptions(),
         job_name: Optional[str] = None,
         retry: bool = True,
         wait_until_done: bool = True,
@@ -57,11 +58,12 @@ class QAIHubBenchmarker(QAIHubBase):
             metadata.benchmark_task_info.framework = framework
             metadata.benchmark_task_info.display_framework = display_framework
 
+            cli_string = options.to_cli_string()
             job: ProfileJob = hub.submit_profile_job(
                 model=input_model_path,
                 device=target_device_name,
                 name=job_name,
-                options=options,
+                options=cli_string,
                 retry=retry,
             )
 
@@ -77,7 +79,9 @@ class QAIHubBenchmarker(QAIHubBase):
                     logger.info(f"{status.symbol} {status.state.name}")
                     profile = self.download_profile(job=job)
                     metadata.benchmark_result.latency = profile["execution_summary"]["estimated_inference_time"] / 1000
-                    metadata.benchmark_result.memory_footprint = profile["execution_summary"]["estimated_inference_peak_memory"]
+                    metadata.benchmark_result.memory_footprint = profile["execution_summary"][
+                        "estimated_inference_peak_memory"
+                    ]
                     metadata.status = Status.COMPLETED
                 else:
                     logger.info(f"{status.symbol} {status.state}: {status.message}")

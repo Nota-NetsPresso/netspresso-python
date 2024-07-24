@@ -18,11 +18,7 @@ class QAIHubConverter(QAIHubBase):
     def transform_shape(self, data):
         for value in data.values():
             shape, _ = value
-            return {
-                "batch": shape[0],
-                "channel": shape[1],
-                "dimension": list(shape[2:])
-            }
+            return {"batch": shape[0], "channel": shape[1], "dimension": list(shape[2:])}
 
     def dict_to_tuple(self, data):
         batch = data.get("batch")
@@ -69,7 +65,7 @@ class QAIHubConverter(QAIHubBase):
                 model=input_model_path,
                 device=target_device_name,
                 name=job_name,
-                input_specs={'image': input_shape},
+                input_specs={"image": input_shape},
                 options=cli_string,
                 single_compile=single_compile,
                 calibration_data=calibration_data,
@@ -116,7 +112,6 @@ class QAIHubConverter(QAIHubBase):
         except KeyboardInterrupt:
             metadata.status = Status.STOPPED
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
-
 
     def download_model(self, job: CompileJob, filename: str):
         job.download_target_model(filename=filename)
