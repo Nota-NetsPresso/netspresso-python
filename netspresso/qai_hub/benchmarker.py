@@ -9,7 +9,7 @@ from qai_hub.public_rest_api import DatasetEntries
 from netspresso.enums import Status
 from netspresso.metadata.benchmarker import BenchmarkerMetadata
 from netspresso.qai_hub.base import QAIHubBase
-from netspresso.qai_hub.options import ProfileOptions
+from netspresso.qai_hub.options import ProfileOptions, InferenceOptions
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
 
@@ -29,7 +29,7 @@ class QAIHubBenchmarker(QAIHubBase):
         self,
         input_model_path: Union[str, Path],
         target_device_name: Union[Device, List[Device]],
-        options: ProfileOptions = ProfileOptions(),
+        options: Union[ProfileOptions, str] = ProfileOptions(),
         job_name: Optional[str] = None,
         retry: bool = True,
         wait_until_done: bool = True,
@@ -58,7 +58,11 @@ class QAIHubBenchmarker(QAIHubBase):
             metadata.benchmark_task_info.framework = framework
             metadata.benchmark_task_info.display_framework = display_framework
 
-            cli_string = options.to_cli_string()
+            if isinstance(options, ProfileOptions):
+                cli_string = options.to_cli_string()
+            else:
+                cli_string = options
+
             job: ProfileJob = hub.submit_profile_job(
                 model=input_model_path,
                 device=target_device_name,
@@ -98,19 +102,25 @@ class QAIHubBenchmarker(QAIHubBase):
 
     def inference_model(
         self,
-        model: Union[str, Path],
-        device: Union[Device, List[Device]],
+        input_model_path: Union[str, Path],
+        target_device_name: Union[Device, List[Device]],
         inputs: Union[Dataset, DatasetEntries, str],
-        name: Optional[str] = None,
-        options: str = "",
+        job_name: Optional[str] = None,
+        options: Union[InferenceOptions, str] = InferenceOptions(),
         retry: bool = True,
     ) -> Union[InferenceJob, List[InferenceJob]]:
+
+        if isinstance(options, InferenceOptions):
+            cli_string = options.to_cli_string()
+        else:
+            cli_string = options
+
         inference_job = hub.submit_inference_job(
-            model=model,
-            device=device,
+            model=input_model_path,
+            device=target_device_name,
             inputs={"image": [inputs]},
-            name=name,
-            options=options,
+            name=job_name,
+            options=cli_string,
             retry=retry,
         )
 

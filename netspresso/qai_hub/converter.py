@@ -36,7 +36,7 @@ class QAIHubConverter(QAIHubBase):
         output_dir: str,
         target_device_name: Union[Device, List[Device]],
         input_shape: Union[List, Tuple, None] = None,
-        options: CompileOptions = CompileOptions(),
+        options: Union[CompileOptions, str] = CompileOptions(),
         job_name: Optional[str] = None,
         single_compile: bool = True,
         calibration_data: Union[Dataset, DatasetEntries, str, None] = None,
@@ -56,7 +56,11 @@ class QAIHubConverter(QAIHubBase):
         try:
             target_extension = self.get_target_extension(runtime=options.target_runtime)
             converted_model_path = default_model_path.with_suffix(target_extension).as_posix()
-            cli_string = options.to_cli_string()
+            
+            if isinstance(options, CompileOptions):
+                cli_string = options.to_cli_string()
+            else:
+                cli_string = options
 
             if isinstance(input_shape, List):
                 input_shape = tuple(input_shape)
