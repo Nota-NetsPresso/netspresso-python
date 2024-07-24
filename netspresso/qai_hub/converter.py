@@ -1,9 +1,9 @@
 from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Union
 
 import qai_hub as hub
 from loguru import logger
-from qai_hub.client import CompileJob, Dataset, Device
+from qai_hub.client import CompileJob, Dataset, Device, InputSpecs
 from qai_hub.public_rest_api import DatasetEntries
 
 from netspresso.enums import Status
@@ -19,6 +19,18 @@ class QAIHubConverter(QAIHubBase):
         for value in data.values():
             shape, _ = value
             return {"batch": shape[0], "channel": shape[1], "dimension": list(shape[2:])}
+    
+    def convert_image_dict_to_list(self, image_dict):
+        result = []
+        for key, value in image_dict.items():
+            batch, channel, *dimension = value
+            result.append({
+                "name": key,
+                "batch": batch,
+                "channel": channel,
+                "dimension": dimension
+            })
+        return result
 
     def dict_to_tuple(self, data):
         batch = data.get("batch")
@@ -35,7 +47,7 @@ class QAIHubConverter(QAIHubBase):
         input_model_path: Union[str, Path],
         output_dir: str,
         target_device_name: Union[Device, List[Device]],
-        input_shape: Union[List, Tuple, None] = None,
+        input_shapes: Optional[InputSpecs] = None,
         options: Union[CompileOptions, str] = CompileOptions(),
         job_name: Optional[str] = None,
         single_compile: bool = True,
@@ -62,14 +74,11 @@ class QAIHubConverter(QAIHubBase):
             else:
                 cli_string = options
 
-            if isinstance(input_shape, List):
-                input_shape = tuple(input_shape)
-
             job = hub.submit_compile_job(
                 model=input_model_path,
                 device=target_device_name,
                 name=job_name,
-                input_specs={"image": input_shape},
+                input_specs=input_shapes,
                 options=cli_string,
                 single_compile=single_compile,
                 calibration_data=calibration_data,
@@ -80,7 +89,7 @@ class QAIHubConverter(QAIHubBase):
             display_framework = self.get_display_framework(framework)
 
             # metadata.model_info.input_shapes = [input_shape]
-            metadata.model_info.input_shapes = [self.transform_shape(job.shapes)]
+            metadata.model_info.input_shapes = self.convert_image_dict_to_list(input_shapes)
             metadata.model_info.data_type = job.shapes["image"][1]
             metadata.convert_task_info.convert_task_uuid = job.job_id
             metadata.convert_task_info.input_model_uuid = job.model.model_id
