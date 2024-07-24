@@ -206,7 +206,7 @@ class OnnxOptions:
 
 @dataclass
 class OnnxQnnOptions(OnnxOptions):
-    qnn_htp_performance_mode: Optional[OnnxQnnHtpPerformanceMode] = OnnxQnnHtpPerformanceMode.K_HTP_BURST
+    qnn_htp_performance_mode: Optional[OnnxQnnHtpPerformanceMode] = OnnxQnnHtpPerformanceMode.BURST
     qnn_htp_graph_optimization_mode: Optional[str] = 3
     qnn_enable_htp_fp16_precision: Optional[str] = 1
 
