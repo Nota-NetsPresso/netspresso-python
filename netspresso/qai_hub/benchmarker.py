@@ -3,7 +3,7 @@ from typing import List, Optional, Union
 
 import qai_hub as hub
 from loguru import logger
-from qai_hub.client import Dataset, Device, InferenceJob, ProfileJob
+from qai_hub.client import Dataset, Device, InferenceJob, ProfileJob, InferenceJob
 from qai_hub.public_rest_api import DatasetEntries
 
 from netspresso.enums import Status
@@ -108,6 +108,7 @@ class QAIHubBenchmarker(QAIHubBase):
         job_name: Optional[str] = None,
         options: Union[InferenceOptions, str] = InferenceOptions(),
         retry: bool = True,
+        wait_until_done: bool = True,
     ) -> Union[InferenceJob, List[InferenceJob]]:
 
         if isinstance(options, InferenceOptions):
@@ -115,13 +116,22 @@ class QAIHubBenchmarker(QAIHubBase):
         else:
             cli_string = options
 
-        inference_job = hub.submit_inference_job(
+        job: InferenceJob = hub.submit_inference_job(
             model=input_model_path,
             device=target_device_name,
-            inputs={"image": [inputs]},
+            inputs=inputs,
             name=job_name,
             options=cli_string,
             retry=retry,
         )
 
-        return inference_job
+        if wait_until_done:
+            job = hub.get_job(job.job_id)
+            status = job.wait()
+
+            if status.success:
+                logger.info(f"{status.symbol} {status.state.name}")
+            else:
+                logger.info(f"{status.symbol} {status.state}: {status.message}")
+
+        return job
