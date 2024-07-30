@@ -5,7 +5,6 @@ import numpy as np
 
 def anchor_free_decoupled_head_decode(pred, original_shape, score_thresh=0.7):
     pred = pred['pred']
-    dtype = pred[0].dtype
     stage_strides= [original_shape[-1] // o.shape[-1] for o in pred]
 
     hw = [x.shape[-2:] for x in pred]
@@ -13,7 +12,7 @@ def anchor_free_decoupled_head_decode(pred, original_shape, score_thresh=0.7):
 
     pred = np.concatenate([x.reshape(1, dim_len, -1) for x in pred], axis=2).transpose(0, 2, 1)
     pred[..., 4:] = 1 / (1 + (np.exp(-pred[..., 4:])))
-    
+
     grids = []
     strides = []
     for (hsize, wsize), stride in zip(hw, stage_strides):

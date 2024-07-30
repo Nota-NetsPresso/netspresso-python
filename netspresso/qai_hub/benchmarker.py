@@ -3,13 +3,13 @@ from typing import List, Optional, Union
 
 import qai_hub as hub
 from loguru import logger
-from qai_hub.client import Dataset, Device, InferenceJob, ProfileJob, InferenceJob
+from qai_hub.client import Dataset, Device, InferenceJob, ProfileJob
 from qai_hub.public_rest_api import DatasetEntries
 
 from netspresso.enums import Status
 from netspresso.metadata.benchmarker import BenchmarkerMetadata
 from netspresso.qai_hub.base import QAIHubBase
-from netspresso.qai_hub.options import ProfileOptions, InferenceOptions
+from netspresso.qai_hub.options import InferenceOptions, ProfileOptions
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
 
@@ -58,10 +58,7 @@ class QAIHubBenchmarker(QAIHubBase):
             metadata.benchmark_task_info.framework = framework
             metadata.benchmark_task_info.display_framework = display_framework
 
-            if isinstance(options, ProfileOptions):
-                cli_string = options.to_cli_string()
-            else:
-                cli_string = options
+            cli_string = options.to_cli_string() if isinstance(options, ProfileOptions) else options
 
             job: ProfileJob = hub.submit_profile_job(
                 model=input_model_path,
@@ -111,10 +108,7 @@ class QAIHubBenchmarker(QAIHubBase):
         wait_until_done: bool = True,
     ) -> Union[InferenceJob, List[InferenceJob]]:
 
-        if isinstance(options, InferenceOptions):
-            cli_string = options.to_cli_string()
-        else:
-            cli_string = options
+        cli_string = options.to_cli_string() if isinstance(options, InferenceOptions) else options
 
         job: InferenceJob = hub.submit_inference_job(
             model=input_model_path,

@@ -19,7 +19,7 @@ class QAIHubConverter(QAIHubBase):
         for value in data.values():
             shape, _ = value
             return {"batch": shape[0], "channel": shape[1], "dimension": list(shape[2:])}
-    
+
     def convert_image_dict_to_list(self, image_dict):
         result = []
         for key, value in image_dict.items():
@@ -68,11 +68,8 @@ class QAIHubConverter(QAIHubBase):
         try:
             target_extension = self.get_target_extension(runtime=options.target_runtime)
             converted_model_path = default_model_path.with_suffix(target_extension).as_posix()
-            
-            if isinstance(options, CompileOptions):
-                cli_string = options.to_cli_string()
-            else:
-                cli_string = options
+
+            cli_string = options.to_cli_string() if isinstance(options, CompileOptions) else options
 
             job = hub.submit_compile_job(
                 model=input_model_path,

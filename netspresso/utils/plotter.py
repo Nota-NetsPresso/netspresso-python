@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from netspresso.metadata.trainer import TrainerMetadata
+
 from netspresso.metadata.compressor import CompressorMetadata
+from netspresso.metadata.trainer import TrainerMetadata
 
 
 class Plotter:
