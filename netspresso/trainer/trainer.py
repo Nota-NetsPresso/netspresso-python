@@ -1,3 +1,4 @@
+import warnings
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -36,6 +37,14 @@ class Trainer:
         """
 
         self.token_handler = token_handler
+        self.deprecated_names = {
+            "MobileNetV3_Small": "MobileNetV3-S",
+            "MobileNetV3_Large": "MobileNetV3-L",
+            "ViT-Tiny": "ViT-T",
+            "MixNet-Small": "MixNet-S",
+            "MixNet-Medium": "MixNet-M",
+            "MixNet-Large": "MixNet-L"
+        }
 
         if (task is not None) == (yaml_path is not None):
             raise ValueError("Either 'task' or 'yaml_path' must be provided, but not both.")
@@ -220,6 +229,16 @@ class Trainer:
         Raises:
             ValueError: If the specified model is not supported for the current task.
         """
+
+        if model_name in self.deprecated_names:
+            warnings.filterwarnings("default", category=DeprecationWarning)
+            warnings.warn(
+                f"The model name '{model_name}' is deprecated and will be removed in a future version. "
+                f"Please use '{self.deprecated_names[model_name]}' instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            warnings.filterwarnings("ignore", category=DeprecationWarning)
 
         self.model_name = model_name
         model = self._get_available_models().get(model_name)
@@ -425,7 +444,7 @@ class Trainer:
         metadata.update_output_dir(output_dir=Path(destination_folder).resolve().as_posix())
         metadata.update_model_info(
             task=self.task,
-            model=self.model.name,
+            model=self.model_name,
             dataset=self.data.name,
             input_shapes=[InputShape(batch=1, channel=3, dimension=[self.img_size, self.img_size])],
         )
@@ -465,7 +484,10 @@ class Trainer:
         FileHandler.move_and_cleanup_folders(source_folder=logging_dir, destination_folder=destination_folder)
         logger.info(f"Files in {logging_dir} were moved to {destination_folder}.")
 
-        best_fx_paths = list(Path(destination_folder).glob("*best_fx.pt"))
+        best_fx_paths_set = set()
+        for pattern in ["*best_fx.pt", "*best.pt"]:
+            best_fx_paths_set.update(destination_folder.glob(pattern))
+        best_fx_paths = list(best_fx_paths_set)
         best_onnx_paths = list(Path(destination_folder).glob("*best.onnx"))
         hparams_path = destination_folder / "hparams.yaml"
         status = self._check_status(training_summary)

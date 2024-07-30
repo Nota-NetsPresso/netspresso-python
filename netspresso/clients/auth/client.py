@@ -10,7 +10,7 @@ from netspresso.clients.config import Config, Module
 
 
 class AuthClient:
-    def __init__(self, config: Config = Config(Module.GENERAL)):
+    def __init__(self, config: Config = Config(Module.AUTH)):
         """
         Initialize the UserSession.
         """

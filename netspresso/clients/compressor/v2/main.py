@@ -1,5 +1,10 @@
 from dataclasses import asdict
 
+import requests
+from requests_toolbelt import MultipartEncoderMonitor
+from requests_toolbelt.multipart.encoder import MultipartEncoder
+from tqdm import tqdm
+
 from netspresso.clients.compressor.v2.schemas.common import RequestPagination, UploadFile
 from netspresso.clients.compressor.v2.schemas.compression import (
     RequestAutomaticCompressionParams,
@@ -21,7 +26,7 @@ from netspresso.clients.compressor.v2.schemas.model import (
     ResponseModelUrl,
 )
 from netspresso.clients.config import Config, Module
-from netspresso.clients.utils.common import get_headers
+from netspresso.clients.utils.common import create_multipart_data, create_progress_func, get_headers, progress_callback
 from netspresso.clients.utils.requester import Requester
 
 
@@ -45,14 +50,23 @@ class CompressorAPIClient:
 
         return ResponseModelUrl(**response.json())
 
-    def upload_model(self, request_data: RequestUploadModel, file: UploadFile, access_token: str, verify_ssl: bool = True) -> bool:
+    def upload_model(
+        self, request_data: RequestUploadModel, file: UploadFile, access_token: str, verify_ssl: bool = True
+    ) -> bool:
         url = f"{self.url}/models/upload"
-        response = Requester.post_as_form(
-            url=url,
-            binary=file.files,
-            request_body=asdict(request_data),
-            headers=get_headers(access_token),
-        )
+
+        file_info = file.files[0][1]
+
+        multipart_data = create_multipart_data(request_data.url, file_info)
+        progress = create_progress_func(multipart_data)
+
+        # Wrap the encoder with MultipartEncoderMonitor
+        monitor = MultipartEncoderMonitor(multipart_data, lambda monitor: progress_callback(monitor, progress))
+
+        headers = get_headers(access_token)
+        headers["Content-Type"] = monitor.content_type
+
+        response = requests.post(url=url, data=monitor, headers=headers, verify=verify_ssl)
 
         return response.text
 
