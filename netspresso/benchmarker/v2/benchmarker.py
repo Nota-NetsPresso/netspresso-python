@@ -160,7 +160,7 @@ class BenchmarkerV2:
                         TaskStatusForDisplay.TIMEOUT,
                     ]:
                         break
-                    time.sleep(3)
+                    time.sleep(30)
 
             benchmark_task = response.data
             input_model_info = validate_model_response.data
