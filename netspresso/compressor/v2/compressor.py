@@ -323,7 +323,7 @@ class CompressorV2:
                 if available_layers.values:
                     available_layers.use = True
 
-            if dataset_path and compression.compression_method == CompressionMethod.PR_NN:
+            if dataset_path and compression.compression_method in [CompressionMethod.PR_NN, CompressionMethod.PR_SNP]:
                 self.upload_dataset(
                     compression_id=create_compression_response.data.compression_id, dataset_path=dataset_path
                 )
@@ -473,7 +473,7 @@ class CompressorV2:
                 verify_ssl=self.token_handler.verify_ssl
             )
 
-            if dataset_path and compression_method == CompressionMethod.PR_NN:
+            if dataset_path and compression_method in [CompressionMethod.PR_NN, CompressionMethod.PR_SNP]:
                 self.upload_dataset(
                     compression_id=create_compression_response.data.compression_id, dataset_path=dataset_path
                 )
