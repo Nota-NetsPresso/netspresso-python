@@ -28,6 +28,7 @@ class BenchmarkTaskInfo:
 
 @dataclass
 class BenchmarkResult:
+    memory_footprint: int = None
     memory_footprint_gpu: int = None
     memory_footprint_cpu: int = None
     power_consumption: int = None

@@ -1,4 +1,7 @@
+import subprocess
 from typing import Optional, Union
+
+from loguru import logger
 
 from netspresso.benchmarker import BenchmarkerV2
 from netspresso.clients.auth import TokenHandler, auth_client
@@ -7,6 +10,8 @@ from netspresso.clients.tao import TAOTokenHandler
 from netspresso.compressor import CompressorV2
 from netspresso.converter import ConverterV2
 from netspresso.enums import Task
+from netspresso.qai_hub.benchmarker import QAIHubBenchmarker
+from netspresso.qai_hub.converter import QAIHubConverter
 from netspresso.tao import TAOTrainer
 from netspresso.trainer import Trainer
 
@@ -92,3 +97,30 @@ class TAO:
             TAO: Initialized Trainer instance.
         """
         return TAOTrainer(token_handler=self.token_handler)
+
+
+class QAIHub:
+    def __init__(self, api_token: str) -> None:
+        # Define the command and arguments
+        command = 'qai-hub'
+        args = ['configure', '--api_token', f'{api_token}']
+
+        # Execute the command
+        result = subprocess.run([command] + args, capture_output=True, text=True)
+        logger.info(result)
+
+    def converter(self) -> QAIHubConverter:
+        """Initialize and return a Converter instance.
+
+        Returns:
+            QAIHubConverter: Initialized Converter instance.
+        """
+        return QAIHubConverter()
+
+    def benchmarker(self) -> QAIHubBenchmarker:
+        """Initialize and return a Benchmarker instance.
+
+        Returns:
+            QAIHubBenchmarker: Initialized Benchmarker instance.
+        """
+        return QAIHubBenchmarker()

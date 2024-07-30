@@ -243,6 +243,7 @@ class Trainer:
         self.model_name = model_name
         model = self._get_available_models().get(model_name)
         self.img_size = img_size
+        self.logging.onnx_input_size = [img_size, img_size]
 
         if model is None:
             raise ValueError(

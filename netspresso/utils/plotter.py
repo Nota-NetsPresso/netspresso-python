@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+from netspresso.metadata.compressor import CompressorMetadata
+from netspresso.metadata.trainer import TrainerMetadata
+
 
 class Plotter:
     BAR_WIDTH = 0.45
@@ -113,9 +116,9 @@ class Plotter:
         )
 
     @staticmethod
-    def compare_metric(original_summary, compressed_summary):
-        original_training_result = original_summary["traning_result"]
-        compressed_training_result = compressed_summary["traning_result"]
+    def compare_metric(original_summary: TrainerMetadata, compressed_summary: TrainerMetadata):
+        original_training_result = original_summary.traning_result
+        compressed_training_result = compressed_summary.traning_result
         metrics_list = original_training_result["metrics_list"]
         original_best_epoch = str(original_training_result["best_epoch"])
         compressed_best_epoch = str(compressed_training_result["best_epoch"])
@@ -157,11 +160,14 @@ class Plotter:
         plt.show()
 
     @staticmethod
-    def compare_profile_result(profile_result):
+    def compare_profile_result(profile_result: CompressorMetadata):
         y_labels = ["FLOPs(M)", "Num of Params(M)", "Model Size(MB)"]
-        keys = ["flops", "number_of_parameters", "size"]
-        original_values = [profile_result["results"]["original_model"][_key] for _key in keys]
-        compressed_values = [profile_result["results"]["compressed_model"][_key] for _key in keys]
+
+        original_model = profile_result.results.original_model
+        compressed_model = profile_result.results.compressed_model
+
+        original_values = [original_model.flops, original_model.number_of_parameters, original_model.size]
+        compressed_values = [compressed_model.flops, compressed_model.number_of_parameters, compressed_model.size]
 
         difference_values = np.array(original_values) / np.array(compressed_values)
 
