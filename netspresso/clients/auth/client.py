@@ -65,7 +65,7 @@ class TokenHandler:
                 )
                 logger.info("The access token has expired. the token has been reissued.")
             except Exception:
-                self.tokens =auth_client.login(
+                self.tokens = auth_client.login(
                     email=self.email, password=self.password, verify_ssl=self.verify_ssl
                 )
                 logger.info("The refresh token has expired. the token has been reissued.")
