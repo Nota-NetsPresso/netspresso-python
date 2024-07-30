@@ -162,19 +162,18 @@ class BenchmarkerV2:
                         break
                     time.sleep(3)
 
-            if launcher_client_v2.is_cloud():
-                remaining_credit = auth_client.get_credit(
-                    self.token_handler.tokens.access_token,
-                    self.token_handler.verify_ssl,
-                )
-                logger.info(
-                    f"{ServiceCredit.MODEL_BENCHMARK} credits have been consumed. Remaining Credit: {remaining_credit}"
-                )
-
             benchmark_task = response.data
             input_model_info = validate_model_response.data
 
             if benchmark_task.status == TaskStatusForDisplay.FINISHED:
+                if launcher_client_v2.is_cloud():
+                    remaining_credit = auth_client.get_credit(
+                        self.token_handler.tokens.access_token,
+                        self.token_handler.verify_ssl,
+                    )
+                    logger.info(
+                        f"{ServiceCredit.MODEL_BENCHMARK} credits have been consumed. Remaining Credit: {remaining_credit}"
+                    )
                 benchmarker_metadata.status = Status.COMPLETED
                 logger.info("Benchmark task successfully completed.")
             else:
