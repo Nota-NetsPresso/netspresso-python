@@ -80,6 +80,10 @@ class Trainer:
         hparams = OmegaConf.load(yaml_path)
         hparams["model"].pop("single_task_model")
 
+        metadata_path = Path(yaml_path).parent / "metadata.json"
+        metadata = FileHandler.load_json(metadata_path)
+        self.model_name = metadata["model_info"]["model"]
+
         self.img_size = hparams["augmentation"]["img_size"]
         self.task = hparams["data"]["task"]
         self.available_models = list(self._get_available_models().keys())
@@ -418,7 +422,6 @@ class Trainer:
             status = Status.STOPPED if training_summary.get("error_stat", None) is None else Status.ERROR
 
         return status
-
 
     def train(self, gpus: str, project_name: str, output_dir: Optional[str] = "./outputs") -> TrainerMetadata:
         """Train the model with the specified configuration.
