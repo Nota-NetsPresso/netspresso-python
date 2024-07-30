@@ -179,7 +179,7 @@ class ConverterV2:
                         TaskStatusForDisplay.TIMEOUT,
                     ]:
                         break
-                    time.sleep(30)            
+                    time.sleep(30)
 
             convert_task = response.data
 
