@@ -35,7 +35,7 @@ class DetectionVisualizer:
         self.cmap = _voc_color_map(N=256, normalized=normalized, brightness_factor=brightness_factor)
         self.class_map = class_map
 
-    def draw(self, image, detections, model_input_shape):
+    def draw(self, image, detections, model_input_shape, text_scale=0.7, text_thickness=2, bbox_thickness=2):
         resize_factor = max((image.shape[0] / model_input_shape[0]), (image.shape[1] / model_input_shape[1]))
         detections[0][:, 1::2] *= resize_factor
         detections[0][:, :4:2] *= resize_factor
@@ -52,16 +52,16 @@ class DetectionVisualizer:
             color = self.cmap[class_label].tolist()
 
             # Draw bbox
-            visualize_image = cv2.rectangle(visualize_image, (x1, y1), (x2, y2), color=color, thickness=2)
+            visualize_image = cv2.rectangle(visualize_image, (x1, y1), (x2, y2), color=color, thickness=bbox_thickness)
 
             # Get class name
             class_name = self.class_map[class_label] if self.class_map else str(class_label)
 
             # Draw class info
-            text_size, _ = cv2.getTextSize(str(class_name), cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2)
+            text_size, _ = cv2.getTextSize(str(class_name), cv2.FONT_HERSHEY_SIMPLEX, text_scale, text_thickness)
             text_w, text_h = text_size
             visualize_image = cv2.rectangle(visualize_image, (x1, y1-5-text_h), (x1+text_w, y1), color=color, thickness=-1)
-            visualize_image = cv2.putText(visualize_image, str(class_name), (x1, y1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+            visualize_image = cv2.putText(visualize_image, str(class_name), (x1, y1-5), cv2.FONT_HERSHEY_SIMPLEX, text_scale, (255, 255, 255), text_thickness)
 
         return visualize_image
 
