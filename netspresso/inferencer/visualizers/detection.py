@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-def _voc_color_map(N=256, normalized=False, brightness_factor=2.0):
+def _voc_color_map(N=256, normalized=False, brightness_factor=1.5):
     def bitget(byteval, idx):
         return ((byteval & (1 << idx)) != 0)
 
@@ -31,8 +31,8 @@ def _voc_color_map(N=256, normalized=False, brightness_factor=2.0):
 
 
 class DetectionVisualizer:
-    def __init__(self, class_map=None):
-        self.cmap = _voc_color_map(256)
+    def __init__(self, class_map=None, normalized=False, brightness_factor=1.5):
+        self.cmap = _voc_color_map(N=256, normalized=normalized, brightness_factor=brightness_factor)
         self.class_map = class_map
 
     def draw(self, image, detections, model_input_shape):
