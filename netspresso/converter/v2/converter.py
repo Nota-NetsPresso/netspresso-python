@@ -206,7 +206,7 @@ class ConverterV2:
             else:
                 converter_metadata.status = Status.ERROR
                 converter_metadata.update_message(exception_detail=convert_task.error_log)
-                logger.info(f"Convert task failed with an error. Error: {convert_task.error_log}")
+                logger.error(f"Convert task failed with an error. Error: {convert_task.error_log}")
 
             converter_metadata.converted_model_path = default_model_path.with_suffix(extension).as_posix()
             for available_option in available_options:

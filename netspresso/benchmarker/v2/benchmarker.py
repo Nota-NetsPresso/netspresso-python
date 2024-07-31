@@ -178,7 +178,8 @@ class BenchmarkerV2:
                 logger.info("Benchmark task successfully completed.")
             else:
                 benchmarker_metadata.status = Status.ERROR
-                logger.info("Benchmark task failed with an error.")
+                benchmarker_metadata.update_message(exception_detail=benchmark_task.error_log)
+                logger.error(f"Benchmark task failed with an error. Error: {benchmark_task.error_log}")
 
             benchmarker_metadata.benchmark_result = benchmark_task.benchmark_result.to(
                 file_size=input_model_info.file_size_in_mb
