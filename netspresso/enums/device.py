@@ -101,11 +101,10 @@ class SoftwareVersion(str, Enum):
     JETPACK_5_0_2 = "5.0.2-b231"
     JETPACK_6_0 = "6.0-b52"
     SNPE_2_20 = "2.20.0"
-    SNPE_2_24 = "2.24.0"
 
     @classmethod
     def create_literal(cls):
-        return Literal["4.4.1-b50", "4.6-b199", "5.0.1-b118", "5.0.2-b231", "6.0-b52"]
+        return Literal["4.4.1-b50", "4.6-b199", "5.0.1-b118", "5.0.2-b231", "6.0-b52", "2.20.0"]
 
 
 class DisplaySoftwareVersion(str, Enum):
@@ -115,7 +114,6 @@ class DisplaySoftwareVersion(str, Enum):
     JETPACK_5_0_2 = "Jetpack 5.0.2"
     JETPACK_6_0 = "Jetpack 6.0"
     SNPE_2_20 = "SNPE 2.20.0"
-    SNPE_2_24 = "SNPE 2.24.0"
 
 
 class HardwareType(str, Enum):
