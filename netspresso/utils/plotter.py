@@ -106,6 +106,9 @@ class Plotter:
 
     @staticmethod
     def compare_flops(original_flops, flops_per_model):
+        original_flops = round(original_flops/1e6, 2)
+        for key, value in flops_per_model.items():
+            flops_per_model[key] = round(value/1e6, 2)
         Plotter._plot_comparison(
             original_flops,
             flops_per_model,
@@ -166,8 +169,16 @@ class Plotter:
         original_model = profile_result.results.original_model
         compressed_model = profile_result.results.compressed_model
 
-        original_values = [original_model.flops, original_model.number_of_parameters, original_model.size]
-        compressed_values = [compressed_model.flops, compressed_model.number_of_parameters, compressed_model.size]
+        original_values = [
+            round(original_model.flops/1e6, 2),
+            round(original_model.number_of_parameters/1e6, 2),
+            original_model.size
+        ]
+        compressed_values = [
+            round(compressed_model.flops/1e6, 2),
+            round(compressed_model.number_of_parameters/1e6, 2),
+            compressed_model.size
+        ]
 
         difference_values = np.array(original_values) / np.array(compressed_values)
 
@@ -193,7 +204,7 @@ class Plotter:
                 axs[idx].text(
                     bar.get_x() + bar.get_width() / 2,
                     bar.get_height() + 0.01,
-                    f"{bar.get_height():.4f}",
+                    f"{bar.get_height():.2f}",
                     ha="center",
                     va="bottom",
                 )
@@ -202,7 +213,7 @@ class Plotter:
                 axs[idx].text(
                     bar.get_x() + bar.get_width() / 2,
                     bar.get_height() + 0.01,
-                    f"{bar.get_height():.4f}",
+                    f"{bar.get_height():.2f}",
                     ha="center",
                     va="bottom",
                 )
