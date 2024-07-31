@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-def _voc_color_map(N=256, normalized=False):
+def _voc_color_map(N=256, normalized=False, brightness_factor=2.0):
     def bitget(byteval, idx):
         return ((byteval & (1 << idx)) != 0)
 
@@ -13,14 +13,20 @@ def _voc_color_map(N=256, normalized=False):
         r = g = b = 0
         c = i
         for j in range(8):
-            r = r | (bitget(c, 0) << 7 - j)
-            g = g | (bitget(c, 1) << 7 - j)
-            b = b | (bitget(c, 2) << 7 - j)
+            r = r | (bitget(c, 0) << (7 - j))
+            g = g | (bitget(c, 1) << (7 - j))
+            b = b | (bitget(c, 2) << (7 - j))
             c = c >> 3
+
+        # Adjust brightness
+        r = min(255, max(0, r * brightness_factor))
+        g = min(255, max(0, g * brightness_factor))
+        b = min(255, max(0, b * brightness_factor))
 
         cmap[i] = np.array([r, g, b])
 
-    cmap = cmap / 255 if normalized else cmap
+    if normalized:
+        cmap = cmap / 255
     return cmap
 
 
@@ -52,10 +58,10 @@ class DetectionVisualizer:
             class_name = self.class_map[class_label] if self.class_map else str(class_label)
 
             # Draw class info
-            text_size, _ = cv2.getTextSize(str(class_name), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+            text_size, _ = cv2.getTextSize(str(class_name), cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2)
             text_w, text_h = text_size
             visualize_image = cv2.rectangle(visualize_image, (x1, y1-5-text_h), (x1+text_w, y1), color=color, thickness=-1)
-            visualize_image = cv2.putText(visualize_image, str(class_name), (x1, y1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+            visualize_image = cv2.putText(visualize_image, str(class_name), (x1, y1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
 
         return visualize_image
 
