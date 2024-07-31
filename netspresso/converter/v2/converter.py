@@ -179,21 +179,7 @@ class ConverterV2:
                         TaskStatusForDisplay.TIMEOUT,
                     ]:
                         break
-                    time.sleep(3)
-
-            self._download_converted_model(
-                convert_task=response.data,
-                local_path=str(default_model_path.with_suffix(extension)),
-            )
-
-            if launcher_client_v2.is_cloud():
-                remaining_credit = auth_client.get_credit(
-                    self.token_handler.tokens.access_token,
-                    self.token_handler.verify_ssl,
-                )
-                logger.info(
-                    f"{ServiceCredit.MODEL_BENCHMARK} credits have been consumed. Remaining Credit: {remaining_credit}"
-                )
+                    time.sleep(30)
 
             convert_task = response.data
 
@@ -203,11 +189,24 @@ class ConverterV2:
             ).data
 
             if convert_task.status == TaskStatusForDisplay.FINISHED:
+                self._download_converted_model(
+                    convert_task=convert_task,
+                    local_path=str(default_model_path.with_suffix(extension)),
+                )
+                if launcher_client_v2.is_cloud():
+                    remaining_credit = auth_client.get_credit(
+                        self.token_handler.tokens.access_token,
+                        self.token_handler.verify_ssl,
+                    )
+                    logger.info(
+                        f"{ServiceCredit.MODEL_CONVERT} credits have been consumed. Remaining Credit: {remaining_credit}"
+                    )
                 converter_metadata.status = Status.COMPLETED
                 logger.info("Convert task successfully completed.")
             else:
                 converter_metadata.status = Status.ERROR
-                logger.info("Convert task failed with an error.")
+                converter_metadata.update_message(exception_detail=convert_task.error_log)
+                logger.error(f"Convert task failed with an error. Error: {convert_task.error_log}")
 
             converter_metadata.converted_model_path = default_model_path.with_suffix(extension).as_posix()
             for available_option in available_options:
