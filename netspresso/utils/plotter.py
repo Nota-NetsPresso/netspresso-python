@@ -106,16 +106,16 @@ class Plotter:
 
     @staticmethod
     def compare_flops(original_flops, flops_per_model):
-        original_flops = round(original_flops/1e6, 2)
+        original_flops = round(original_flops/1e9, 2)
         for key, value in flops_per_model.items():
-            flops_per_model[key] = round(value/1e6, 2)
+            flops_per_model[key] = round(value/1e9, 2)
         Plotter._plot_comparison(
             original_flops,
             flops_per_model,
             None,
             "FLOPs vs. Compression Ratio",
             "Compression Ratio",
-            "FLOPs (M)",
+            "FLOPs (G)",
         )
 
     @staticmethod
@@ -164,18 +164,18 @@ class Plotter:
 
     @staticmethod
     def compare_profile_result(profile_result: CompressorMetadata):
-        y_labels = ["FLOPs(M)", "Num of Params(M)", "Model Size(MB)"]
+        y_labels = ["FLOPs(G)", "Num of Params(M)", "Model Size(MB)"]
 
         original_model = profile_result.results.original_model
         compressed_model = profile_result.results.compressed_model
 
         original_values = [
-            round(original_model.flops/1e6, 2),
+            round(original_model.flops/1e9, 2),
             round(original_model.number_of_parameters/1e6, 2),
             original_model.size
         ]
         compressed_values = [
-            round(compressed_model.flops/1e6, 2),
+            round(compressed_model.flops/1e9, 2),
             round(compressed_model.number_of_parameters/1e6, 2),
             compressed_model.size
         ]
