@@ -199,7 +199,7 @@ class ConverterV2:
                         self.token_handler.verify_ssl,
                     )
                     logger.info(
-                        f"{ServiceCredit.MODEL_BENCHMARK} credits have been consumed. Remaining Credit: {remaining_credit}"
+                        f"{ServiceCredit.MODEL_CONVERT} credits have been consumed. Remaining Credit: {remaining_credit}"
                     )
                 converter_metadata.status = Status.COMPLETED
                 logger.info("Convert task successfully completed.")
