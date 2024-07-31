@@ -206,6 +206,7 @@ class ConverterV2:
                         TaskStatusForDisplay.TIMEOUT,
                     ]:
                         break
+
                     time.sleep(sleep_interval)
 
             available_options = launcher_client_v2.benchmarker.read_framework_options(

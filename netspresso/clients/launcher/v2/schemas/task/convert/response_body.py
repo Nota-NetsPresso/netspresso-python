@@ -22,6 +22,7 @@ class ConvertTask:
     output_model_id: str
     input_layer: InputLayer = field(default_factory=InputLayer)
     status: TaskStatusForDisplay = ""
+    error_log: Optional[dict] = None
     convert_task_option: Optional[TaskOption] = field(default_factory=TaskOption)
 
     def __init__(self, **kwargs):

@@ -159,26 +159,26 @@ class BenchmarkerV2:
                         TaskStatusForDisplay.TIMEOUT,
                     ]:
                         break
-                    time.sleep(3)
-
-            if launcher_client_v2.is_cloud():
-                remaining_credit = auth_client.get_credit(
-                    self.token_handler.tokens.access_token,
-                    self.token_handler.verify_ssl,
-                )
-                logger.info(
-                    f"{ServiceCredit.MODEL_BENCHMARK} credits have been consumed. Remaining Credit: {remaining_credit}"
-                )
+                    time.sleep(30)
 
             benchmark_task = response.data
             input_model_info = validate_model_response.data
 
             if benchmark_task.status == TaskStatusForDisplay.FINISHED:
+                if launcher_client_v2.is_cloud():
+                    remaining_credit = auth_client.get_credit(
+                        self.token_handler.tokens.access_token,
+                        self.token_handler.verify_ssl,
+                    )
+                    logger.info(
+                        f"{ServiceCredit.MODEL_BENCHMARK} credits have been consumed. Remaining Credit: {remaining_credit}"
+                    )
                 metadata.status = Status.COMPLETED
                 logger.info("Benchmark task successfully completed.")
             else:
                 metadata.status = Status.ERROR
-                logger.info("Benchmark task failed with an error.")
+                metadata.update_message(exception_detail=benchmark_task.error_log)
+                logger.error(f"Benchmark task failed with an error. Error: {benchmark_task.error_log}")
 
             metadata.benchmark_result = benchmark_task.benchmark_result.to(
                 file_size=input_model_info.file_size_in_mb
