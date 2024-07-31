@@ -6,7 +6,7 @@ from .compression import (
     RecommendationMethod,
     StepOp,
 )
-from .credit import MembershipType, ServiceCredit
+from .credit import MembershipType, ServiceCredit, ServiceTask
 from .device import (
     DeviceName,
     DisplaySoftwareVersion,
@@ -22,6 +22,7 @@ from .task import LauncherTask, Task, TaskStatusForDisplay
 
 __all__ = [
     "ServiceCredit",
+    "ServiceTask",
     "TaskType",
     "Status",
     "CompressionMethod",

@@ -8,15 +8,14 @@ from loguru import logger
 from netspresso.clients.auth import TokenHandler, auth_client
 from netspresso.clients.auth.response_body import UserResponse
 from netspresso.clients.launcher import launcher_client_v2
-from netspresso.clients.launcher.v2.schemas import InputLayer, ResponseConvertTaskItem
-from netspresso.clients.launcher.v2.schemas.task.convert.response_body import (
-    ConvertTask,
-)
+from netspresso.clients.launcher.v2.schemas import InputLayer
+from netspresso.clients.launcher.v2.schemas.task.convert.response_body import ConvertTask
 from netspresso.enums import (
     DataType,
     DeviceName,
     Framework,
     ServiceCredit,
+    ServiceTask,
     SoftwareVersion,
     Status,
     TaskStatusForDisplay,
@@ -33,18 +32,19 @@ class ConverterV2:
         self.token_handler = token_handler
         self.user_info = user_info
 
-    def check_credit_balance(self, service_credit):
+    def check_credit_balance(self, service_task: ServiceTask):
         current_credit = auth_client.get_credit(
             access_token=self.token_handler.tokens.access_token,
             verify_ssl=self.token_handler.verify_ssl
         )
-        service_name = service_credit.name.replace("_", " ").lower()
-        if current_credit > service_credit:
+        service_credit = ServiceCredit.get_credit(service_task)
+        service_task_name = service_task.name.replace("_", " ").lower()
+        if current_credit < service_credit:
             logger.error(
-                f"Insufficient balance: {current_credit} credits available, but {service_credit} credits required for {service_name} task."
+                f"Insufficient balance: {current_credit} credits available, but {service_credit} credits required for {service_task_name} task."
             )
             raise RuntimeError(
-                f"Your current balance of {current_credit} credits is insufficient to complete the task. \n{service_credit} credits are required for one {service_name} task. \nFor additional credit, please contact us at netspresso@nota.ai."
+                f"Your current balance of {current_credit} credits is insufficient to complete the task. \n{service_credit} credits are required for one {service_task_name} task. \nFor additional credit, please contact us at netspresso@nota.ai."
             )
 
     def print_remaining_credit(self, service_credit):
@@ -57,20 +57,21 @@ class ConverterV2:
             )
 
     def initialize_metadata(self, output_dir):
-        metadata = None
+        def create_metadata_with_status(status, error_message=None):
+            metadata = ConverterMetadata()
+            metadata.status = status
+            if error_message:
+                logger.error(error_message)
+            return metadata
 
         try:
             metadata = ConverterMetadata()
         except Exception as e:
-            logger.error(f"An unexpected error occurred during metadata initialization or folder creation: {e}")
-            if metadata is None:
-                metadata = ConverterMetadata()
-            metadata.status = Status.ERROR
+            error_message = f"An unexpected error occurred during metadata initialization: {e}"
+            metadata = create_metadata_with_status(Status.ERROR, error_message)
         except KeyboardInterrupt:
-            logger.warning("Conversion task was interrupted by the user.")
-            if metadata is None:
-                metadata = ConverterMetadata()
-            metadata.status = Status.STOPPED
+            warning_message = "Conversion task was interrupted by the user."
+            metadata = create_metadata_with_status(Status.STOPPED, warning_message)
         finally:
             MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
@@ -145,17 +146,19 @@ class ConverterV2:
             ConverterMetadata: Convert metadata.
         """
 
+        FileHandler.check_input_model_path(input_model_path)
         output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
         metadata = self.initialize_metadata(output_dir=output_dir)
 
         try:
             metadata.input_model_path = Path(input_model_path).resolve().as_posix()
-            FileHandler.check_input_model_path(input_model_path)
+            if metadata.status in [Status.ERROR, Status.STOPPED]:
+                return metadata
             default_model_path = FileHandler.get_default_model_path(folder_path=output_dir)
             extension = FileHandler.get_extension(framework=target_framework)
 
             self.token_handler.validate_token()
-            self.check_credit_balance(service_credit=ServiceCredit.MODEL_CONVERT)
+            self.check_credit_balance(service_task=ServiceTask.MODEL_CONVERT)
 
             # Get presigned_model_upload_url
             presigned_url_response = launcher_client_v2.converter.presigned_model_upload_url(
@@ -213,27 +216,25 @@ class ConverterV2:
                 access_token=self.token_handler.tokens.access_token,
                 framework=target_framework,
             )
-            for available_option in available_options.data:
-                metadata.available_options.append(available_option.to())
+            metadata.available_options.extend(option.to() for option in available_options.data)
 
             if convert_response.data.status == TaskStatusForDisplay.FINISHED:
                 self._download_converted_model(
                     convert_task=convert_response.data,
                     local_path=str(default_model_path.with_suffix(extension)),
                 )
-                self.print_remaining_credit(service_credit=ServiceCredit.MODEL_CONVERT)
+                self.print_remaining_credit(service_credit=ServiceTask.MODEL_CONVERT)
                 metadata.status = Status.COMPLETED
+                metadata.converted_model_path = default_model_path.with_suffix(extension).as_posix()
                 logger.info("Conversion task was completed successfully.")
             else:
                 metadata = self.handle_conversion_error(metadata, convert_response.data.error_log)
-
-            metadata.converted_model_path = default_model_path.with_suffix(extension).as_posix()
 
         except Exception as e:
             metadata = self.handle_conversion_error(metadata, e.args[0])
         except KeyboardInterrupt:
             metadata.status = Status.STOPPED
-            logger.warning("Conversion task was interrupted by the user.")
+            logger.error("Conversion task was interrupted by the user.")
         finally:
             MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
