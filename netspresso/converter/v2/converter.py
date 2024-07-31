@@ -112,9 +112,9 @@ class ConverterV2:
         default_model_path, extension = FileHandler.get_path_and_extension(
             folder_path=output_dir, framework=target_framework
         )
-        converter_metadata = ConverterMetadata()
-        converter_metadata.input_model_path = Path(input_model_path).resolve().as_posix()
-        MetadataHandler.save_json(data=asdict(converter_metadata), folder_path=output_dir)
+        metadata = ConverterMetadata()
+        metadata.input_model_path = Path(input_model_path).resolve().as_posix()
+        MetadataHandler.save_json(data=asdict(metadata), folder_path=output_dir)
 
         try:
             current_credit = auth_client.get_credit(
@@ -161,9 +161,9 @@ class ConverterV2:
                 dataset_path=dataset_path,
             )
 
-            converter_metadata.model_info = input_model_info.to()
-            converter_metadata.convert_task_info = response.data.to(input_model_info.uploaded_file_name)
-            MetadataHandler.save_json(data=asdict(converter_metadata), folder_path=output_dir)
+            metadata.model_info = input_model_info.to()
+            metadata.convert_task_info = response.data.to(input_model_info.uploaded_file_name)
+            MetadataHandler.save_json(data=asdict(metadata), folder_path=output_dir)
 
             if wait_until_done:
                 while True:
@@ -203,35 +203,35 @@ class ConverterV2:
             ).data
 
             if convert_task.status == TaskStatusForDisplay.FINISHED:
-                converter_metadata.status = Status.COMPLETED
+                metadata.status = Status.COMPLETED
                 logger.info("Convert task successfully completed.")
             else:
-                converter_metadata.status = Status.ERROR
+                metadata.status = Status.ERROR
                 logger.info("Convert task failed with an error.")
 
-            converter_metadata.converted_model_path = default_model_path.with_suffix(extension).as_posix()
+            metadata.converted_model_path = default_model_path.with_suffix(extension).as_posix()
             for available_option in available_options:
-                converter_metadata.available_options.append(available_option.to())
+                metadata.available_options.append(available_option.to())
 
             MetadataHandler.save_json(
-                data=asdict(converter_metadata), folder_path=output_dir
+                data=asdict(metadata), folder_path=output_dir
             )
 
-            return converter_metadata
+            return metadata
 
         except Exception as e:
             logger.error(f"Convert failed. Error: {e}")
-            converter_metadata.status = Status.ERROR
-            converter_metadata.update_message(exception_detail=e.args[0])
+            metadata.status = Status.ERROR
+            metadata.update_message(exception_detail=e.args[0])
             MetadataHandler.save_json(
-                data=asdict(converter_metadata), folder_path=output_dir
+                data=asdict(metadata), folder_path=output_dir
             )
             raise e
 
         except KeyboardInterrupt:
-            converter_metadata.status = Status.STOPPED
+            metadata.status = Status.STOPPED
             MetadataHandler.save_json(
-                data=asdict(converter_metadata), folder_path=output_dir
+                data=asdict(metadata), folder_path=output_dir
             )
 
     def get_conversion_task(self, conversion_task_id: str) -> ConvertTask:

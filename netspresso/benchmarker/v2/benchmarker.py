@@ -85,15 +85,14 @@ class BenchmarkerV2:
         try:
             folder_path = Path(input_model_path).parent
 
-            benchmarker_metadata = BenchmarkerMetadata()
-            benchmarker_metadata.input_model_path = Path(input_model_path).resolve().as_posix()
+            metadata = BenchmarkerMetadata()
+            metadata.input_model_path = Path(input_model_path).resolve().as_posix()
             metadatas = []
 
             file_path = folder_path / f"{file_name}.json"
 
             if FileHandler.check_exists(file_path):
                 metadatas = MetadataHandler.load_json(file_path)
-                # metadatas.append(asdict(benchmarker_metadata))
 
             current_credit = auth_client.get_credit(
                 access_token=self.token_handler.tokens.access_token,
@@ -138,8 +137,8 @@ class BenchmarkerV2:
                 software_version=target_software_version,
             )
 
-            benchmarker_metadata.benchmark_task_info = response.data.to()
-            metadatas.append(asdict(benchmarker_metadata))
+            metadata.benchmark_task_info = response.data.to()
+            metadatas.append(asdict(metadata))
             MetadataHandler.save_json(
                 data=metadatas,
                 folder_path=folder_path,
@@ -175,30 +174,30 @@ class BenchmarkerV2:
             input_model_info = validate_model_response.data
 
             if benchmark_task.status == TaskStatusForDisplay.FINISHED:
-                benchmarker_metadata.status = Status.COMPLETED
+                metadata.status = Status.COMPLETED
                 logger.info("Benchmark task successfully completed.")
             else:
-                benchmarker_metadata.status = Status.ERROR
+                metadata.status = Status.ERROR
                 logger.info("Benchmark task failed with an error.")
 
-            benchmarker_metadata.benchmark_result = benchmark_task.benchmark_result.to(
+            metadata.benchmark_result = benchmark_task.benchmark_result.to(
                 file_size=input_model_info.file_size_in_mb
             )
 
-            metadatas[-1] = asdict(benchmarker_metadata)
+            metadatas[-1] = asdict(metadata)
             MetadataHandler.save_json(
                 data=metadatas,
                 folder_path=folder_path,
                 file_name=file_name,
             )
 
-            return benchmarker_metadata
+            return metadata
 
         except Exception as e:
             logger.error(f"Benchmark failed. Error: {e}")
-            benchmarker_metadata.status = Status.ERROR
-            benchmarker_metadata.update_message(exception_detail=e.args[0])
-            metadatas[-1] = asdict(benchmarker_metadata)
+            metadata.status = Status.ERROR
+            metadata.update_message(exception_detail=e.args[0])
+            metadatas[-1] = asdict(metadata)
             MetadataHandler.save_json(
                 data=metadatas,
                 folder_path=folder_path,
@@ -207,8 +206,8 @@ class BenchmarkerV2:
             raise e
 
         except KeyboardInterrupt:
-            benchmarker_metadata.status = Status.STOPPED
-            metadatas[-1] = asdict(benchmarker_metadata)
+            metadata.status = Status.STOPPED
+            metadatas[-1] = asdict(metadata)
             MetadataHandler.save_json(
                 data=metadatas,
                 folder_path=folder_path,
