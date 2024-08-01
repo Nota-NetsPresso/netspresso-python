@@ -216,13 +216,14 @@ class Trainer:
 
     def set_dataset(self, dataset_root_path: str):
         dataset_name = Path(dataset_root_path).name
+        root_path = Path(dataset_root_path).resolve().as_posix()
 
-        self.check_paths_exist(dataset_root_path)
-        images_train = self.find_paths(dataset_root_path, "images", "train")
-        images_valid = self.find_paths(dataset_root_path, "images", "valid")
-        labels_train = self.find_paths(dataset_root_path, "labels", "train")
-        labels_valid = self.find_paths(dataset_root_path, "labels", "valid")
-        id_mapping = FileHandler.load_json(f"{dataset_root_path}/id_mapping.json")
+        self.check_paths_exist(root_path)
+        images_train = self.find_paths(root_path, "images", "train")
+        images_valid = self.find_paths(root_path, "images", "valid")
+        labels_train = self.find_paths(root_path, "labels", "train")
+        labels_valid = self.find_paths(root_path, "labels", "valid")
+        id_mapping = FileHandler.load_json(f"{root_path}/id_mapping.json")
         self.set_dataset_config(
             name=dataset_name,
             root_path=dataset_root_path,
