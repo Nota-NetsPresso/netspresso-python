@@ -181,32 +181,57 @@ class Trainer:
     def check_paths_exist(self, base_path):
         paths = [
             "images/train",
-            "labels/train",
             "images/valid",
-            "labels/valid",
             "id_mapping.json",
         ]
 
+        # Check for the existence of required directories and files
         for relative_path in paths:
             path = Path(base_path) / relative_path
             if not path.exists():
-                if path.suffix:
+                if path.suffix:  # It's a file
                     raise FileNotFoundError(
                         f"The required file '{relative_path}' does not exist. Please check and make sure it is in the correct location."
                     )
-                else:
+                else:  # It's a directory
                     raise FileNotFoundError(
                         f"The required directory '{relative_path}' does not exist. Please check and make sure it is in the correct location."
                     )
+
+    def find_paths(self, base_path: str, search_dir, split: str) -> List[str]:
+        base_dir = Path(base_path)
+        
+        if not base_dir.exists():
+            raise FileNotFoundError(f"The directory '{base_path}' does not exist.")
+        
+        result_paths = []
+
+        dir_path = base_dir / search_dir
+        if dir_path.exists() and dir_path.is_dir():
+            for item in dir_path.iterdir():
+                if item.is_dir() or item.is_file():
+                    if split in item.name:
+                        result_paths.append(item.as_posix())
+        
+        return result_paths[0]
 
     def set_dataset(self, dataset_root_path: str):
         dataset_name = Path(dataset_root_path).name
 
         self.check_paths_exist(dataset_root_path)
+        images_train = self.find_paths(dataset_root_path, "images", "train")
+        images_valid = self.find_paths(dataset_root_path, "images", "valid")
+        labels_train = self.find_paths(dataset_root_path, "labels", "train")
+        labels_valid = self.find_paths(dataset_root_path, "labels", "valid")
+        id_mapping = FileHandler.load_json(f"{dataset_root_path}/id_mapping.json")
         self.set_dataset_config(
             name=dataset_name,
             root_path=dataset_root_path,
-            id_mapping="id_mapping.json",
+            train_image=images_train,
+            train_label=labels_train,
+            valid_image=images_valid,
+            valid_label=labels_valid,
+            id_mapping=id_mapping,
         )
 
     def set_model_config(
