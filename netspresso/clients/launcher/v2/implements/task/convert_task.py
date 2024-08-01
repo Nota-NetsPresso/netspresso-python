@@ -1,4 +1,5 @@
 from dataclasses import asdict
+from enum import Enum
 
 from loguru import logger
 
@@ -25,6 +26,15 @@ class ConvertTaskAPI(TaskInterface):
         self.option_base_url = f"{self.base_url}/{self.task_type}/options"
         self.model_base_url = f"{self.base_url}/{self.task_type}/models"
 
+    @staticmethod
+    def custom_asdict_factory(data):
+        def convert_value(obj):
+            if isinstance(obj, Enum):
+                return obj.value
+            return obj
+
+        return {k: convert_value(v) for k, v in data}
+
     def start(
         self,
         request_body: RequestConvert,
@@ -36,7 +46,7 @@ class ConvertTaskAPI(TaskInterface):
         logger.info(f"Request_Body: {asdict(request_body)}")
         response = Requester().post_as_form(
             url=endpoint,
-            request_body=asdict(request_body),
+            request_body=asdict(request_body, dict_factory=self.custom_asdict_factory),
             headers=headers.to_dict(),
             binary=file.files if file else None,
         )
