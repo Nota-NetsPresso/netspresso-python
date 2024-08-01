@@ -30,7 +30,7 @@ INPUT_MODEL_PATH = "./examples/sample_models/yolo-fastest.onnx"
 OUTPUT_DIR = "./outputs/converted/DLC_GALAXY_S24_ULTRA"
 TARGET_FRAMEWORK = Framework.DLC
 TARGET_DEVICE_NAME = DeviceName.GALAXY_S24_ULTRA
-TARGET_DATA_TYPE = DataType.FP32
+TARGET_DATA_TYPE = DataType.FP16
 TARGET_SOFTWARE_VERSION = SoftwareVersion.SNPE_2_20
 
 # 3. Run convert
