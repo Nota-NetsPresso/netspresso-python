@@ -30,7 +30,7 @@ class TrainerMetadata(BaseMetadata):
     hparams: str = ""
     model_info: ModelInfo = field(default_factory=ModelInfo)
     training_info: TrainingInfo = field(default_factory=TrainingInfo)
-    traning_result: Dict = field(default_factory=dict)
+    training_result: Dict = field(default_factory=dict)
     available_options: List[AvailableOption] = field(default_factory=list)
 
     def update_model_info(self, task, model, dataset, input_shapes):
@@ -46,7 +46,7 @@ class TrainerMetadata(BaseMetadata):
         self.training_info.optimizer = optimizer
 
     def update_training_result(self, training_summary):
-        self.traning_result = training_summary
+        self.training_result = training_summary
 
     def update_output_dir(self, output_dir):
         self.output_dir = output_dir
