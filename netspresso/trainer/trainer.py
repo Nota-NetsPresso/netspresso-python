@@ -200,19 +200,18 @@ class Trainer:
 
     def find_paths(self, base_path: str, search_dir, split: str) -> List[str]:
         base_dir = Path(base_path)
-        
+
         if not base_dir.exists():
             raise FileNotFoundError(f"The directory '{base_path}' does not exist.")
-        
+
         result_paths = []
 
         dir_path = base_dir / search_dir
         if dir_path.exists() and dir_path.is_dir():
             for item in dir_path.iterdir():
-                if item.is_dir() or item.is_file():
-                    if split in item.name:
-                        result_paths.append(item.as_posix())
-        
+                if (item.is_dir() or item.is_file()) and split in item.name:
+                    result_paths.append(item.as_posix())
+
         return result_paths[0]
 
     def set_dataset(self, dataset_root_path: str):
