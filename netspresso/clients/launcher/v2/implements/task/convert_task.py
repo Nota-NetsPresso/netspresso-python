@@ -1,5 +1,6 @@
 from dataclasses import asdict
 from enum import Enum
+
 from loguru import logger
 
 from netspresso.clients.launcher.v2.interfaces import TaskInterface
@@ -32,7 +33,7 @@ class ConvertTaskAPI(TaskInterface):
                 return obj.value
             return obj
 
-        return dict((k, convert_value(v)) for k, v in data)
+        return {k: convert_value(v) for k, v in data}
 
     def start(
         self,
