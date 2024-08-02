@@ -18,6 +18,7 @@ from netspresso.clients.launcher.v2.schemas import (
     ResponseModelItem,
     ResponseModelOptions,
     ResponseModelUploadUrl,
+    UploadDataset,
     UploadFile,
 )
 from netspresso.clients.utils.common import read_file_bytes
@@ -123,7 +124,7 @@ class Converter:
 
         if dataset_path:
             dataset_filename = os.path.basename(dataset_path)
-            file_object = UploadFile(
+            file_object = UploadDataset(
                 file_name=dataset_filename,
                 file_content=read_file_bytes(dataset_path),
             )
