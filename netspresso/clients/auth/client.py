@@ -59,16 +59,10 @@ class TokenHandler:
 
     def validate_token(self):
         if not self.check_jwt_exp():
-            try:
-                self.tokens = auth_client.reissue_token(
-                    self.tokens.access_token, self.tokens.refresh_token, self.verify_ssl
-                )
-                logger.info("The access token has expired. the token has been reissued.")
-            except Exception:
-                self.tokens = auth_client.login(
-                    email=self.email, password=self.password, verify_ssl=self.verify_ssl
-                )
-                logger.info("The refresh token has expired. the token has been reissued.")
+            self.tokens = auth_client.login(
+                email=self.email, password=self.password, verify_ssl=self.verify_ssl
+            )
+            logger.info("The token has expired. the token has been reissued.")
 
 
 auth_client = AuthClient()
