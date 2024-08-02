@@ -42,6 +42,7 @@ from netspresso.trainer.models.yolox import (
 
 CLASSIFICATION_MODELS = {
     "EfficientFormer": ClassificationEfficientFormerModelConfig,
+    "EfficientFormer-L1": ClassificationEfficientFormerModelConfig,
     "MobileNetV3_Small": ClassificationMobileNetV3SmallModelConfig,
     "MobileNetV3-S": ClassificationMobileNetV3SmallModelConfig,
     "MobileNetV3_Large": ClassificationMobileNetV3LargeModelConfig,
@@ -67,6 +68,7 @@ DETECTION_MODELS = {
 
 SEGMENTATION_MODELS = {
     "EfficientFormer": SegmentationEfficientFormerModelConfig,
+    "EfficientFormer-L1": SegmentationEfficientFormerModelConfig,
     "MobileNetV3_Small": SegmentationMobileNetV3SmallModelConfig,
     "MobileNetV3-S": SegmentationMobileNetV3SmallModelConfig,
     "ResNet50": SegmentationResNet50ModelConfig,

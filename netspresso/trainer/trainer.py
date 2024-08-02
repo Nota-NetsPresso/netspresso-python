@@ -38,6 +38,7 @@ class Trainer:
 
         self.token_handler = token_handler
         self.deprecated_names = {
+            "EfficientFormer": "EfficientFormer-L1",
             "MobileNetV3_Small": "MobileNetV3-S",
             "MobileNetV3_Large": "MobileNetV3-L",
             "ViT-Tiny": "ViT-T",
