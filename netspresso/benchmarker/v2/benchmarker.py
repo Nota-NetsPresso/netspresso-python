@@ -84,7 +84,7 @@ class BenchmarkerV2:
 
         return metadatas
 
-    def handle_conversion_error(self, metadata, error_message):
+    def handle_error(self, metadata, error_message):
         metadata.status = Status.ERROR
         metadata.update_message(exception_detail=error_message)
         logger.error(f"Benchmark task failed due to an error: {error_message}")
@@ -188,10 +188,10 @@ class BenchmarkerV2:
                 )
                 logger.info("Benchmark task was completed successfully.")
             else:
-                metadata = self.handle_conversion_error(metadata, benchmark_response.data.error_log)
+                metadata = self.handle_error(metadata, benchmark_response.data.error_log)
 
         except Exception as e:
-            metadata = self.handle_conversion_error(metadata, e.args[0])
+            metadata = self.handle_error(metadata, e.args[0])
         except KeyboardInterrupt:
             metadata.status = Status.STOPPED
             logger.error("Benchmark task was interrupted by the user.")

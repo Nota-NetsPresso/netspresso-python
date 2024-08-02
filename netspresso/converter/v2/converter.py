@@ -77,7 +77,7 @@ class ConverterV2:
 
         return metadata
 
-    def handle_conversion_error(self, metadata, error_message):
+    def handle_error(self, metadata, error_message):
         metadata.status = Status.ERROR
         metadata.update_message(exception_detail=error_message)
         logger.error(f"Conversion task failed due to an error: {error_message}")
@@ -228,10 +228,10 @@ class ConverterV2:
                 metadata.converted_model_path = default_model_path.with_suffix(extension).as_posix()
                 logger.info("Conversion task was completed successfully.")
             else:
-                metadata = self.handle_conversion_error(metadata, convert_response.data.error_log)
+                metadata = self.handle_error(metadata, convert_response.data.error_log)
 
         except Exception as e:
-            metadata = self.handle_conversion_error(metadata, e.args[0])
+            metadata = self.handle_error(metadata, e.args[0])
         except KeyboardInterrupt:
             metadata.status = Status.STOPPED
             logger.error("Conversion task was interrupted by the user.")
