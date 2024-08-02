@@ -19,8 +19,8 @@ class MobileViTArchitectureConfig(ArchitectureConfig):
             },
             "stage_params": [
                 {
-                    "out_channels": 32,
                     "block_type": "mv2",
+                    "out_channels": 32,
                     "num_blocks": 1,
                     "stride": 1,
                     "ir_expansion_ratio": 4,  # [mv2_exp_mult] * 4
@@ -37,8 +37,8 @@ class MobileViTArchitectureConfig(ArchitectureConfig):
                     "out_channels": 96,
                     "num_blocks": 2,
                     "stride": 2,
-                    "hidden_size": 144,
-                    "intermediate_size": 288,
+                    "attention_channels": 144,
+                    "ffn_intermediate_channels": 288,
                     "dilate": False,
                     "ir_expansion_ratio": 4,  # [mv2_exp_mult] * 4
                 },
@@ -47,8 +47,8 @@ class MobileViTArchitectureConfig(ArchitectureConfig):
                     "out_channels": 128,
                     "num_blocks": 4,
                     "stride": 2,
-                    "hidden_size": 192,
-                    "intermediate_size": 384,
+                    "attention_channels": 192,
+                    "ffn_intermediate_channels": 384,
                     "dilate": False,
                     "ir_expansion_ratio": 4,  # [mv2_exp_mult] * 4
                 },
@@ -57,8 +57,8 @@ class MobileViTArchitectureConfig(ArchitectureConfig):
                     "out_channels": 160,
                     "num_blocks": 3,
                     "stride": 2,
-                    "hidden_size": 240,
-                    "intermediate_size": 480,
+                    "attention_channels": 240,
+                    "ffn_intermediate_channels": 480,
                     "dilate": False,
                     "ir_expansion_ratio": 4,  # [mv2_exp_mult] * 4
                 },
