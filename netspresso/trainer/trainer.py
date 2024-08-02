@@ -44,7 +44,8 @@ class Trainer:
             "ViT-Tiny": "ViT-T",
             "MixNet-Small": "MixNet-S",
             "MixNet-Medium": "MixNet-M",
-            "MixNet-Large": "MixNet-L"
+            "MixNet-Large": "MixNet-L",
+            "PIDNet": "PIDNet-S",
         }
 
         if (task is not None) == (yaml_path is not None):

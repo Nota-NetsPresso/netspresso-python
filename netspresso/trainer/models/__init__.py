@@ -77,6 +77,7 @@ SEGMENTATION_MODELS = {
     "MixNet-M": SegmentationMixNetMediumModelConfig,
     "MixNet-L": SegmentationMixNetLargeModelConfig,
     "PIDNet": PIDNetModelConfig,
+    "PIDNet-S": PIDNetModelConfig,
 }
 
 POSEESTIMATION_MODELS = {
