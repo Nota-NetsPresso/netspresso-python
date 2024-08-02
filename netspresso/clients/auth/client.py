@@ -6,11 +6,11 @@ from loguru import logger
 
 from netspresso.clients.auth.response_body import TokenResponse, UserResponse
 from netspresso.clients.auth.v2.client import AuthClientV2
-from netspresso.clients.config import Config, Module
+from netspresso.clients.config import Config, ServiceModule, ServiceName
 
 
 class AuthClient:
-    def __init__(self, config: Config = Config(Module.AUTH)):
+    def __init__(self, config: Config = Config(ServiceName.NP, ServiceModule.AUTH)):
         """
         Initialize the UserSession.
         """

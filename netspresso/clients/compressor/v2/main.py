@@ -25,14 +25,14 @@ from netspresso.clients.compressor.v2.schemas.model import (
     ResponseModelItems,
     ResponseModelUrl,
 )
-from netspresso.clients.config import Config, Module
+from netspresso.clients.config import Config, ServiceModule, ServiceName
 from netspresso.clients.utils.common import create_multipart_data, create_progress_func, get_headers, progress_callback
 from netspresso.clients.utils.requester import Requester
 
 
 class CompressorAPIClient:
     def __init__(self):
-        self.config = Config(Module.COMPRESSOR)
+        self.config = Config(ServiceName.NP, ServiceModule.COMPRESSOR)
         self.host = self.config.HOST
         self.port = self.config.PORT
         self.prefix = self.config.URI_PREFIX

@@ -6,6 +6,7 @@ from .compression import (
     RecommendationMethod,
     StepOp,
 )
+from .config import EndPointProperty, EnvironmentType, ServiceModule, ServiceName
 from .credit import MembershipType, ServiceCredit
 from .device import (
     DeviceName,
@@ -48,4 +49,8 @@ __all__ = [
     "DisplaySoftwareVersion",
     "LauncherTask",
     "TaskStatusForDisplay",
+    "EnvironmentType",
+    "ServiceModule",
+    "EndPointProperty",
+    "ServiceName",
 ]
