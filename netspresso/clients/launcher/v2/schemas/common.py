@@ -46,6 +46,14 @@ class UploadFile:
 
 
 @dataclass
+class UploadDataset:
+    files: List
+
+    def __init__(self, file_name, file_content):
+        self.files = [("dataset", (file_name, file_content))]
+
+
+@dataclass
 class RequestPagination:
     """ """
 

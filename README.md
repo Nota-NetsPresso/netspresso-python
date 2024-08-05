@@ -214,7 +214,7 @@ trainer.set_dataset_config(
 )
 
 # 2-2. Model
-print(trainer.available_models)  # ['EfficientFormer', 'YOLOX-S', 'ResNet', 'MobileNetV3', 'MixNetL', 'MixNetM', 'MixNetS']
+print(trainer.available_models)  # ['YOLOX-S', 'YOLOX-M', 'YOLOX-L', 'YOLOX-X']
 trainer.set_model_config(model_name="YOLOX-S", img_size=512)
 
 # 2-3. Augmentation
@@ -336,9 +336,9 @@ benchmark_result = benchmarker.benchmark_model(
     target_device_name=DeviceName.JETSON_AGX_ORIN,
     target_software_version=SoftwareVersion.JETPACK_5_0_1,
 )
-print(f"model inference latency: {benchmark_result['result']['latency']} ms")
-print(f"model gpu memory footprint: {benchmark_result['result']['memory_footprint_gpu']} MB")
-print(f"model cpu memory footprint: {benchmark_result['result']['memory_footprint_cpu']} MB")
+print(f"model inference latency: {benchmark_result.benchmark_result.latency} ms")
+print(f"model gpu memory footprint: {benchmark_result.benchmark_result.memory_footprint_gpu} MB")
+print(f"model cpu memory footprint: {benchmark_result.benchmark_result.memory_footprint_cpu} MB")
 ```
 
 <details open>
@@ -349,6 +349,7 @@ print(f"model cpu memory footprint: {benchmark_result['result']['memory_footprin
 
   | Target / Source Framework | ONNX | TENSORFLOW_KERAS | TENSORFLOW |
   |:--------------------------|:----:|:----------------:|:----------:|
+  | DLC                       |  ✔️  |                  |            |
   | TENSORRT                  |  ✔️  |                  |            |
   | DRPAI                     |  ✔️  |                  |            |
   | OPENVINO                  |  ✔️  |                  |            |
@@ -381,7 +382,7 @@ print(f"model cpu memory footprint: {benchmark_result['result']['memory_footprin
 
   ### Software versions that support conversions and benchmarks for specific devices 
 
-  Software Versions requires only Jetson Device. If you are using a different device, you do not need to enter it.
+  Software Versions requires for Jetson Device. If you are using a different device, you do not need to enter it.
 
   | Software Version / Device | JETSON_NANO | JETSON_TX2 | JETSON_XAVIER | JETSON_NX | JETSON_AGX_ORIN | JETSON_ORIN_NANO |
   |:--------------------------|:-----------:|:----------:|:-------------:|:---------:|:---------------:|:----------------:|

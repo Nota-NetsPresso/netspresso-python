@@ -29,6 +29,7 @@ class SegFormerB0ArchitectureConfig(ArchitectureConfig):
                     "sequence_reduction_ratio": 4,
                     "attention_chananels": 64,
                     "embedding_patch_sizes": 3,
+                    "embedding_strides": 2,
                     "num_attention_heads": 2,
                 },
                 {
