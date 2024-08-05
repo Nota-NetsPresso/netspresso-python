@@ -567,7 +567,7 @@ class Trainer(NetsPressoBase):
             best_onnx_paths = list(Path(destination_folder).glob("*best.onnx"))
             hparams_path = destination_folder / "hparams.yaml"
             status = self._get_status_by_training_summary(training_summary.get("status"))
-            error_stat = training_summary.get("error_stat")
+            error_stat = training_summary.get("error_stat", "")
 
             if best_fx_paths:
                 metadata.update_best_fx_model_path(best_fx_model_path=best_fx_paths[0].resolve().as_posix())
