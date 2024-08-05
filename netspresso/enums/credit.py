@@ -1,11 +1,11 @@
-from enum import Enum, IntEnum
+from enum import Enum
 
 
-class ServiceTask(IntEnum):
-    ADVANCED_COMPRESSION = 1
-    AUTOMATIC_COMPRESSION = 2
-    MODEL_CONVERT = 3
-    MODEL_BENCHMARK = 4
+class ServiceTask(str, Enum):
+    ADVANCED_COMPRESSION = "Advanced Compression"
+    AUTOMATIC_COMPRESSION = "Automatic Compression"
+    MODEL_CONVERT = "Conversion"
+    MODEL_BENCHMARK = "Benchmark"
 
 
 class ServiceCredit:

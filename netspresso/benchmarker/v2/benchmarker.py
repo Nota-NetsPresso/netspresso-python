@@ -4,14 +4,15 @@ from typing import Optional, Union
 
 from loguru import logger
 
-from netspresso.clients.auth import TokenHandler, auth_client
+from netspresso.base import NetsPressoBase
+from netspresso.clients.auth import TokenHandler
 from netspresso.clients.auth.response_body import UserResponse
 from netspresso.clients.launcher import launcher_client_v2
 from netspresso.clients.launcher.v2.schemas.task.benchmark.response_body import (
     BenchmarkTask,
 )
 from netspresso.enums import Status, TaskStatusForDisplay
-from netspresso.enums.credit import ServiceCredit, ServiceTask
+from netspresso.enums.credit import ServiceTask
 from netspresso.enums.device import (
     DeviceName,
     HardwareType,
@@ -22,37 +23,12 @@ from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
 
 
-class BenchmarkerV2:
+class BenchmarkerV2(NetsPressoBase):
     def __init__(self, token_handler: TokenHandler, user_info: UserResponse) -> None:
         """Initialize the Benchmarker."""
 
-        self.token_handler = token_handler
+        super().__init__(token_handler)
         self.user_info = user_info
-
-    def check_credit_balance(self, service_task: ServiceTask):
-        current_credit = auth_client.get_credit(
-            access_token=self.token_handler.tokens.access_token,
-            verify_ssl=self.token_handler.verify_ssl
-        )
-        service_credit = ServiceCredit.get_credit(service_task)
-        service_task_name = service_task.name.replace("_", " ").lower()
-        if current_credit < service_credit:
-            logger.error(
-                f"Insufficient balance: {current_credit} credits available, but {service_credit} credits required for {service_task_name} task."
-            )
-            raise RuntimeError(
-                f"Your current balance of {current_credit} credits is insufficient to complete the task. \n{service_credit} credits are required for one {service_task_name} task. \nFor additional credit, please contact us at netspresso@nota.ai."
-            )
-
-    def print_remaining_credit(self, service_task):
-        if launcher_client_v2.is_cloud():
-            service_credit = ServiceCredit.get_credit(service_task)
-            remaining_credit = auth_client.get_credit(
-                self.token_handler.tokens.access_token, verify_ssl=self.token_handler.verify_ssl
-            )
-            logger.info(
-                f"{service_credit} credits have been consumed. Remaining Credit: {remaining_credit}"
-            )
 
     def initialize_metadata(self, input_model_path: str):
         def create_metadata_with_status(status, error_message=None):
@@ -78,18 +54,11 @@ class BenchmarkerV2:
             if FileHandler.check_exists(file_path):
                 metadatas = MetadataHandler.load_json(file_path)
 
-            # Add current metadata and save
+            metadata.input_model_path = Path(input_model_path).resolve().as_posix()
             metadatas.append(metadata)
             MetadataHandler.save_benchmark_result(data=metadatas, folder_path=output_dir)
 
         return metadatas
-
-    def handle_error(self, metadata, error_message):
-        metadata.status = Status.ERROR
-        metadata.update_message(exception_detail=error_message)
-        logger.error(f"Benchmark task failed due to an error: {error_message}")
-
-        return metadata
 
     def benchmark_model(
         self,
@@ -123,12 +92,10 @@ class BenchmarkerV2:
         try:
             metadata: BenchmarkerMetadata = metadatas[-1]
             output_dir = Path(input_model_path).parent
-            metadata.input_model_path = Path(input_model_path).resolve().as_posix()
             if metadata.status in [Status.ERROR, Status.STOPPED]:
                 return metadata
 
-            self.token_handler.validate_token()
-            self.check_credit_balance(service_task=ServiceTask.MODEL_CONVERT)
+            self.validate_token_and_check_credit(service_task=ServiceTask.MODEL_BENCHMARK)
 
             # Get presigned_model_upload_url
             presigned_url_response = launcher_client_v2.benchmarker.presigned_model_upload_url(
@@ -188,13 +155,12 @@ class BenchmarkerV2:
                 )
                 logger.info("Benchmark task was completed successfully.")
             else:
-                metadata = self.handle_error(metadata, benchmark_response.data.error_log)
+                metadata = self.handle_error(metadata, ServiceTask.MODEL_BENCHMARK, benchmark_response.data.error_log)
 
         except Exception as e:
-            metadata = self.handle_error(metadata, e.args[0])
+            metadata = self.handle_error(metadata, ServiceTask.MODEL_BENCHMARK, e.args[0])
         except KeyboardInterrupt:
-            metadata.status = Status.STOPPED
-            logger.error("Benchmark task was interrupted by the user.")
+            metadata = self.handle_stop(metadata, ServiceTask.MODEL_BENCHMARK)
         finally:
             metadatas[-1] = metadata
             MetadataHandler.save_benchmark_result(data=metadatas, folder_path=output_dir)
