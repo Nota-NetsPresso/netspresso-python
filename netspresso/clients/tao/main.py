@@ -1,6 +1,6 @@
 from loguru import logger
 
-from netspresso.clients.config import Config, Module
+from netspresso.clients.config import Config, ServiceModule, ServiceName
 from netspresso.clients.tao.auth import AuthAPI
 from netspresso.clients.tao.dataset import DatasetAPI
 from netspresso.clients.tao.experiment import ExperimentAPI
@@ -9,7 +9,7 @@ from netspresso.clients.utils.common import create_tao_headers
 
 class TAOAPIClient:
     def __init__(self):
-        self.config = Config(Module.TAO)
+        self.config = Config(ServiceName.TAO, ServiceModule.TRAINER)
         self.host = self.config.HOST
         self.prefix = self.config.URI_PREFIX
         self.url = f"{self.host}{self.prefix}"

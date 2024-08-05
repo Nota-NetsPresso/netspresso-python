@@ -1,11 +1,11 @@
-from netspresso.clients.config import Config, Module
+from netspresso.clients.config import Config, ServiceModule, ServiceName
 from netspresso.clients.launcher.v2.benchmarker import Benchmarker
 from netspresso.clients.launcher.v2.converter import Converter
 
 
 class LauncherAPIClient:
     def __init__(self):
-        self.config = Config(Module.LAUNCHER)
+        self.config = Config(ServiceName.NP, ServiceModule.LAUNCHER)
         self.host = self.config.HOST
         self.port = self.config.PORT
         self.prefix = self.config.URI_PREFIX

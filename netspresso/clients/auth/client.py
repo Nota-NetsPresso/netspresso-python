@@ -6,11 +6,11 @@ from loguru import logger
 
 from netspresso.clients.auth.response_body import TokenResponse, UserResponse
 from netspresso.clients.auth.v2.client import AuthClientV2
-from netspresso.clients.config import Config, Module
+from netspresso.clients.config import Config, ServiceModule, ServiceName
 
 
 class AuthClient:
-    def __init__(self, config: Config = Config(Module.AUTH)):
+    def __init__(self, config: Config = Config(ServiceName.NP, ServiceModule.AUTH)):
         """
         Initialize the UserSession.
         """
@@ -64,16 +64,10 @@ class TokenHandler:
 
     def validate_token(self):
         if not self.check_jwt_exp():
-            try:
-                self.tokens = auth_client.reissue_token(
-                    self.tokens.access_token, self.tokens.refresh_token, self.verify_ssl
-                )
-                logger.info("The access token has expired. the token has been reissued.")
-            except Exception:
-                self.tokens = auth_client.login(
-                    email=self.email, password=self.password, verify_ssl=self.verify_ssl
-                )
-                logger.info("The refresh token has expired. the token has been reissued.")
+            self.tokens = auth_client.login(
+                email=self.email, password=self.password, verify_ssl=self.verify_ssl
+            )
+            logger.info("The token has expired. the token has been reissued.")
 
 
 auth_client = AuthClient()

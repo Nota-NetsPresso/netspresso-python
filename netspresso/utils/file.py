@@ -15,7 +15,6 @@ FRAMEWORK_EXTENSION_MAP = {
     "drpai": ".zip",
     "openvino": ".zip",
     "tensorrt": ".trt",
-    "dlc": ".dlc"
 }
 
 

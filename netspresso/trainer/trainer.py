@@ -38,12 +38,14 @@ class Trainer:
 
         self.token_handler = token_handler
         self.deprecated_names = {
+            "EfficientFormer": "EfficientFormer-L1",
             "MobileNetV3_Small": "MobileNetV3-S",
             "MobileNetV3_Large": "MobileNetV3-L",
             "ViT-Tiny": "ViT-T",
             "MixNet-Small": "MixNet-S",
             "MixNet-Medium": "MixNet-M",
-            "MixNet-Large": "MixNet-L"
+            "MixNet-Large": "MixNet-L",
+            "PIDNet": "PIDNet-S",
         }
 
         if (task is not None) == (yaml_path is not None):
@@ -131,6 +133,28 @@ class Trainer:
             )
 
     def _get_available_models(self) -> Dict[str, Any]:
+        """Get available models based on the current task.
+
+        Returns:
+            Dict[str, Any]: A dictionary mapping model types to available models.
+        """
+
+        available_models = {
+            "classification": CLASSIFICATION_MODELS,
+            "detection": DETECTION_MODELS,
+            "segmentation": SEGMENTATION_MODELS,
+        }[self.task]
+
+        # Filter out deprecated names
+        filtered_models = {
+            name: config
+            for name, config in available_models.items()
+            if name not in self.deprecated_names
+        }
+
+        return filtered_models
+
+    def _get_available_models_w_deprecated_names(self) -> Dict[str, Any]:
         """Get available models based on the current task.
 
         Returns:
@@ -270,7 +294,7 @@ class Trainer:
             warnings.filterwarnings("ignore", category=DeprecationWarning)
 
         self.model_name = model_name
-        model = self._get_available_models().get(model_name)
+        model = self._get_available_models_w_deprecated_names().get(model_name)
         self.img_size = img_size
         self.logging.onnx_input_size = [img_size, img_size]
 
