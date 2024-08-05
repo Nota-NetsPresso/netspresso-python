@@ -1,11 +1,25 @@
-from enum import Enum, IntEnum
+from enum import Enum
 
 
-class ServiceCredit(IntEnum):
-    ADVANCED_COMPRESSION = 50
-    AUTOMATIC_COMPRESSION = 25
-    MODEL_CONVERT = 50
-    MODEL_BENCHMARK = 25
+class ServiceTask(str, Enum):
+    TRAINING = "Training"
+    ADVANCED_COMPRESSION = "Advanced Compression"
+    AUTOMATIC_COMPRESSION = "Automatic Compression"
+    MODEL_CONVERT = "Conversion"
+    MODEL_BENCHMARK = "Benchmark"
+
+
+class ServiceCredit:
+    CREDITS = {
+        ServiceTask.ADVANCED_COMPRESSION: 50,
+        ServiceTask.AUTOMATIC_COMPRESSION: 25,
+        ServiceTask.MODEL_CONVERT: 50,
+        ServiceTask.MODEL_BENCHMARK: 25,
+    }
+
+    @staticmethod
+    def get_credit(task_id):
+        return ServiceCredit.CREDITS.get(task_id, "Task not found")
 
 
 class MembershipType(str, Enum):

@@ -23,6 +23,7 @@ from .task import LauncherTask, Task, TaskStatusForDisplay
 
 __all__ = [
     "ServiceCredit",
+    "ServiceTask",
     "TaskType",
     "Status",
     "CompressionMethod",
