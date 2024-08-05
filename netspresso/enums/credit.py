@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class ServiceTask(str, Enum):
+    TRAINING = "Training"
     ADVANCED_COMPRESSION = "Advanced Compression"
     AUTOMATIC_COMPRESSION = "Automatic Compression"
     MODEL_CONVERT = "Conversion"
