@@ -465,13 +465,15 @@ class Trainer(NetsPressoBase):
 
         return available_options
 
-    def _check_status(self, training_summary):
-        if training_summary.get("success"):
-            status = Status.COMPLETED
-        else:
-            status = Status.STOPPED if training_summary.get("error_stat", None) is None else Status.ERROR
-
-        return status
+    def _get_status_by_training_summary(self, status):
+        if status == "success":
+            return Status.COMPLETED
+        elif status == "stop":
+            return Status.STOPPED
+        elif status == "error":
+            return Status.ERROR
+        elif status == "":
+            return Status.IN_PROGRESS
 
     def initialize_metadata(self, output_dir):
         def create_metadata_with_status(status, error_message=None):
@@ -564,11 +566,8 @@ class Trainer(NetsPressoBase):
             best_fx_paths = list(best_fx_paths_set)
             best_onnx_paths = list(Path(destination_folder).glob("*best.onnx"))
             hparams_path = destination_folder / "hparams.yaml"
-            status = self._check_status(training_summary)
-            error_stat = training_summary.get("error_stat", "")
-
-            available_options = self._get_available_options()
-            metadata.update_available_options(available_options)
+            status = self._get_status_by_training_summary(training_summary.get("status"))
+            error_stat = training_summary.get("error_stat")
 
             if best_fx_paths:
                 metadata.update_best_fx_model_path(best_fx_model_path=best_fx_paths[0].resolve().as_posix())
@@ -578,6 +577,9 @@ class Trainer(NetsPressoBase):
             metadata.update_hparams(hparams=hparams_path.resolve().as_posix())
             metadata.update_status(status=status)
             metadata.update_message(exception_detail=error_stat)
+
+            available_options = self._get_available_options()
+            metadata.update_available_options(available_options)
 
         except Exception as e:
             metadata = self.handle_error(metadata, ServiceTask.TRAINING, e.args[0])
