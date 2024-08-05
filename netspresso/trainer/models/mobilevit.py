@@ -84,6 +84,7 @@ class ClassificationMobileViTModelConfig(ModelConfig):
             }
         )
     )
+    postprocessor: Dict[str, Any] = None
     losses: List[Dict[str, Any]] = field(
         default_factory=lambda: [{"criterion": "cross_entropy", "label_smoothing": 0.1, "weight": None}]
     )

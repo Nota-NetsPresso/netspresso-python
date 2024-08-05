@@ -69,6 +69,7 @@ class SegmentationSegFormerB0ModelConfig(ModelConfig):
             }
         )
     )
+    postprocessor: Dict[str, Any] = None
     losses: List[Dict[str, Any]] = field(
         default_factory=lambda: [{"criterion": "seg_cross_entropy", "ignore_index": 255, "weight": None}]
     )

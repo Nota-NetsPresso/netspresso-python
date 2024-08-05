@@ -46,6 +46,7 @@ class ClassificationEfficientFormerModelConfig(ModelConfig):
             }
         )
     )
+    postprocessor: Dict[str, Any] = None
     losses: List[Dict[str, Any]] = field(
         default_factory=lambda: [{"criterion": "cross_entropy", "label_smoothing": 0.1, "weight": None}]
     )
@@ -66,6 +67,7 @@ class SegmentationEfficientFormerModelConfig(ModelConfig):
             }
         )
     )
+    postprocessor: Dict[str, Any] = None
     losses: List[Dict[str, Any]] = field(
         default_factory=lambda: [{"criterion": "seg_cross_entropy", "ignore_index": 255, "weight": None}]
     )
@@ -108,15 +110,21 @@ class DetectionEfficientFormerModelConfig(ModelConfig):
                     "aspect_ratios": [0.5, 1.0, 2.0],
                     "num_layers": 1,
                     "norm_type": "batch_norm",
-                    # postprocessor - decode
-                    "topk_candidates": 1000,
-                    "score_thresh": 0.05,
-                    # postprocessor - nms
-                    "nms_thresh": 0.45,
-                    "class_agnostic": False,
                 },
             },
         )
+    )
+    postprocessor: Dict[str, Any] = field(
+        default_factory=lambda: {
+            "params": {
+                # postprocessor - decode
+                "topk_candidates": 1000,
+                "score_thresh": 0.05,
+                # postprocessor - nms
+                "nms_thresh": 0.45,
+                "class_agnostic": False,
+            },
+        }
     )
     losses: List[Dict[str, Any]] = field(
         default_factory=lambda: [
