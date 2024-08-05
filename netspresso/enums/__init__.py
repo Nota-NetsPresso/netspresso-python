@@ -7,7 +7,7 @@ from .compression import (
     StepOp,
 )
 from .config import EndPointProperty, EnvironmentType, ServiceModule, ServiceName
-from .credit import MembershipType, ServiceCredit
+from .credit import MembershipType, ServiceCredit, ServiceTask
 from .device import (
     DeviceName,
     DisplaySoftwareVersion,
@@ -23,6 +23,7 @@ from .task import LauncherTask, Task, TaskStatusForDisplay
 
 __all__ = [
     "ServiceCredit",
+    "ServiceTask",
     "TaskType",
     "Status",
     "CompressionMethod",
