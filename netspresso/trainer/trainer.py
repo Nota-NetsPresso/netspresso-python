@@ -8,7 +8,7 @@ from omegaconf import OmegaConf
 from netspresso.base import NetsPressoBase
 from netspresso.clients.auth import TokenHandler
 from netspresso.clients.launcher import launcher_client_v2
-from netspresso.enums import Framework, Status, Task, ServiceTask
+from netspresso.enums import Framework, ServiceTask, Status, Task
 from netspresso.metadata.common import InputShape
 from netspresso.metadata.trainer import TrainerMetadata
 from netspresso.trainer.augmentations import AUGMENTATION_CONFIG_TYPE, AugmentationConfig, Transform
