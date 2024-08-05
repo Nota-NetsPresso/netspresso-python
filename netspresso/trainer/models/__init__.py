@@ -39,6 +39,7 @@ from netspresso.trainer.models.yolox import (
     DetectionYoloXSModelConfig,
     DetectionYoloXXModelConfig,
 )
+from netspresso.trainer.models.yolo import DetectionYoloFastestModelConfig
 
 CLASSIFICATION_MODELS = {
     "EfficientFormer": ClassificationEfficientFormerModelConfig,
@@ -64,6 +65,7 @@ DETECTION_MODELS = {
     "YOLOX-M": DetectionYoloXMModelConfig,
     "YOLOX-L": DetectionYoloXLModelConfig,
     "YOLOX-X": DetectionYoloXXModelConfig,
+    "YOLO-Fastest": DetectionYoloFastestModelConfig,
 }
 
 SEGMENTATION_MODELS = {
