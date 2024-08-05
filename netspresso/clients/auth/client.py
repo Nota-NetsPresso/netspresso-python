@@ -15,7 +15,12 @@ class AuthClient:
         Initialize the UserSession.
         """
 
+        self.config = config
         self.api_client = AuthClientV2(config=config)
+
+    def is_cloud(self) -> bool:
+        # TODO
+        return self.config.is_cloud()
 
     def login(self, email, password, verify_ssl: bool = True) -> TokenResponse:
         return self.api_client.login(

@@ -5,9 +5,10 @@ from typing import Any, Dict, List, Optional, Union
 from loguru import logger
 from omegaconf import OmegaConf
 
+from netspresso.base import NetsPressoBase
 from netspresso.clients.auth import TokenHandler
 from netspresso.clients.launcher import launcher_client_v2
-from netspresso.enums import Framework, Status, Task
+from netspresso.enums import Framework, ServiceTask, Status, Task
 from netspresso.metadata.common import InputShape
 from netspresso.metadata.trainer import TrainerMetadata
 from netspresso.trainer.augmentations import AUGMENTATION_CONFIG_TYPE, AugmentationConfig, Transform
@@ -25,7 +26,7 @@ from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
 
 
-class Trainer:
+class Trainer(NetsPressoBase):
     def __init__(
         self, token_handler: TokenHandler, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None
     ) -> None:
@@ -472,6 +473,40 @@ class Trainer:
 
         return status
 
+    def initialize_metadata(self, output_dir):
+        def create_metadata_with_status(status, error_message=None):
+            metadata = TrainerMetadata()
+            metadata.status = status
+            if error_message:
+                logger.error(error_message)
+            return metadata
+
+        try:
+            metadata = TrainerMetadata()
+        except Exception as e:
+            error_message = f"An unexpected error occurred during metadata initialization: {e}"
+            metadata = create_metadata_with_status(Status.ERROR, error_message)
+        except KeyboardInterrupt:
+            warning_message = "Training task was interrupted by the user."
+            metadata = create_metadata_with_status(Status.STOPPED, warning_message)
+        finally:
+            metadata.update_output_dir(Path(output_dir).resolve().as_posix())
+            metadata.update_model_info(
+                task=self.task,
+                model=self.model_name,
+                dataset=self.data.name,
+                input_shapes=[InputShape(batch=1, channel=3, dimension=[self.img_size, self.img_size])],
+            )
+            metadata.update_training_info(
+                epochs=self.training.epochs,
+                batch_size=self.environment.batch_size,
+                learning_rate=self.training.optimizer["lr"],
+                optimizer=self.training.optimizer["name"],
+            )
+            MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
+
+        return metadata
+
     def train(self, gpus: str, project_name: str, output_dir: Optional[str] = "./outputs") -> TrainerMetadata:
         """Train the model with the specified configuration.
 
@@ -489,74 +524,66 @@ class Trainer:
         self._apply_img_size()
 
         project_name = project_name if project_name else f"{self.task}_{self.model_name}".lower()
-        self.logging.output_dir = output_dir
         destination_folder = Path(output_dir) / project_name
         destination_folder = FileHandler.create_unique_folder(folder_path=destination_folder)
-        metadata = TrainerMetadata()
-        metadata.update_output_dir(output_dir=Path(destination_folder).resolve().as_posix())
-        metadata.update_model_info(
-            task=self.task,
-            model=self.model_name,
-            dataset=self.data.name,
-            input_shapes=[InputShape(batch=1, channel=3, dimension=[self.img_size, self.img_size])],
-        )
-        metadata.update_training_info(
-            epochs=self.training.epochs,
-            batch_size=self.environment.batch_size,
-            learning_rate=self.training.optimizer["lr"],
-            optimizer=self.training.optimizer["name"],
-        )
-        MetadataHandler.save_json(data=metadata.asdict(), folder_path=destination_folder)
-        self.logging.project_id = Path(destination_folder).name
-        self.environment.gpus = gpus
+        metadata = self.initialize_metadata(output_dir=output_dir)
 
-        configs = TrainerConfigs(
-            self.data,
-            self.augmentation,
-            self.model,
-            self.training,
-            self.logging,
-            self.environment,
-        )
+        try:
+            self.logging.output_dir = output_dir
+            self.logging.project_id = Path(destination_folder).name
+            self.environment.gpus = gpus
+            configs = TrainerConfigs(
+                self.data,
+                self.augmentation,
+                self.model,
+                self.training,
+                self.logging,
+                self.environment,
+            )
+            logging_dir = train_with_yaml(
+                gpus=gpus,
+                data=configs.data,
+                augmentation=configs.augmentation,
+                model=configs.model,
+                training=configs.training,
+                logging=configs.logging,
+                environment=configs.environment,
+            )
 
-        logging_dir = train_with_yaml(
-            gpus=gpus,
-            data=configs.data,
-            augmentation=configs.augmentation,
-            model=configs.model,
-            training=configs.training,
-            logging=configs.logging,
-            environment=configs.environment,
-        )
-        training_summary = FileHandler.load_json(file_path=logging_dir / "training_summary.json")
-        FileHandler.remove_folder(configs.temp_folder)
-        logger.info(f"Removed {configs.temp_folder} folder.")
+            training_summary = FileHandler.load_json(file_path=logging_dir / "training_summary.json")
+            FileHandler.remove_folder(configs.temp_folder)
+            logger.info(f"Removed {configs.temp_folder} folder.")
 
-        destination_folder = Path(self.logging.output_dir) / self.logging.project_id
-        FileHandler.move_and_cleanup_folders(source_folder=logging_dir, destination_folder=destination_folder)
-        logger.info(f"Files in {logging_dir} were moved to {destination_folder}.")
+            destination_folder = Path(self.logging.output_dir) / self.logging.project_id
+            FileHandler.move_and_cleanup_folders(source_folder=logging_dir, destination_folder=destination_folder)
+            logger.info(f"Files in {logging_dir} were moved to {destination_folder}.")
 
-        best_fx_paths_set = set()
-        for pattern in ["*best_fx.pt", "*best.pt"]:
-            best_fx_paths_set.update(destination_folder.glob(pattern))
-        best_fx_paths = list(best_fx_paths_set)
-        best_onnx_paths = list(Path(destination_folder).glob("*best.onnx"))
-        hparams_path = destination_folder / "hparams.yaml"
-        status = self._check_status(training_summary)
-        error_stat = training_summary.get("error_stat", "")
+            best_fx_paths_set = set()
+            for pattern in ["*best_fx.pt", "*best.pt"]:
+                best_fx_paths_set.update(destination_folder.glob(pattern))
+            best_fx_paths = list(best_fx_paths_set)
+            best_onnx_paths = list(Path(destination_folder).glob("*best.onnx"))
+            hparams_path = destination_folder / "hparams.yaml"
+            status = self._check_status(training_summary)
+            error_stat = training_summary.get("error_stat", "")
 
-        available_options = self._get_available_options()
+            available_options = self._get_available_options()
+            metadata.update_available_options(available_options)
 
-        if best_fx_paths:
-            metadata.update_best_fx_model_path(best_fx_model_path=best_fx_paths[0].resolve().as_posix())
-        if best_onnx_paths:
-            metadata.update_best_onnx_model_path(best_onnx_model_path=best_onnx_paths[0].resolve().as_posix())
-        metadata.update_training_result(training_summary=training_summary)
-        metadata.update_hparams(hparams=hparams_path.resolve().as_posix())
-        metadata.update_status(status=status)
-        metadata.update_message(exception_detail=error_stat)
-        metadata.update_available_options(available_options)
+            if best_fx_paths:
+                metadata.update_best_fx_model_path(best_fx_model_path=best_fx_paths[0].resolve().as_posix())
+            if best_onnx_paths:
+                metadata.update_best_onnx_model_path(best_onnx_model_path=best_onnx_paths[0].resolve().as_posix())
+            metadata.update_training_result(training_summary=training_summary)
+            metadata.update_hparams(hparams=hparams_path.resolve().as_posix())
+            metadata.update_status(status=status)
+            metadata.update_message(exception_detail=error_stat)
 
-        MetadataHandler.save_json(data=metadata.asdict(), folder_path=destination_folder)
+        except Exception as e:
+            metadata = self.handle_error(metadata, ServiceTask.TRAINING, e.args[0])
+        except KeyboardInterrupt:
+            metadata = self.handle_stop(metadata, ServiceTask.TRAINING)
+        finally:
+            MetadataHandler.save_metadata(data=metadata, folder_path=destination_folder)
 
         return metadata

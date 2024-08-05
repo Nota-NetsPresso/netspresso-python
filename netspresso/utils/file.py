@@ -153,6 +153,69 @@ class FileHandler:
         return default_model_path, extension
 
     @staticmethod
+    def get_default_model_path(folder_path: str) -> Path:
+        """Generates the default model file path based on the provided folder path.
+
+        This method constructs a file path for the default model file located in the
+        specified folder. The default model file is named using the name of the base
+        folder and has a `.ext` extension. The resulting path is resolved to its absolute
+        form.
+
+        Args:
+            folder_path (str): The base folder path where the model file is located.
+
+        Returns:
+            Path: The default model file path as a `Path` object. This path is formed by
+                combining the base folder path with the default file name and extension,
+                and is resolved to an absolute path.
+
+        Example:
+            >>> FileHandler.get_default_model_path('/models/my_model')
+            PosixPath('/models/my_model/my_model.ext')
+
+        Note:
+            - Ensure that the base folder path provided is valid and accessible.
+            - The extension `.ext` should be replaced with the actual file extension needed
+            for the model file.
+        """
+        default_model_path = (Path(folder_path) / f"{Path(folder_path).name}.ext").resolve()
+
+        return default_model_path
+
+    @staticmethod
+    def get_extension(framework: str) -> str:
+        """Retrieves the file extension associated with the given framework.
+
+        This method looks up the file extension for a specific framework using the
+        `FRAMEWORK_EXTENSION_MAP`. If the framework is not found in the map, it raises
+        a `KeyError` with a message listing all supported frameworks.
+
+        Args:
+            framework (str): The name of the framework for which the file extension is requested.
+
+        Raises:
+            KeyError: If the provided framework is not found in the `FRAMEWORK_EXTENSION_MAP`.
+                    The error message includes the list of supported frameworks and the
+                    entered framework.
+
+        Returns:
+            str: The file extension corresponding to the specified framework. This is a string
+                representing the file extension (e.g., '.h5', '.pt', etc.).
+
+        Example:
+            >>> FileHandler.get_extension('pytorch')
+            '.pt'
+
+            >>> FileHandler.get_extension('unknown_framework')
+            KeyError: "The framework supports ['tensorflow_keras', 'pytorch', 'onnx', 'tensorflow_lite', 'drpai', 'openvino', 'tensorrt']. The entered framework is unknown_framework."
+        """
+        extension = FRAMEWORK_EXTENSION_MAP.get(framework)
+        if extension is None:
+            available_frameworks = list(FRAMEWORK_EXTENSION_MAP.keys())
+            raise KeyError(f"The framework supports {available_frameworks}. The entered framework is {framework}.")
+        return extension
+
+    @staticmethod
     def load_json(file_path: str):
         """Load JSON data from a file.
 

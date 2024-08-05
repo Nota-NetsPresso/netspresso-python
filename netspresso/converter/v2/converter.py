@@ -1,38 +1,63 @@
 import time
-from dataclasses import asdict
 from pathlib import Path
 from typing import Optional, Union
 from urllib import request
 
 from loguru import logger
 
-from netspresso.clients.auth import TokenHandler, auth_client
+from netspresso.base import NetsPressoBase
+from netspresso.clients.auth import TokenHandler
 from netspresso.clients.auth.response_body import UserResponse
 from netspresso.clients.launcher import launcher_client_v2
-from netspresso.clients.launcher.v2.schemas import InputLayer, ResponseConvertTaskItem
-from netspresso.clients.launcher.v2.schemas.task.convert.response_body import (
-    ConvertTask,
-)
+from netspresso.clients.launcher.v2.schemas import InputLayer
+from netspresso.clients.launcher.v2.schemas.task.convert.response_body import ConvertTask
 from netspresso.enums import (
     DataType,
     DeviceName,
     Framework,
-    ServiceCredit,
+    ServiceTask,
     SoftwareVersion,
     Status,
     TaskStatusForDisplay,
 )
 from netspresso.metadata.converter import ConverterMetadata
-from netspresso.utils import FileHandler, check_credit_balance
+from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
 
 
-class ConverterV2:
+class ConverterV2(NetsPressoBase):
     def __init__(self, token_handler: TokenHandler, user_info: UserResponse):
         """Initialize the Converter."""
 
-        self.token_handler = token_handler
+        super().__init__(token_handler)
         self.user_info = user_info
+
+    def initialize_metadata(self, output_dir, input_model_path, target_framework):
+        def create_metadata_with_status(status, error_message=None):
+            metadata = ConverterMetadata()
+            metadata.status = status
+            if error_message:
+                logger.error(error_message)
+            return metadata
+
+        try:
+            metadata = ConverterMetadata()
+        except Exception as e:
+            error_message = f"An unexpected error occurred during metadata initialization: {e}"
+            metadata = create_metadata_with_status(Status.ERROR, error_message)
+        except KeyboardInterrupt:
+            warning_message = "Conversion task was interrupted by the user."
+            metadata = create_metadata_with_status(Status.STOPPED, warning_message)
+        finally:
+            metadata.input_model_path = Path(input_model_path).resolve().as_posix()
+            available_options = launcher_client_v2.benchmarker.read_framework_options(
+                access_token=self.token_handler.tokens.access_token,
+                framework=target_framework,
+            )
+            metadata.available_options.extend(option.to() for option in available_options.data)
+            MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
+
+        return metadata
 
     def _download_converted_model(
         self, convert_task: ConvertTask, local_path: str
@@ -49,15 +74,6 @@ class ConverterV2:
         self.token_handler.validate_token()
 
         try:
-            if convert_task.status == TaskStatusForDisplay.ERROR:
-                raise FileNotFoundError(
-                    "The conversion is Failed. There is no file available for download."
-                )
-            if convert_task.status != TaskStatusForDisplay.FINISHED:
-                raise FileNotFoundError(
-                    "The conversion is in progress. There is no file available for download at the moment."
-                )
-
             download_url = launcher_client_v2.converter.download_model_file(
                 convert_task_uuid=convert_task.convert_task_id,
                 access_token=self.token_handler.tokens.access_token,
@@ -81,6 +97,7 @@ class ConverterV2:
         input_layer: Optional[InputLayer] = None,
         dataset_path: Optional[str] = None,
         wait_until_done: bool = True,
+        sleep_interval: int = 30,
     ) -> ConverterMetadata:
         """Convert a model to the specified framework.
 
@@ -105,133 +122,93 @@ class ConverterV2:
         """
 
         FileHandler.check_input_model_path(input_model_path)
-
-        self.token_handler.validate_token()
-
         output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
-        default_model_path, extension = FileHandler.get_path_and_extension(
-            folder_path=output_dir, framework=target_framework
+        metadata = self.initialize_metadata(
+            output_dir=output_dir,
+            input_model_path=input_model_path,
+            target_framework=target_framework
         )
-        converter_metadata = ConverterMetadata()
-        converter_metadata.input_model_path = Path(input_model_path).resolve().as_posix()
-        MetadataHandler.save_json(data=asdict(converter_metadata), folder_path=output_dir)
 
         try:
-            current_credit = auth_client.get_credit(
-                self.token_handler.tokens.access_token,
-                verify_ssl=self.token_handler.verify_ssl,
-            )
-            check_credit_balance(
-                user_credit=current_credit, service_credit=ServiceCredit.MODEL_CONVERT
+            if metadata.status in [Status.ERROR, Status.STOPPED]:
+                return metadata
+
+            self.validate_token_and_check_credit(service_task=ServiceTask.MODEL_CONVERT)
+
+            # Get presigned_model_upload_url
+            presigned_url_response = launcher_client_v2.converter.presigned_model_upload_url(
+                access_token=self.token_handler.tokens.access_token,
+                input_model_path=input_model_path,
             )
 
-            # GET presigned_model_upload_url
-            presigned_url_response = (
-                launcher_client_v2.converter.presigned_model_upload_url(
-                    access_token=self.token_handler.tokens.access_token,
-                    input_model_path=input_model_path,
-                )
-            )
-
-            # UPLOAD model_file
+            # Upload model_file
             launcher_client_v2.converter.upload_model_file(
                 access_token=self.token_handler.tokens.access_token,
                 input_model_path=input_model_path,
                 presigned_upload_url=presigned_url_response.data.presigned_upload_url,
             )
 
-            # VALIDATE model_file
+            # Validate model_file
             validate_model_response = launcher_client_v2.converter.validate_model_file(
                 access_token=self.token_handler.tokens.access_token,
                 input_model_path=input_model_path,
                 ai_model_id=presigned_url_response.data.ai_model_id,
             )
 
-            input_model_info = validate_model_response.data
-
-            # START convert task
-            response = launcher_client_v2.converter.start_task(
+            # Start convert task
+            convert_response = launcher_client_v2.converter.start_task(
                 access_token=self.token_handler.tokens.access_token,
                 input_model_id=presigned_url_response.data.ai_model_id,
                 target_device_name=target_device_name,
                 target_framework=target_framework,
                 data_type=target_data_type,
-                input_layer=input_layer if input_layer else input_model_info.detail.input_layers[0],
+                input_layer=input_layer if input_layer else validate_model_response.data.detail.input_layers[0],
                 software_version=target_software_version,
                 dataset_path=dataset_path,
             )
 
-            converter_metadata.model_info = input_model_info.to()
-            converter_metadata.convert_task_info = response.data.to(input_model_info.uploaded_file_name)
-            MetadataHandler.save_json(data=asdict(converter_metadata), folder_path=output_dir)
+            metadata.model_info = validate_model_response.data.to()
+            metadata.convert_task_info = convert_response.data.to(validate_model_response.data.uploaded_file_name)
+            MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
             if wait_until_done:
                 while True:
-                    # Poll Convert Task status
                     self.token_handler.validate_token()
-                    response = launcher_client_v2.converter.read_task(
+                    convert_response = launcher_client_v2.converter.read_task(
                         access_token=self.token_handler.tokens.access_token,
-                        task_id=response.data.convert_task_id,
+                        task_id=convert_response.data.convert_task_id,
                     )
-                    if response.data.status in [
+                    if convert_response.data.status in [
                         TaskStatusForDisplay.FINISHED,
                         TaskStatusForDisplay.ERROR,
                         TaskStatusForDisplay.TIMEOUT,
                     ]:
                         break
-                    time.sleep(30)
 
-            convert_task = response.data
+                    time.sleep(sleep_interval)
 
-            available_options = launcher_client_v2.benchmarker.read_framework_options(
-                access_token=self.token_handler.tokens.access_token,
-                framework=target_framework,
-            ).data
-
-            if convert_task.status == TaskStatusForDisplay.FINISHED:
+            if convert_response.data.status == TaskStatusForDisplay.FINISHED:
+                default_model_path = FileHandler.get_default_model_path(folder_path=output_dir)
+                extension = FileHandler.get_extension(framework=target_framework)
                 self._download_converted_model(
-                    convert_task=convert_task,
+                    convert_task=convert_response.data,
                     local_path=str(default_model_path.with_suffix(extension)),
                 )
-                if launcher_client_v2.is_cloud():
-                    remaining_credit = auth_client.get_credit(
-                        self.token_handler.tokens.access_token,
-                        self.token_handler.verify_ssl,
-                    )
-                    logger.info(
-                        f"{ServiceCredit.MODEL_CONVERT} credits have been consumed. Remaining Credit: {remaining_credit}"
-                    )
-                converter_metadata.status = Status.COMPLETED
-                logger.info("Convert task successfully completed.")
+                self.print_remaining_credit(service_task=ServiceTask.MODEL_CONVERT)
+                metadata.status = Status.COMPLETED
+                metadata.converted_model_path = default_model_path.with_suffix(extension).as_posix()
+                logger.info("Conversion task was completed successfully.")
             else:
-                converter_metadata.status = Status.ERROR
-                converter_metadata.update_message(exception_detail=convert_task.error_log)
-                logger.error(f"Convert task failed with an error. Error: {convert_task.error_log}")
-
-            converter_metadata.converted_model_path = default_model_path.with_suffix(extension).as_posix()
-            for available_option in available_options:
-                converter_metadata.available_options.append(available_option.to())
-
-            MetadataHandler.save_json(
-                data=asdict(converter_metadata), folder_path=output_dir
-            )
-
-            return converter_metadata
+                metadata = self.handle_error(metadata, ServiceTask.MODEL_CONVERT, convert_response.data.error_log)
 
         except Exception as e:
-            logger.error(f"Convert failed. Error: {e}")
-            converter_metadata.status = Status.ERROR
-            converter_metadata.update_message(exception_detail=e.args[0])
-            MetadataHandler.save_json(
-                data=asdict(converter_metadata), folder_path=output_dir
-            )
-            raise e
-
+            metadata = self.handle_error(metadata, ServiceTask.MODEL_CONVERT, e.args[0])
         except KeyboardInterrupt:
-            converter_metadata.status = Status.STOPPED
-            MetadataHandler.save_json(
-                data=asdict(converter_metadata), folder_path=output_dir
-            )
+            metadata = self.handle_stop(metadata, ServiceTask.MODEL_CONVERT)
+        finally:
+            MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
+
+        return metadata
 
     def get_conversion_task(self, conversion_task_id: str) -> ConvertTask:
         """Get the conversion task information with given conversion task uuid.
