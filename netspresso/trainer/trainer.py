@@ -527,7 +527,7 @@ class Trainer(NetsPressoBase):
         project_name = project_name if project_name else f"{self.task}_{self.model_name}".lower()
         destination_folder = Path(output_dir) / project_name
         destination_folder = FileHandler.create_unique_folder(folder_path=destination_folder)
-        metadata = self.initialize_metadata(output_dir=output_dir)
+        metadata = self.initialize_metadata(output_dir=destination_folder)
 
         try:
             self.logging.output_dir = output_dir
