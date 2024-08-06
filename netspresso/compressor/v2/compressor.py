@@ -24,7 +24,6 @@ from netspresso.clients.compressor.v2.schemas import (
     UploadFile,
 )
 from netspresso.clients.launcher import launcher_client_v2
-from netspresso.compressor.utils.file import read_file_bytes
 from netspresso.compressor.utils.onnx import export_onnx
 from netspresso.enums import CompressionMethod, Framework, RecommendationMethod, ServiceTask, Status
 from netspresso.metadata.compressor import CompressorMetadata
@@ -170,7 +169,7 @@ class CompressorV2(NetsPressoBase):
                 verify_ssl=self.token_handler.verify_ssl,
             )
 
-            file_content = read_file_bytes(file_path=input_model_path)
+            file_content = FileHandler.read_file_bytes(file_path=input_model_path)
             upload_model_request = RequestUploadModel(url=create_model_response.data.presigned_url)
             file = UploadFile(file_name=object_name, file_content=file_content)
             upload_model_response = compressor_client_v2.upload_model(
@@ -311,7 +310,7 @@ class CompressorV2(NetsPressoBase):
 
         try:
             logger.info("Uploading dataset...")
-            file_content = read_file_bytes(file_path=dataset_path)
+            file_content = FileHandler.read_file_bytes(file_path=dataset_path)
             object_name = Path(dataset_path).name
             file = UploadFile(file_name=object_name, file_content=file_content)
             compressor_client_v2.upload_dataset(

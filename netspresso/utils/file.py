@@ -258,3 +258,17 @@ class FileHandler:
 
         folder_path = Path(folder_path)
         shutil.rmtree(folder_path, ignore_errors=True)
+
+    @staticmethod
+    def read_file_bytes(file_path: str) -> bytes:
+        """Read the contents of a file and return them as bytes.
+
+        Args:
+            file_path (str): The path to the file to be read.
+
+        Returns:
+            bytes: The contents of the file as a byte object.
+        """
+        with open(file_path, "rb") as f:
+            file_byte = f.read()
+        return file_byte
