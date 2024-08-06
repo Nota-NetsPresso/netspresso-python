@@ -466,14 +466,13 @@ class Trainer(NetsPressoBase):
         return available_options
 
     def _get_status_by_training_summary(self, status):
-        if status == "success":
-            return Status.COMPLETED
-        elif status == "stop":
-            return Status.STOPPED
-        elif status == "error":
-            return Status.ERROR
-        elif status == "":
-            return Status.IN_PROGRESS
+        status_mapping = {
+            "success": Status.COMPLETED,
+            "stop": Status.STOPPED,
+            "error": Status.ERROR,
+            "": Status.IN_PROGRESS
+        }
+        return status_mapping.get(status, Status.IN_PROGRESS)
 
     def initialize_metadata(self, output_dir):
         def create_metadata_with_status(status, error_message=None):
