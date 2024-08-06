@@ -65,7 +65,7 @@ DETECTION_MODELS = {
     "YOLOX-M": DetectionYoloXMModelConfig,
     "YOLOX-L": DetectionYoloXLModelConfig,
     "YOLOX-X": DetectionYoloXXModelConfig,
-    "YOLO-Fastest": DetectionYoloFastestModelConfig,
+    # "YOLO-Fastest": DetectionYoloFastestModelConfig,
 }
 
 SEGMENTATION_MODELS = {
@@ -87,14 +87,13 @@ POSEESTIMATION_MODELS = {
     "MobileNetV3-S": PoseEstimationMobileNetV3SmallModelConfig,
 }
 
-NOT_SUPPORTED_PRETRAINED_MODELS = ["YOLO-Fastest"]
+# NOT_SUPPORTED_PRETRAINED_MODELS = ["YOLO-Fastest"]
 
 
 __all__ = [
     "CLASSIFICATION_MODELS",
     "DETECTION_MODELS",
     "SEGMENTATION_MODELS",
-    "NOT_SUPPORTED_PRETRAINED_MODELS",
     "CheckpointConfig",
     "ModelConfig",
 ]

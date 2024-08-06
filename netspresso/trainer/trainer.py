@@ -16,7 +16,6 @@ from netspresso.trainer.data import DATA_CONFIG_TYPE, ImageLabelPathConfig, Path
 from netspresso.trainer.models import (
     CLASSIFICATION_MODELS,
     DETECTION_MODELS,
-    NOT_SUPPORTED_PRETRAINED_MODELS,
     SEGMENTATION_MODELS,
     CheckpointConfig,
     ModelConfig,
@@ -304,9 +303,6 @@ class Trainer(NetsPressoBase):
             raise ValueError(
                 f"The '{model_name}' model is not supported for the '{self.task}' task. The available models are {self.available_models}."
             )
-
-        if self.model_name in NOT_SUPPORTED_PRETRAINED_MODELS:
-            use_pretrained = False
 
         self.model = model(
             checkpoint=CheckpointConfig(
