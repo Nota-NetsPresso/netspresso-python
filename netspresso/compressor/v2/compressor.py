@@ -26,6 +26,7 @@ from netspresso.clients.compressor.v2.schemas import (
 from netspresso.clients.launcher import launcher_client_v2
 from netspresso.compressor.utils.onnx import export_onnx
 from netspresso.enums import CompressionMethod, Framework, RecommendationMethod, ServiceTask, Status
+from netspresso.exceptions.compressor import FailedUploadModelException
 from netspresso.metadata.compressor import CompressorMetadata
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
@@ -181,7 +182,7 @@ class CompressorV2(NetsPressoBase):
 
             if not upload_model_response:
                 # TODO: Confirm upload success
-                raise Exception("Upload model failed.")
+                raise FailedUploadModelException()
 
             validate_model_request = RequestValidateModel(framework=framework, input_layers=input_shapes)
             validate_model_response = compressor_client_v2.validate_model(
