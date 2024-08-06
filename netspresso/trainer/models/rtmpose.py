@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from netspresso.trainer.models.base import ArchitectureConfig, ModelConfig
 from netspresso.trainer.models.mobilenetv3 import MobileNetV3SmallArchitectureConfig
@@ -23,11 +23,17 @@ class PoseEstimationMobileNetV3SmallModelConfig(ModelConfig):
                     "dropout_rate": 0.0,
                     "drop_path": 0.0,
                     "use_rel_bias": False,
-                    "simcc_split_ratio": 2.0,
                     "target_size": [256, 256],
                     "backbone_stride": 32,
                 },
             }
         )
+    )
+    postprocessor: Optional[Dict[str, Any]] = field(
+        default_factory=lambda: {
+            "params": {
+                "simcc_split_ratio": 2.0,
+            },
+        }
     )
     losses: List[Dict[str, Any]] = field(default_factory=lambda: [{"criterion": "rtmcc_loss", "weight": None}])

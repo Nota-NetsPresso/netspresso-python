@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from netspresso.trainer.models.base import ArchitectureConfig, CheckpointConfig, ModelConfig
 
@@ -78,6 +78,7 @@ class ClassificationResNet18ModelConfig(ModelConfig):
             }
         )
     )
+    postprocessor: Optional[Dict[str, Any]] = None
     losses: List[Dict[str, Any]] = field(
         default_factory=lambda: [{"criterion": "cross_entropy", "label_smoothing": 0.1, "weight": None}]
     )
@@ -100,6 +101,7 @@ class ClassificationResNet34ModelConfig(ModelConfig):
             }
         )
     )
+    postprocessor: Optional[Dict[str, Any]] = None
     losses: List[Dict[str, Any]] = field(
         default_factory=lambda: [{"criterion": "cross_entropy", "label_smoothing": 0.1, "weight": None}]
     )
@@ -122,6 +124,7 @@ class ClassificationResNet50ModelConfig(ModelConfig):
             }
         )
     )
+    postprocessor: Optional[Dict[str, Any]] = None
     losses: List[Dict[str, Any]] = field(
         default_factory=lambda: [{"criterion": "cross_entropy", "label_smoothing": 0.1, "weight": None}]
     )
@@ -142,6 +145,7 @@ class SegmentationResNet50ModelConfig(ModelConfig):
             }
         )
     )
+    postprocessor: Optional[Dict[str, Any]] = None
     losses: List[Dict[str, Any]] = field(
         default_factory=lambda: [{"criterion": "seg_cross_entropy", "ignore_index": 255, "weight": None}]
     )
@@ -184,15 +188,21 @@ class DetectionResNet50ModelConfig(ModelConfig):
                     "aspect_ratios": [0.5, 1.0, 2.0],
                     "num_layers": 1,
                     "norm_type": "batch_norm",
-                    # postprocessor - decode
-                    "topk_candidates": 1000,
-                    "score_thresh": 0.05,
-                    # postprocessor - nms
-                    "nms_thresh": 0.45,
-                    "class_agnostic": False,
                 },
             },
         )
+    )
+    postprocessor: Optional[Dict[str, Any]] = field(
+        default_factory=lambda: {
+            "params": {
+                # postprocessor - decode
+                "topk_candidates": 1000,
+                "score_thresh": 0.05,
+                # postprocessor - nms
+                "nms_thresh": 0.45,
+                "class_agnostic": False,
+            },
+        }
     )
     losses: List[Dict[str, Any]] = field(
         default_factory=lambda: [
