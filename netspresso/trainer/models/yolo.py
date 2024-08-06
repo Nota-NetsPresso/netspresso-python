@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from netspresso.trainer.models.base import ArchitectureConfig, CheckpointConfig, ModelConfig
 
@@ -41,7 +41,7 @@ class DetectionYoloFastestModelConfig(ModelConfig):
             },
         )
     )
-    postprocessor: Dict[str, Any] = field(
+    postprocessor: Optional[Dict[str, Any]] = field(
         default_factory=lambda: {
             "params": {
                 # postprocessor - decode

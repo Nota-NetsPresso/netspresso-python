@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from netspresso.trainer.models.base import ArchitectureConfig, ModelConfig
 
@@ -69,7 +69,7 @@ class SegmentationSegFormerB0ModelConfig(ModelConfig):
             }
         )
     )
-    postprocessor: Dict[str, Any] = None
+    postprocessor: Optional[Dict[str, Any]] = None
     losses: List[Dict[str, Any]] = field(
         default_factory=lambda: [{"criterion": "seg_cross_entropy", "ignore_index": 255, "weight": None}]
     )

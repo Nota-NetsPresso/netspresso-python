@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from netspresso.trainer.models.base import ArchitectureConfig, ModelConfig
 from netspresso.trainer.models.mobilenetv3 import MobileNetV3SmallArchitectureConfig
@@ -29,7 +29,7 @@ class PoseEstimationMobileNetV3SmallModelConfig(ModelConfig):
             }
         )
     )
-    postprocessor: Dict[str, Any] = field(
+    postprocessor: Optional[Dict[str, Any]] = field(
         default_factory=lambda: {
             "params": {
                 "simcc_split_ratio": 2.0,

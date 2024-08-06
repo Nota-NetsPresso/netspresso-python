@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from netspresso.trainer.models.base import ArchitectureConfig, CheckpointConfig, ModelConfig
 
@@ -117,7 +117,7 @@ class ClassificationMobileNetV3LargeModelConfig(ModelConfig):
             }
         )
     )
-    postprocessor: Dict[str, Any] = None
+    postprocessor: Optional[Dict[str, Any]] = None
     losses: List[Dict[str, Any]] = field(
         default_factory=lambda: [{"criterion": "cross_entropy", "label_smoothing": 0.1, "weight": None}]
     )
@@ -140,7 +140,7 @@ class ClassificationMobileNetV3SmallModelConfig(ModelConfig):
             }
         )
     )
-    postprocessor: Dict[str, Any] = None
+    postprocessor: Optional[Dict[str, Any]] = None
     losses: List[Dict[str, Any]] = field(
         default_factory=lambda: [{"criterion": "cross_entropy", "label_smoothing": 0.1, "weight": None}]
     )
@@ -161,7 +161,7 @@ class SegmentationMobileNetV3SmallModelConfig(ModelConfig):
             }
         )
     )
-    postprocessor: Dict[str, Any] = None
+    postprocessor: Optional[Dict[str, Any]] = None
     losses: List[Dict[str, Any]] = field(
         default_factory=lambda: [{"criterion": "seg_cross_entropy", "ignore_index": 255, "weight": None}]
     )
@@ -208,7 +208,7 @@ class DetectionMobileNetV3SmallModelConfig(ModelConfig):
             },
         )
     )
-    postprocessor: Dict[str, Any] = field(
+    postprocessor: Optional[Dict[str, Any]] = field(
         default_factory=lambda: {
             "params": {
                 # postprocessor - decode

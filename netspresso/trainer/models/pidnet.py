@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from netspresso.trainer.models.base import ArchitectureConfig, ModelConfig
 
@@ -23,7 +23,7 @@ class PIDNetModelConfig(ModelConfig):
     task: str = "segmentation"
     name: str = "pidnet_s"
     architecture: ArchitectureConfig = field(default_factory=lambda: PIDNetArchitectureConfig())
-    postprocessor: Dict[str, Any] = None
+    postprocessor: Optional[Dict[str, Any]] = None
     losses: List[Dict[str, Any]] = field(
         default_factory=lambda: [
             {"criterion": "pidnet_loss", "ignore_index": 255, "weight": None},

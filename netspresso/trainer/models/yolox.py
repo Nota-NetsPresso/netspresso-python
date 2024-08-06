@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from netspresso.trainer.models.base import ArchitectureConfig, CheckpointConfig, ModelConfig
 
@@ -123,7 +123,7 @@ class DetectionYoloXXModelConfig(ModelConfig):
             },
         )
     )
-    postprocessor: Dict[str, Any] = field(
+    postprocessor: Optional[Dict[str, Any]] = field(
         default_factory=lambda: {
             "params": {
                 # postprocessor - decode
@@ -162,7 +162,7 @@ class DetectionYoloXLModelConfig(ModelConfig):
             },
         )
     )
-    postprocessor: Dict[str, Any] = field(
+    postprocessor: Optional[Dict[str, Any]] = field(
         default_factory=lambda: {
             "params": {
                 # postprocessor - decode
@@ -201,7 +201,7 @@ class DetectionYoloXMModelConfig(ModelConfig):
             },
         )
     )
-    postprocessor: Dict[str, Any] = field(
+    postprocessor: Optional[Dict[str, Any]] = field(
         default_factory=lambda: {
             "params": {
                 # postprocessor - decode
@@ -240,7 +240,7 @@ class DetectionYoloXSModelConfig(ModelConfig):
             },
         )
     )
-    postprocessor: Dict[str, Any] = field(
+    postprocessor: Optional[Dict[str, Any]] = field(
         default_factory=lambda: {
             "params": {
                 # postprocessor - decode
@@ -279,7 +279,7 @@ class DetectionYoloXNanoModelConfig(ModelConfig):
             },
         )
     )
-    postprocessor: Dict[str, Any] = field(
+    postprocessor: Optional[Dict[str, Any]] = field(
         default_factory=lambda: {
             "params": {
                 # postprocessor - decode
@@ -318,7 +318,7 @@ class DetectionYoloXTinyModelConfig(ModelConfig):
             },
         )
     )
-    postprocessor: Dict[str, Any] = field(
+    postprocessor: Optional[Dict[str, Any]] = field(
         default_factory=lambda: {
             "params": {
                 # postprocessor - decode
