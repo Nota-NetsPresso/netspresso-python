@@ -33,13 +33,13 @@ from netspresso.trainer.models.resnet import (
 from netspresso.trainer.models.rtmpose import PoseEstimationMobileNetV3SmallModelConfig
 from netspresso.trainer.models.segformer import SegmentationSegFormerB0ModelConfig
 from netspresso.trainer.models.vit import ClassificationViTTinyModelConfig
+from netspresso.trainer.models.yolo import DetectionYoloFastestModelConfig
 from netspresso.trainer.models.yolox import (
     DetectionYoloXLModelConfig,
     DetectionYoloXMModelConfig,
     DetectionYoloXSModelConfig,
     DetectionYoloXXModelConfig,
 )
-from netspresso.trainer.models.yolo import DetectionYoloFastestModelConfig
 
 CLASSIFICATION_MODELS = {
     "EfficientFormer": ClassificationEfficientFormerModelConfig,
