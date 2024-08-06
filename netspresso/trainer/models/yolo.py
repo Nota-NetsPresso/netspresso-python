@@ -21,7 +21,7 @@ class ShufflenetV2ArchitectureConfig(ArchitectureConfig):
 class DetectionYoloFastestModelConfig(ModelConfig):
     task: str = "detection"
     name: str = "yolofastest"
-    checkpoint: CheckpointConfig = CheckpointConfig(use_pretrained=False)
+    checkpoint: CheckpointConfig = field(default_factory=lambda: CheckpointConfig(use_pretrained=False))
     architecture: ArchitectureConfig = field(
         default_factory=lambda: ShufflenetV2ArchitectureConfig(
             neck={
