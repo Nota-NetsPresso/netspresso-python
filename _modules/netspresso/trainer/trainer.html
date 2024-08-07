@@ -84,6 +84,17 @@
 <span class="kn">from</span> <span class="nn">netspresso.clients.auth</span> <span class="kn">import</span> <span class="n">TokenHandler</span>
 <span class="kn">from</span> <span class="nn">netspresso.clients.launcher</span> <span class="kn">import</span> <span class="n">launcher_client_v2</span>
 <span class="kn">from</span> <span class="nn">netspresso.enums</span> <span class="kn">import</span> <span class="n">Framework</span><span class="p">,</span> <span class="n">ServiceTask</span><span class="p">,</span> <span class="n">Status</span><span class="p">,</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="nn">netspresso.exceptions.trainer</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BaseDirectoryNotFoundException</span><span class="p">,</span>
+    <span class="n">DirectoryNotFoundException</span><span class="p">,</span>
+    <span class="n">FileNotFoundErrorException</span><span class="p">,</span>
+    <span class="n">NotSetDatasetException</span><span class="p">,</span>
+    <span class="n">NotSetModelException</span><span class="p">,</span>
+    <span class="n">NotSupportedModelException</span><span class="p">,</span>
+    <span class="n">NotSupportedTaskException</span><span class="p">,</span>
+    <span class="n">RetrainingFunctionException</span><span class="p">,</span>
+    <span class="n">TaskOrYamlPathException</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">netspresso.metadata.common</span> <span class="kn">import</span> <span class="n">InputShape</span>
 <span class="kn">from</span> <span class="nn">netspresso.metadata.trainer</span> <span class="kn">import</span> <span class="n">TrainerMetadata</span>
 <span class="kn">from</span> <span class="nn">netspresso.trainer.augmentations</span> <span class="kn">import</span> <span class="n">AUGMENTATION_CONFIG_TYPE</span><span class="p">,</span> <span class="n">AugmentationConfig</span><span class="p">,</span> <span class="n">Transform</span>
@@ -125,7 +136,7 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="n">task</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">yaml_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either &#39;task&#39; or &#39;yaml_path&#39; must be provided, but not both.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">TaskOrYamlPathException</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">task</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_from_task</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
@@ -188,7 +199,7 @@
 
         <span class="n">available_tasks</span> <span class="o">=</span> <span class="p">[</span><span class="n">task</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">Task</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">task</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">available_tasks</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The task supports </span><span class="si">{</span><span class="n">available_tasks</span><span class="si">}</span><span class="s2">. The entered task is </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">NotSupportedTaskException</span><span class="p">(</span><span class="n">available_tasks</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">task</span>
 
     <span class="k">def</span> <span class="nf">_validate_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -200,13 +211,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;The dataset is not set. Use `set_dataset_config` or `set_dataset_config_with_yaml` to set the dataset configuration.&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">NotSetDatasetException</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;The model is not set. Use `set_model_config` or `set_model_config_with_yaml` to set the model configuration.&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">NotSetModelException</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_get_available_models</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get available models based on the current task.</span>
@@ -290,19 +297,15 @@
             <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">base_path</span><span class="p">)</span> <span class="o">/</span> <span class="n">relative_path</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span><span class="p">:</span>  <span class="c1"># It&#39;s a file</span>
-                    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;The required file &#39;</span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s2">&#39; does not exist. Please check and make sure it is in the correct location.&quot;</span>
-                    <span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">FileNotFoundErrorException</span><span class="p">(</span><span class="n">relative_path</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>  <span class="c1"># It&#39;s a directory</span>
-                    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;The required directory &#39;</span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s2">&#39; does not exist. Please check and make sure it is in the correct location.&quot;</span>
-                    <span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">DirectoryNotFoundException</span><span class="p">(</span><span class="n">relative_path</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">find_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">search_dir</span><span class="p">,</span> <span class="n">split</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="n">base_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">base_path</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">base_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The directory &#39;</span><span class="si">{</span><span class="n">base_path</span><span class="si">}</span><span class="s2">&#39; does not exist.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BaseDirectoryNotFoundException</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span>
 
         <span class="n">result_paths</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -375,9 +378,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">onnx_input_size</span> <span class="o">=</span> <span class="p">[</span><span class="n">img_size</span><span class="p">,</span> <span class="n">img_size</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The &#39;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&#39; model is not supported for the &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="si">}</span><span class="s2">&#39; task. The available models are </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">available_models</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">NotSupportedModelException</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span>
             <span class="n">checkpoint</span><span class="o">=</span><span class="n">CheckpointConfig</span><span class="p">(</span>
@@ -400,7 +401,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;This function is intended for retraining. Please use &#39;set_model_config&#39; for model setup.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">RetrainingFunctionException</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">fx_model_path</span> <span class="o">=</span> <span class="n">fx_model_path</span></div>
