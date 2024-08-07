@@ -38,7 +38,7 @@ class CompressorV2(NetsPressoBase):
 
         super().__init__(token_handler)
 
-    def _update_metadata_for_trainer(self, metadata, input_model_path):
+    def _update_metadata_for_trainer(self, metadata: CompressorMetadata, input_model_path: str):
         if (Path(input_model_path).parent / "metadata.json").exists():
             trained_data = FileHandler.load_json(Path(input_model_path).parent / "metadata.json")
             metadata.update_model_info_for_trainer(
@@ -56,7 +56,7 @@ class CompressorV2(NetsPressoBase):
 
         return metadata
 
-    def initialize_metadata(self, output_dir, input_model_path, compression_method, ratio):
+    def initialize_metadata(self, output_dir, input_model_path, compression_method, ratio, framework, input_shapes):
         def create_metadata_with_status(status, error_message=None):
             metadata = CompressorMetadata()
             metadata.status = status
@@ -76,6 +76,8 @@ class CompressorV2(NetsPressoBase):
             metadata.input_model_path = Path(input_model_path).resolve().as_posix()
             metadata.compression_info.method = compression_method
             metadata.compression_info.ratio = ratio
+            metadata.model_info.framework = framework
+            metadata.model_info.input_shapes = input_shapes
             metadata = self._update_metadata_for_trainer(metadata, input_model_path)
             MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
@@ -347,11 +349,13 @@ class CompressorV2(NetsPressoBase):
         """
 
         output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
-        metadata = self.initialize_metadata(
+        metadata: CompressorMetadata = self.initialize_metadata(
             output_dir=output_dir,
             input_model_path="",
             compression_method=compression.compression_method,
             ratio="",
+            framework="",
+            input_shapes=[],
         )
 
         try:
@@ -391,6 +395,7 @@ class CompressorV2(NetsPressoBase):
             )
             compression_info = update_compression_response.data
             model_info = self.get_model(model_id=compression.input_model_id)
+            metadata.update_model_info(model_info.detail.framework, model_info.detail.input_layers)
             metadata = self.finalize_compression_process(metadata, model_info, compression_info, output_dir)
 
             self.print_remaining_credit(service_task=ServiceTask.ADVANCED_COMPRESSION)
@@ -442,6 +447,8 @@ class CompressorV2(NetsPressoBase):
             input_model_path=input_model_path,
             compression_method=compression_method,
             ratio=recommendation_ratio,
+            framework=framework,
+            input_shapes=input_shapes,
         )
 
         try:
@@ -534,6 +541,8 @@ class CompressorV2(NetsPressoBase):
             input_model_path=input_model_path,
             compression_method=CompressionMethod.PR_L2,
             ratio=compression_ratio,
+            framework=framework,
+            input_shapes=input_shapes,
         )
 
         try:
