@@ -9,6 +9,17 @@ from netspresso.base import NetsPressoBase
 from netspresso.clients.auth import TokenHandler
 from netspresso.clients.launcher import launcher_client_v2
 from netspresso.enums import Framework, ServiceTask, Status, Task
+from netspresso.exceptions.trainer import (
+    BaseDirectoryNotFoundException,
+    DirectoryNotFoundException,
+    FileNotFoundErrorException,
+    NotSetDatasetException,
+    NotSetModelException,
+    NotSupportedModelException,
+    NotSupportedTaskException,
+    RetrainingFunctionException,
+    TaskOrYamlPathException,
+)
 from netspresso.metadata.common import InputShape
 from netspresso.metadata.trainer import TrainerMetadata
 from netspresso.trainer.augmentations import AUGMENTATION_CONFIG_TYPE, AugmentationConfig, Transform
@@ -50,7 +61,7 @@ class Trainer(NetsPressoBase):
         }
 
         if (task is not None) == (yaml_path is not None):
-            raise ValueError("Either 'task' or 'yaml_path' must be provided, but not both.")
+            raise TaskOrYamlPathException()
 
         if task is not None:
             self._initialize_from_task(task)
@@ -113,7 +124,7 @@ class Trainer(NetsPressoBase):
 
         available_tasks = [task.value for task in Task]
         if task not in available_tasks:
-            raise ValueError(f"The task supports {available_tasks}. The entered task is {task}.")
+            raise NotSupportedTaskException(available_tasks, task)
         return task
 
     def _validate_config(self):
@@ -125,13 +136,9 @@ class Trainer(NetsPressoBase):
         """
 
         if self.data is None:
-            raise ValueError(
-                "The dataset is not set. Use `set_dataset_config` or `set_dataset_config_with_yaml` to set the dataset configuration."
-            )
+            raise NotSetDatasetException()
         if self.model is None:
-            raise ValueError(
-                "The model is not set. Use `set_model_config` or `set_model_config_with_yaml` to set the model configuration."
-            )
+            raise NotSetModelException()
 
     def _get_available_models(self) -> Dict[str, Any]:
         """Get available models based on the current task.
@@ -215,19 +222,15 @@ class Trainer(NetsPressoBase):
             path = Path(base_path) / relative_path
             if not path.exists():
                 if path.suffix:  # It's a file
-                    raise FileNotFoundError(
-                        f"The required file '{relative_path}' does not exist. Please check and make sure it is in the correct location."
-                    )
+                    raise FileNotFoundErrorException(relative_path)
                 else:  # It's a directory
-                    raise FileNotFoundError(
-                        f"The required directory '{relative_path}' does not exist. Please check and make sure it is in the correct location."
-                    )
+                    raise DirectoryNotFoundException(relative_path)
 
     def find_paths(self, base_path: str, search_dir, split: str) -> List[str]:
         base_dir = Path(base_path)
 
         if not base_dir.exists():
-            raise FileNotFoundError(f"The directory '{base_path}' does not exist.")
+            raise BaseDirectoryNotFoundException(base_dir)
 
         result_paths = []
 
@@ -300,9 +303,7 @@ class Trainer(NetsPressoBase):
         self.logging.onnx_input_size = [img_size, img_size]
 
         if model is None:
-            raise ValueError(
-                f"The '{model_name}' model is not supported for the '{self.task}' task. The available models are {self.available_models}."
-            )
+            raise NotSupportedModelException()
 
         self.model = model(
             checkpoint=CheckpointConfig(
@@ -325,7 +326,7 @@ class Trainer(NetsPressoBase):
         """
 
         if not self.model:
-            raise ValueError("This function is intended for retraining. Please use 'set_model_config' for model setup.")
+            raise RetrainingFunctionException()
 
         self.model.checkpoint.path = None
         self.model.checkpoint.fx_model_path = fx_model_path

@@ -2,6 +2,7 @@ from dataclasses import asdict, dataclass, field
 from typing import List, Optional
 
 from netspresso.enums.model import Framework
+from netspresso.exceptions.compressor import NotFillInputLayersException
 
 
 @dataclass
@@ -31,5 +32,5 @@ class RequestValidateModel:
     def __post_init__(self):
         new_input_layers = list(self.input_layers)
         if self.framework == Framework.PYTORCH and not new_input_layers:
-            raise Exception()
+            raise NotFillInputLayersException()
         self.input_layers = new_input_layers

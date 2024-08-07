@@ -2,6 +2,7 @@ from loguru import logger
 
 from netspresso.clients.auth import TokenHandler, auth_client
 from netspresso.enums import ServiceCredit, ServiceTask, Status
+from netspresso.exceptions.common import NotEnoughCreditException
 from netspresso.metadata.common import BaseMetadata
 
 
@@ -21,9 +22,7 @@ class NetsPressoBase:
             logger.error(
                 f"Insufficient balance: {current_credit} credits available, but {service_credit} credits required for {service_task_name} task."
             )
-            raise RuntimeError(
-                f"Your current balance of {current_credit} credits is insufficient to complete the task. \n{service_credit} credits are required for one {service_task_name} task. \nFor additional credit, please contact us at netspresso@nota.ai."
-            )
+            raise NotEnoughCreditException(current_credit, service_credit, service_task_name)
 
     def print_remaining_credit(self, service_task):
         if self.auth_client.is_cloud():

@@ -7,6 +7,8 @@ from urllib import request
 
 from loguru import logger
 
+from netspresso.exceptions.common import NotSupportedFrameworkException, NotValidInputModelPath
+
 FRAMEWORK_EXTENSION_MAP = {
     "tensorflow_keras": ".h5",
     "pytorch": ".pt",
@@ -45,9 +47,7 @@ class FileHandler:
         """
 
         if not Path(input_model_path).is_file():
-            raise FileNotFoundError(
-                "The input_model_path should be a file and cannot be a directory. Ex) ./model/sample_model.pt"
-            )
+            raise NotValidInputModelPath()
 
     @staticmethod
     def create_folder(
@@ -132,7 +132,7 @@ class FileHandler:
         extension = FRAMEWORK_EXTENSION_MAP.get(framework)
         if extension is None:
             available_frameworks = list(FRAMEWORK_EXTENSION_MAP.keys())
-            raise KeyError(f"The framework supports {available_frameworks}. The entered framework is {framework}.")
+            raise NotSupportedFrameworkException(available_frameworks, framework)
         return extension
 
     @staticmethod
@@ -212,7 +212,7 @@ class FileHandler:
         extension = FRAMEWORK_EXTENSION_MAP.get(framework)
         if extension is None:
             available_frameworks = list(FRAMEWORK_EXTENSION_MAP.keys())
-            raise KeyError(f"The framework supports {available_frameworks}. The entered framework is {framework}.")
+            raise NotSupportedFrameworkException(available_frameworks, framework)
         return extension
 
     @staticmethod

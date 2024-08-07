@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from typing import List
 
 from netspresso.enums.compression import GroupPolicy, LayerNorm, Policy, StepOp
+from netspresso.exceptions.compressor import NotValidChannelAxisRangeException
 
 
 @dataclass
@@ -11,9 +12,7 @@ class OptionsBase:
     def __post_init__(self):
         valid_values = [0, 1, -1, -2]
         if self.reshape_channel_axis not in valid_values:
-            raise ValueError(
-                f"The reshape_channel_axis value is in the range [0, 1, -1, -2], but got {self.reshape_channel_axis}"
-            )
+            raise NotValidChannelAxisRangeException(self.reshape_channel_axis)
 
 
 @dataclass
