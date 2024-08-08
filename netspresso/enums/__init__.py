@@ -20,6 +20,7 @@ from .model import DataType, Extension, Framework, OriginFrom
 from .module import Module
 from .tao.action import ConvertAction, ExperimentAction
 from .task import LauncherTask, Task, TaskStatusForDisplay
+from .train import Optimizer, Scheduler
 
 __all__ = [
     "ServiceCredit",
@@ -54,4 +55,6 @@ __all__ = [
     "ServiceModule",
     "EndPointProperty",
     "ServiceName",
+    "Optimizer",
+    "Scheduler",
 ]
