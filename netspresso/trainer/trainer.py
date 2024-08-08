@@ -8,7 +8,7 @@ from omegaconf import OmegaConf
 from netspresso.base import NetsPressoBase
 from netspresso.clients.auth import TokenHandler
 from netspresso.clients.launcher import launcher_client_v2
-from netspresso.enums import Framework, ServiceTask, Status, Task
+from netspresso.enums import Framework, Optimizer, Scheduler, ServiceTask, Status, Task
 from netspresso.exceptions.trainer import (
     BaseDirectoryNotFoundException,
     DirectoryNotFoundException,
@@ -503,7 +503,8 @@ class Trainer(NetsPressoBase):
                 epochs=self.training.epochs,
                 batch_size=self.environment.batch_size,
                 learning_rate=self.training.optimizer["lr"],
-                optimizer=self.training.optimizer["name"],
+                optimizer=Optimizer.to_display_name(self.training.optimizer["name"]),
+                scheduler=Scheduler.to_display_name(self.training.scheduler["name"]),
             )
             MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
