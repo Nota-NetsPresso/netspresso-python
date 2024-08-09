@@ -10,6 +10,7 @@ from netspresso.clients.auth import TokenHandler
 from netspresso.clients.auth.response_body import UserResponse
 from netspresso.clients.launcher import launcher_client_v2
 from netspresso.clients.launcher.v2.schemas import InputLayer
+from netspresso.clients.launcher.v2.schemas.common import DeviceInfo
 from netspresso.clients.launcher.v2.schemas.task.convert.response_body import ConvertTask
 from netspresso.enums import (
     DataType,
@@ -32,7 +33,36 @@ class ConverterV2(NetsPressoBase):
         super().__init__(token_handler)
         self.user_info = user_info
 
-    def initialize_metadata(self, output_dir, input_model_path, target_framework):
+    def create_available_options(self, target_framework, target_device, target_software_version):
+        def filter_device(device: DeviceInfo, target_software_version: SoftwareVersion):
+            filtered_versions = [
+                version for version in device.software_versions
+                if version.software_version == target_software_version
+            ]
+
+            if filtered_versions:
+                device.software_versions = filtered_versions
+                return device
+            return None
+
+        available_options = launcher_client_v2.benchmarker.read_framework_options(
+            access_token=self.token_handler.tokens.access_token,
+            framework=target_framework,
+        )
+
+        if target_framework in [Framework.TENSORRT, Framework.DRPAI]:
+            for available_option in available_options.data:
+                if available_option.framework == target_framework:
+                    available_option.devices = [
+                        filter_device(device, target_software_version)
+                        for device in available_option.devices
+                        if device.device_name == target_device
+                    ]
+                available_option.devices = [device for device in available_option.devices if device]
+
+        return available_options
+
+    def initialize_metadata(self, output_dir, input_model_path, target_framework, target_device, target_software_version):
         def create_metadata_with_status(status, error_message=None):
             metadata = ConverterMetadata()
             metadata.status = status
@@ -50,10 +80,7 @@ class ConverterV2(NetsPressoBase):
             metadata = create_metadata_with_status(Status.STOPPED, warning_message)
         finally:
             metadata.input_model_path = Path(input_model_path).resolve().as_posix()
-            available_options = launcher_client_v2.benchmarker.read_framework_options(
-                access_token=self.token_handler.tokens.access_token,
-                framework=target_framework,
-            )
+            available_options = self.create_available_options(target_framework, target_device, target_software_version)
             metadata.available_options.extend(option.to() for option in available_options.data)
             MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
@@ -126,7 +153,9 @@ class ConverterV2(NetsPressoBase):
         metadata = self.initialize_metadata(
             output_dir=output_dir,
             input_model_path=input_model_path,
-            target_framework=target_framework
+            target_framework=target_framework,
+            target_device=target_device_name,
+            target_software_version=target_software_version,
         )
 
         try:
