@@ -12,6 +12,7 @@ from netspresso.enums import Framework, Optimizer, Scheduler, ServiceTask, Statu
 from netspresso.exceptions.trainer import (
     BaseDirectoryNotFoundException,
     DirectoryNotFoundException,
+    FailedTrainingException,
     FileNotFoundErrorException,
     NotSetDatasetException,
     NotSetModelException,
@@ -492,7 +493,7 @@ class Trainer(NetsPressoBase):
             warning_message = "Training task was interrupted by the user."
             metadata = create_metadata_with_status(Status.STOPPED, warning_message)
         finally:
-            metadata.update_output_dir(Path(output_dir).resolve().as_posix())
+            metadata.update_output_dir(output_dir.resolve().as_posix())
             metadata.update_model_info(
                 task=self.task,
                 model=self.model_name,
@@ -506,9 +507,21 @@ class Trainer(NetsPressoBase):
                 optimizer=Optimizer.to_display_name(self.training.optimizer["name"]),
                 scheduler=Scheduler.to_display_name(self.training.scheduler["name"]),
             )
+            metadata.update_hparams(hparams=(output_dir / "hparams.yaml").resolve().as_posix())
             MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
         return metadata
+
+    def find_best_model_paths(self, destination_folder: Path):
+        best_fx_paths_set = set()
+
+        for pattern in ["*best_fx.pt", "*best.pt"]:
+            best_fx_paths_set.update(destination_folder.glob(pattern))
+
+        best_fx_paths = list(best_fx_paths_set)
+        best_onnx_paths = list(destination_folder.glob("*best.onnx"))
+
+        return best_fx_paths, best_onnx_paths
 
     def train(self, gpus: str, project_name: str, output_dir: Optional[str] = "./outputs") -> TrainerMetadata:
         """Train the model with the specified configuration.
@@ -533,8 +546,10 @@ class Trainer(NetsPressoBase):
 
         try:
             self.logging.output_dir = output_dir
-            self.logging.project_id = Path(destination_folder).name
+            self.logging.project_id = destination_folder.name
+            self.logging_dir = Path(self.logging.output_dir) / self.logging.project_id / "version_0"
             self.environment.gpus = gpus
+
             configs = TrainerConfigs(
                 self.data,
                 self.augmentation,
@@ -543,7 +558,7 @@ class Trainer(NetsPressoBase):
                 self.logging,
                 self.environment,
             )
-            logging_dir = train_with_yaml(
+            train_with_yaml(
                 gpus=gpus,
                 data=configs.data,
                 augmentation=configs.augmentation,
@@ -553,40 +568,36 @@ class Trainer(NetsPressoBase):
                 environment=configs.environment,
             )
 
-            training_summary = FileHandler.load_json(file_path=logging_dir / "training_summary.json")
-            FileHandler.remove_folder(configs.temp_folder)
-            logger.info(f"Removed {configs.temp_folder} folder.")
-
-            destination_folder = Path(self.logging.output_dir) / self.logging.project_id
-            FileHandler.move_and_cleanup_folders(source_folder=logging_dir, destination_folder=destination_folder)
-            logger.info(f"Files in {logging_dir} were moved to {destination_folder}.")
-
-            best_fx_paths_set = set()
-            for pattern in ["*best_fx.pt", "*best.pt"]:
-                best_fx_paths_set.update(destination_folder.glob(pattern))
-            best_fx_paths = list(best_fx_paths_set)
-            best_onnx_paths = list(Path(destination_folder).glob("*best.onnx"))
-            hparams_path = destination_folder / "hparams.yaml"
-            status = self._get_status_by_training_summary(training_summary.get("status"))
-            error_stat = training_summary.get("error_stat", "")
-
-            if best_fx_paths:
-                metadata.update_best_fx_model_path(best_fx_model_path=best_fx_paths[0].resolve().as_posix())
-            if best_onnx_paths:
-                metadata.update_best_onnx_model_path(best_onnx_model_path=best_onnx_paths[0].resolve().as_posix())
-            metadata.update_training_result(training_summary=training_summary)
-            metadata.update_hparams(hparams=hparams_path.resolve().as_posix())
-            metadata.update_status(status=status)
-            metadata.update_message(exception_detail=error_stat)
-
             available_options = self._get_available_options()
             metadata.update_available_options(available_options)
 
         except Exception as e:
+            e = FailedTrainingException(error_log=e.args[0])
             metadata = self.handle_error(metadata, ServiceTask.TRAINING, e.args[0])
         except KeyboardInterrupt:
             metadata = self.handle_stop(metadata, ServiceTask.TRAINING)
         finally:
+            FileHandler.remove_folder(configs.temp_folder)
+            logger.info(f"Removed {configs.temp_folder} folder.")
+
+            FileHandler.move_and_cleanup_folders(source_folder=self.logging_dir, destination_folder=destination_folder)
+            logger.info(f"Files in {self.logging_dir} were moved to {destination_folder}.")
+
+            training_summary = FileHandler.load_json(file_path=destination_folder / "training_summary.json")
+            metadata.update_training_result(training_summary=training_summary)
+
+            status = self._get_status_by_training_summary(training_summary.get("status"))
+            metadata.update_status(status=status)
+            error_stats = training_summary.get("error_stats", "")
+            if error_stats != "":
+                e = FailedTrainingException(error_log=error_stats)
+                metadata.update_message(exception_detail=e.args[0])
+
+            best_fx_paths, best_onnx_paths = self.find_best_model_paths(destination_folder)
+            if best_fx_paths:
+                metadata.update_best_fx_model_path(best_fx_model_path=best_fx_paths[0].resolve().as_posix())
+            if best_onnx_paths:
+                metadata.update_best_onnx_model_path(best_onnx_model_path=best_onnx_paths[0].resolve().as_posix())
             MetadataHandler.save_metadata(data=metadata, folder_path=destination_folder)
 
         return metadata

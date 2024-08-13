@@ -99,3 +99,18 @@ class BaseDirectoryNotFoundException(PyNPException):
                 name=self.__class__.__name__,
                 message=message,
             )
+
+
+class FailedTrainingException(PyNPException):
+    def __init__(self, error_log: str):
+        message = "An error occurred during the training process."
+        super().__init__(
+                data=AdditionalData(
+                    origin="pynp",
+                    error_log=error_log
+                ),
+                error_code="",
+                name=self.__class__.__name__,
+                message=message,
+            )
+
