@@ -588,8 +588,8 @@ class Trainer(NetsPressoBase):
 
             status = self._get_status_by_training_summary(training_summary.get("status"))
             metadata.update_status(status=status)
-            error_stats = training_summary.get("error_stats", "")
-            if error_stats != "":
+            if status == Status.ERROR:
+                error_stats = training_summary.get("error_stats", "")
                 e = FailedTrainingException(error_log=error_stats)
                 metadata.update_message(exception_detail=e.args[0])
 
