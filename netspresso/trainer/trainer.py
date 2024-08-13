@@ -12,6 +12,7 @@ from netspresso.enums import Framework, Optimizer, Scheduler, ServiceTask, Statu
 from netspresso.exceptions.trainer import (
     BaseDirectoryNotFoundException,
     DirectoryNotFoundException,
+    FailedTrainingException,
     FileNotFoundErrorException,
     NotSetDatasetException,
     NotSetModelException,
@@ -19,7 +20,6 @@ from netspresso.exceptions.trainer import (
     NotSupportedTaskException,
     RetrainingFunctionException,
     TaskOrYamlPathException,
-    FailedTrainingException,
 )
 from netspresso.metadata.common import InputShape
 from netspresso.metadata.trainer import TrainerMetadata
@@ -514,13 +514,13 @@ class Trainer(NetsPressoBase):
 
     def find_best_model_paths(self, destination_folder: Path):
         best_fx_paths_set = set()
-        
+
         for pattern in ["*best_fx.pt", "*best.pt"]:
             best_fx_paths_set.update(destination_folder.glob(pattern))
-        
+
         best_fx_paths = list(best_fx_paths_set)
         best_onnx_paths = list(destination_folder.glob("*best.onnx"))
-        
+
         return best_fx_paths, best_onnx_paths
 
     def train(self, gpus: str, project_name: str, output_dir: Optional[str] = "./outputs") -> TrainerMetadata:
