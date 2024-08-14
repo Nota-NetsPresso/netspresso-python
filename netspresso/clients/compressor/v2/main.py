@@ -78,6 +78,7 @@ class CompressorAPIClient:
             url=url,
             request_body=asdict(request_data),
             headers=get_headers(access_token),
+            timeout=600,
         )
 
         return ResponseModelItem(**response.json())
@@ -120,6 +121,7 @@ class CompressorAPIClient:
             url=url,
             request_body=asdict(request_data),
             headers=get_headers(access_token),
+            timeout=600,
         )
 
         return ResponseCompressionItem(**response.json())
@@ -155,6 +157,7 @@ class CompressorAPIClient:
             url=url,
             request_body=asdict(request_data),
             headers=get_headers(access_token),
+            timeout=600,
         )
 
         return ResponseRecommendationItem(**response.json())
@@ -167,6 +170,7 @@ class CompressorAPIClient:
             url=url,
             request_body=asdict(request_data),
             headers=get_headers(access_token),
+            timeout=600,
         )
 
         return ResponseCompressionItem(**response.json())
@@ -183,6 +187,7 @@ class CompressorAPIClient:
             url=url,
             request_body=asdict(request_data),
             headers=get_headers(access_token),
+            timeout=600,
         )
 
         return ResponseCompressionItem(**response.json())
