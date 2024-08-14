@@ -87,3 +87,25 @@ class NotValidInputModelPath(PyNPException):
             name=self.__class__.__name__,
             message=message,
         )
+
+
+class GatewayTimeoutException(PyNPException):
+    def __init__(self, error_log):
+        message = "504 Gateway Timeout: The server did not receive a timely response."
+        super().__init__(
+            data=AdditionalData(origin="pynp", error_log=error_log),
+            error_code="",
+            name=self.__class__.__name__,
+            message=message,
+        )
+
+
+class UnexpetedException(PyNPException):
+    def __init__(self, error_log, status_code):
+        message = f"Unexpected error occurred with status code {status_code}"
+        super().__init__(
+            data=AdditionalData(origin="pynp", error_log=error_log),
+            error_code="",
+            name=self.__class__.__name__,
+            message=message,
+        )

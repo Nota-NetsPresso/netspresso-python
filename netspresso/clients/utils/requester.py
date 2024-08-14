@@ -3,6 +3,8 @@ from typing import Optional
 import requests
 from requests import Response
 
+from netspresso.exceptions.common import GatewayTimeoutException, UnexpetedException
+
 
 class Requester:
     @staticmethod
@@ -10,7 +12,15 @@ class Requester:
         if response.ok:
             return response
         else:
-            raise Exception(response.json())
+            try:
+                error_message = response.json()
+                raise Exception(error_message)
+            except ValueError:
+                if response.status_code == 504:
+                    raise GatewayTimeoutException(error_log=response.text) from None
+                else:
+                    raise UnexpetedException(error_log=response.text, status_code=response.status_code) from None
+
 
     @staticmethod
     def get(url: str, params: Optional[dict] = None, headers=None, **kwargs) -> Response:
