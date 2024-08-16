@@ -465,6 +465,13 @@ class Trainer(NetsPressoBase):
 
         available_options = options_response.data
 
+        # TODO: Will be removed when we support DLC in the future
+        available_options = [
+            available_option
+            for available_option in available_options
+            if available_option.framework != "dlc"
+        ]
+
         return available_options
 
     def _get_status_by_training_summary(self, status):
