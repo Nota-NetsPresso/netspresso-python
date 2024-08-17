@@ -45,6 +45,8 @@ class ConverterV2(NetsPressoBase):
                 return device
             return None
 
+        self.token_handler.validate_token()
+
         available_options = launcher_client_v2.benchmarker.read_framework_options(
             access_token=self.token_handler.tokens.access_token,
             framework=target_framework,
