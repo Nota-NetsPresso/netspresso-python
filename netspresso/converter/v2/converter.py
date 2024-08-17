@@ -44,7 +44,7 @@ class ConverterV2(NetsPressoBase):
                 device.software_versions = filtered_versions
                 return device
             return None
-        
+
         self.token_handler.validate_token()
 
         available_options = launcher_client_v2.benchmarker.read_framework_options(
