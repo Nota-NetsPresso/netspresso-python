@@ -29,6 +29,7 @@ class TrainerMetadata(BaseMetadata):
     best_fx_model_path: str = ""
     best_onnx_model_path: str = ""
     hparams: str = ""
+    runtime: str = ""
     model_info: ModelInfo = field(default_factory=ModelInfo)
     training_info: TrainingInfo = field(default_factory=TrainingInfo)
     training_result: Dict = field(default_factory=dict)
