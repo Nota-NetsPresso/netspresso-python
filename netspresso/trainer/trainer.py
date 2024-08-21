@@ -530,6 +530,24 @@ class Trainer(NetsPressoBase):
 
         return best_fx_paths, best_onnx_paths
 
+    def create_runtime_config(self, yaml_path):
+        hparams = OmegaConf.load(yaml_path)
+
+        preprocess = hparams["augmentation"]["inference"]
+        postprocess = hparams["model"]["postprocessor"]
+
+        _config = {
+            "task": self.task.value,
+            "preprocess": preprocess,
+            "postprocess": postprocess,
+        }
+        name = "runtime"
+        config = OmegaConf.create({name: _config})
+        save_path = Path(yaml_path).parent / f"{name}.yaml"
+        OmegaConf.save(config=config, f=save_path)
+
+        return save_path
+
     def train(self, gpus: str, project_name: str, output_dir: Optional[str] = "./outputs") -> TrainerMetadata:
         """Train the model with the specified configuration.
 
@@ -589,6 +607,9 @@ class Trainer(NetsPressoBase):
 
             FileHandler.move_and_cleanup_folders(source_folder=self.logging_dir, destination_folder=destination_folder)
             logger.info(f"Files in {self.logging_dir} were moved to {destination_folder}.")
+
+            runtime_config_path = self.create_runtime_config(yaml_path=destination_folder / "hparams.yaml")
+            metadata.runtime = runtime_config_path
 
             training_summary = FileHandler.load_json(file_path=destination_folder / "training_summary.json")
             metadata.update_training_result(training_summary=training_summary)
