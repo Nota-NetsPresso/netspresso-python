@@ -70,9 +70,8 @@ class MosaicDetection(Transform):
 @dataclass
 class Pad(Transform):
     name: str = 'pad'
-    padding: int = 0
+    size: List = field(default_factory=lambda: [DEFAULT_IMG_SIZE, DEFAULT_IMG_SIZE])
     fill: int = 0
-    padding_mode: str = 'constant'
 
 
 @dataclass
@@ -98,7 +97,7 @@ class RandomErasing(Transform):
     name: str = "randomerasing"
     p: float = 0.5
     scale: List = field(default_factory=lambda: [0.02, 0.33])
-    scale: List = field(default_factory=lambda: [0.3, 3.3])
+    ratio: List = field(default_factory=lambda: [0.3, 3.3])
     value: Optional[int] = 0
     inplace: bool = False
 
