@@ -609,7 +609,7 @@ class Trainer(NetsPressoBase):
             logger.info(f"Files in {self.logging_dir} were moved to {destination_folder}.")
 
             runtime_config_path = self.create_runtime_config(yaml_path=destination_folder / "hparams.yaml")
-            metadata.runtime = runtime_config_path
+            metadata.runtime = runtime_config_path.as_posix()
 
             training_summary = FileHandler.load_json(file_path=destination_folder / "training_summary.json")
             metadata.update_training_result(training_summary=training_summary)
