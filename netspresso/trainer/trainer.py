@@ -533,8 +533,12 @@ class Trainer(NetsPressoBase):
     def create_runtime_config(self, yaml_path):
         hparams = OmegaConf.load(yaml_path)
 
-        preprocess = hparams["augmentation"]["inference"]
-        postprocess = hparams["model"]["postprocessor"]
+        preprocess = hparams.augmentation.inference
+        postprocess = hparams.model.postprocessor
+
+        for _preprocess in preprocess:
+            if _preprocess.size:
+                _preprocess.size = _preprocess.size[0]
 
         _config = {
             "task": self.task.value,
