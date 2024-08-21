@@ -605,6 +605,24 @@
 
         <span class="k">return</span> <span class="n">best_fx_paths</span><span class="p">,</span> <span class="n">best_onnx_paths</span>
 
+    <span class="k">def</span> <span class="nf">create_runtime_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yaml_path</span><span class="p">):</span>
+        <span class="n">hparams</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">yaml_path</span><span class="p">)</span>
+
+        <span class="n">preprocess</span> <span class="o">=</span> <span class="n">hparams</span><span class="p">[</span><span class="s2">&quot;augmentation&quot;</span><span class="p">][</span><span class="s2">&quot;inference&quot;</span><span class="p">]</span>
+        <span class="n">postprocess</span> <span class="o">=</span> <span class="n">hparams</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">][</span><span class="s2">&quot;postprocessor&quot;</span><span class="p">]</span>
+
+        <span class="n">_config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;task&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="s2">&quot;preprocess&quot;</span><span class="p">:</span> <span class="n">preprocess</span><span class="p">,</span>
+            <span class="s2">&quot;postprocess&quot;</span><span class="p">:</span> <span class="n">postprocess</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;runtime&quot;</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">create</span><span class="p">({</span><span class="n">name</span><span class="p">:</span> <span class="n">_config</span><span class="p">})</span>
+        <span class="n">save_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">yaml_path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.yaml&quot;</span>
+        <span class="n">OmegaConf</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">save_path</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">save_path</span>
+
 <div class="viewcode-block" id="Trainer.train"><a class="viewcode-back" href="../../../description/api/trainer/train.html#netspresso.trainer.trainer.Trainer.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gpus</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">project_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;./outputs&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrainerMetadata</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Train the model with the specified configuration.</span>
 
@@ -664,6 +682,9 @@
 
             <span class="n">FileHandler</span><span class="o">.</span><span class="n">move_and_cleanup_folders</span><span class="p">(</span><span class="n">source_folder</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logging_dir</span><span class="p">,</span> <span class="n">destination_folder</span><span class="o">=</span><span class="n">destination_folder</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Files in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">logging_dir</span><span class="si">}</span><span class="s2"> were moved to </span><span class="si">{</span><span class="n">destination_folder</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+            <span class="n">runtime_config_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_runtime_config</span><span class="p">(</span><span class="n">yaml_path</span><span class="o">=</span><span class="n">destination_folder</span> <span class="o">/</span> <span class="s2">&quot;hparams.yaml&quot;</span><span class="p">)</span>
+            <span class="n">metadata</span><span class="o">.</span><span class="n">runtime</span> <span class="o">=</span> <span class="n">runtime_config_path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
 
             <span class="n">training_summary</span> <span class="o">=</span> <span class="n">FileHandler</span><span class="o">.</span><span class="n">load_json</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="n">destination_folder</span> <span class="o">/</span> <span class="s2">&quot;training_summary.json&quot;</span><span class="p">)</span>
             <span class="n">metadata</span><span class="o">.</span><span class="n">update_training_result</span><span class="p">(</span><span class="n">training_summary</span><span class="o">=</span><span class="n">training_summary</span><span class="p">)</span>
