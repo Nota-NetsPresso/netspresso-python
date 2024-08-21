@@ -608,13 +608,17 @@
     <span class="k">def</span> <span class="nf">create_runtime_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yaml_path</span><span class="p">):</span>
         <span class="n">hparams</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">yaml_path</span><span class="p">)</span>
 
-        <span class="n">preprocess</span> <span class="o">=</span> <span class="n">hparams</span><span class="p">[</span><span class="s2">&quot;augmentation&quot;</span><span class="p">][</span><span class="s2">&quot;inference&quot;</span><span class="p">]</span>
-        <span class="n">postprocess</span> <span class="o">=</span> <span class="n">hparams</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">][</span><span class="s2">&quot;postprocessor&quot;</span><span class="p">]</span>
+        <span class="n">preprocess</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">augmentation</span><span class="o">.</span><span class="n">inference</span>
+        <span class="k">for</span> <span class="n">_preprocess</span> <span class="ow">in</span> <span class="n">preprocess</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_preprocess</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+                <span class="n">_preprocess</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">_preprocess</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">visualize</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;class_map&quot;</span><span class="p">:</span> <span class="n">hparams</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">id_mapping</span><span class="p">,</span> <span class="s2">&quot;normalized&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;brightness_factor&quot;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">}}</span>
 
         <span class="n">_config</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;task&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
             <span class="s2">&quot;preprocess&quot;</span><span class="p">:</span> <span class="n">preprocess</span><span class="p">,</span>
-            <span class="s2">&quot;postprocess&quot;</span><span class="p">:</span> <span class="n">postprocess</span><span class="p">,</span>
+            <span class="s2">&quot;postprocess&quot;</span><span class="p">:</span> <span class="n">hparams</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">postprocessor</span><span class="p">,</span>
+            <span class="s2">&quot;visualize&quot;</span><span class="p">:</span> <span class="n">visualize</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;runtime&quot;</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">create</span><span class="p">({</span><span class="n">name</span><span class="p">:</span> <span class="n">_config</span><span class="p">})</span>
