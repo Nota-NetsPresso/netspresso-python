@@ -534,16 +534,16 @@ class Trainer(NetsPressoBase):
         hparams = OmegaConf.load(yaml_path)
 
         preprocess = hparams.augmentation.inference
-        postprocess = hparams.model.postprocessor
-
         for _preprocess in preprocess:
             if _preprocess.size:
                 _preprocess.size = _preprocess.size[0]
+        visualize = {"params": {"class_map": hparams.data.id_mapping, "normalized": False, "brightness_factor": 1.5}}
 
         _config = {
             "task": self.task.value,
             "preprocess": preprocess,
-            "postprocess": postprocess,
+            "postprocess": hparams.model.postprocessor,
+            "visualize": visualize,
         }
         name = "runtime"
         config = OmegaConf.create({name: _config})
