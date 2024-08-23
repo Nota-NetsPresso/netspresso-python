@@ -1,25 +1,5 @@
-# import numpy as np
-# import scipy.ndimage
-
-
-# class SegmentationPostprocessor:
-#     def __init__(self):
-#         pass
-
-#     def __call__(self, outputs, original_shape):
-#         pred = outputs['pred']
-#         H, W = original_shape[-2:]
-
-#         # Perform bilinear interpolation using scipy
-#         # pred shape: (batch_size, num_classes, h, w)
-#         zoom_factors = (1, 1, H / pred.shape[2], W / pred.shape[3])
-#         pred = scipy.ndimage.zoom(pred, zoom_factors, order=1)
-
-#         # Perform argmax along the class dimension (axis=1)
-#         pred = np.argmax(pred, axis=1)
-
-#         return pred
 import numpy as np
+
 
 class SegmentationPostprocessor:
     def __init__(self):

@@ -127,7 +127,6 @@ class NPInferencer(BaseInferencer):
         elif self.runtime_config.task == Task.SEMANTIC_SEGMENTATION:
             model_input_shape = img.shape[1:3]
             pred = self.postprocessor({"pred": outputs[0]}, model_input_shape)
-        import ipdb; ipdb.set_trace()
 
         # Draw outputs
         img_draw = self.visualizer.draw(image=img_draw, pred=pred, model_input_shape=model_input_shape)
