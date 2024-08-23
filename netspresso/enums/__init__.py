@@ -15,6 +15,7 @@ from .device import (
     SoftwareVersion,
     TaskStatus,
 )
+from .inference import Runtime
 from .metadata import Status, TaskType
 from .model import DataType, Extension, Framework, OriginFrom
 from .module import Module
@@ -57,4 +58,5 @@ __all__ = [
     "ServiceName",
     "Optimizer",
     "Scheduler",
+    "Runtime",
 ]

@@ -7,6 +7,7 @@ from netspresso.clients.tao import TAOTokenHandler
 from netspresso.compressor import CompressorV2
 from netspresso.converter import ConverterV2
 from netspresso.enums import Task
+from netspresso.inferencer.inferencer import CustomInferencer, NPInferencer
 from netspresso.tao import TAOTrainer
 from netspresso.trainer import Trainer
 
@@ -73,6 +74,23 @@ class NetsPresso:
             Benchmarker: Initialized Benchmarker instance.
         """
         return BenchmarkerV2(token_handler=self.token_handler, user_info=self.user_info)
+
+    def np_inferencer(self, config_path) -> NPInferencer:
+        """Initialize and return a Inferencer instance.
+
+        Returns:
+            Inferencer: Initialized Inferencer instance.
+        """
+
+        return NPInferencer(config_path=config_path)
+
+    def custom_inferencer(self) -> CustomInferencer:
+        """Initialize and return a Inferencer instance.
+
+        Returns:
+            Inferencer: Initialized Inferencer instance.
+        """
+        return CustomInferencer()
 
 
 class TAO:
