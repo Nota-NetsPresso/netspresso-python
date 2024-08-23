@@ -6,7 +6,7 @@ class ClassificationVisualizer:
         self.n = len(class_map)
         self.class_map = class_map
 
-    def draw(self, image, pred, text_scale=0.7, text_thickness=2):
+    def draw(self, image, pred, model_input_shape=None, text_scale=0.7, text_thickness=2):
         visualize_image = image.copy()
 
         class_name = self.class_map[int(pred[0])] # Class is determined with top1 score
