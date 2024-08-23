@@ -537,7 +537,15 @@ class Trainer(NetsPressoBase):
         for _preprocess in preprocess:
             if _preprocess.size:
                 _preprocess.size = _preprocess.size[0]
-        visualize = {"params": {"class_map": hparams.data.id_mapping, "normalized": False, "brightness_factor": 1.5}}
+            if _preprocess.name == "resize":
+                _preprocess.resize_criteria = "long"
+
+        if self.task == Task.IMAGE_CLASSIFICATION:
+            visualize = {"params": {"class_map": hparams.data.id_mapping, "pallete": None}}
+        elif self.task == Task.OBJECT_DETECTION:
+            visualize = {"params": {"class_map": hparams.data.id_mapping, "normalized": False, "brightness_factor": 1.5}}
+        elif self.task == Task.SEMANTIC_SEGMENTATION:
+            visualize = {"params": {"class_map": hparams.data.id_mapping, "pallete": None, "normalized": False, "brightness_factor": 1.5}}
 
         _config = {
             "task": self.task.value,

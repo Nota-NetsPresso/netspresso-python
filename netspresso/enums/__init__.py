@@ -21,6 +21,7 @@ from .module import Module
 from .tao.action import ConvertAction, ExperimentAction
 from .task import LauncherTask, Task, TaskStatusForDisplay
 from .train import Optimizer, Scheduler
+from .inference import Runtime
 
 __all__ = [
     "ServiceCredit",
@@ -57,4 +58,5 @@ __all__ = [
     "ServiceName",
     "Optimizer",
     "Scheduler",
+    "Runtime",
 ]
