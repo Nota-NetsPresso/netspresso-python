@@ -36,7 +36,7 @@ class TrainerMetadata:
     best_fx_model_path: str = ""
     best_onnx_model_path: str = ""
     hparams: str = ""
-    traning_result: Dict = field(default_factory=dict)
+    training_result: Dict = field(default_factory=dict)
 
     def asdict(self) -> Dict:
         _dict = json.loads(json.dumps(asdict(self)))
@@ -56,7 +56,7 @@ class TrainerMetadata:
         self.training_info.batch_size = batch_size
 
     def update_training_result(self, training_summary):
-        self.traning_result = training_summary
+        self.training_result = training_summary
 
     def update_logging_dir(self, logging_dir):
         self.logging_dir = logging_dir
