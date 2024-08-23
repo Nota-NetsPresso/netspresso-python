@@ -548,7 +548,7 @@ class Trainer(NetsPressoBase):
             visualize = {"params": {"class_map": hparams.data.id_mapping, "pallete": None, "normalized": False, "brightness_factor": 1.5}}
 
         _config = {
-            "task": self.task.value,
+            "task": self.task,
             "preprocess": preprocess,
             "postprocess": hparams.model.postprocessor,
             "visualize": visualize,
