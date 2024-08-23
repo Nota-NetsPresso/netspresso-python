@@ -11,14 +11,14 @@ class SegmentationPostprocessor:
 
         # Upsample logits to the images' original size using bilinear interpolation
         pred_upsampled = np.zeros((pred.shape[0], pred.shape[1], H, W))
-        
+
         for i in range(pred.shape[0]):  # Iterate over the batch
             for j in range(pred.shape[1]):  # Iterate over the channels (classes)
                 pred_upsampled[i, j] = self.bilinear_interpolate(pred[i, j], (H, W))
 
         # Take the argmax over the channel dimension to get the predicted class for each pixel
         pred_classes = np.argmax(pred_upsampled, axis=1)
-        
+
         return pred_classes
 
     def bilinear_interpolate(self, img, new_shape):

@@ -5,7 +5,6 @@ from matplotlib import pyplot as plt
 from netspresso.inferencer.visualizers.utils import voc_color_map
 
 
-
 class DetectionVisualizer:
     def __init__(self, class_map=None, normalized=False, brightness_factor=1.5):
         self.cmap = voc_color_map(N=256, normalized=normalized, brightness_factor=brightness_factor)

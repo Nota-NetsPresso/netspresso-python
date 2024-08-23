@@ -1,4 +1,5 @@
 from typing import List
+
 from netspresso.exceptions.common import AdditionalData, PyNPException
 
 
