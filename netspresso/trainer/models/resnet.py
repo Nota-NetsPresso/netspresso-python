@@ -12,12 +12,33 @@ class ResNet18ArchitectureConfig(ArchitectureConfig):
             "params": {
                 "block_type": "basicblock",
                 "norm_type": "batch_norm",
+                "return_stage_idx": None,
+                "split_stem_conv": False,
+                "first_stage_shortcut_conv": False,
             },
             "stage_params": [
-                {"channels": 64, "num_blocks": 2},
-                {"channels": 128, "num_blocks": 2, "replace_stride_with_dilation": False},
-                {"channels": 256, "num_blocks": 2, "replace_stride_with_dilation": False},
-                {"channels": 512, "num_blocks": 2, "replace_stride_with_dilation": False},
+                {
+                    "channels": 64,
+                    "num_blocks": 2,
+                },
+                {
+                    "channels": 128,
+                    "num_blocks": 2,
+                    "replace_stride_with_dilation": False,
+                    "replace_stride_with_pooling": False,
+                },
+                {
+                    "channels": 256,
+                    "num_blocks": 2,
+                    "replace_stride_with_dilation": False,
+                    "replace_stride_with_pooling": False,
+                },
+                {
+                    "channels": 512,
+                    "num_blocks": 2,
+                    "replace_stride_with_dilation": False,
+                    "replace_stride_with_pooling": False,
+                },
             ],
         }
     )
@@ -31,12 +52,33 @@ class ResNet34ArchitectureConfig(ArchitectureConfig):
             "params": {
                 "block_type": "basicblock",
                 "norm_type": "batch_norm",
+                "return_stage_idx": None,
+                "split_stem_conv": False,
+                "first_stage_shortcut_conv": False,
             },
             "stage_params": [
-                {"channels": 64, "num_blocks": 3},
-                {"channels": 128, "num_blocks": 4, "replace_stride_with_dilation": False},
-                {"channels": 256, "num_blocks": 6, "replace_stride_with_dilation": False},
-                {"channels": 512, "num_blocks": 3, "replace_stride_with_dilation": False},
+                {
+                    "channels": 64,
+                    "num_blocks": 3,
+                },
+                {
+                    "channels": 128,
+                    "num_blocks": 4,
+                    "replace_stride_with_dilation": False,
+                    "replace_stride_with_pooling": False,
+                },
+                {
+                    "channels": 256,
+                    "num_blocks": 6,
+                    "replace_stride_with_dilation": False,
+                    "replace_stride_with_pooling": False,
+                },
+                {
+                    "channels": 512,
+                    "num_blocks": 3,
+                    "replace_stride_with_dilation": False,
+                    "replace_stride_with_pooling": False,
+                },
             ],
         }
     )
@@ -50,12 +92,33 @@ class ResNet50ArchitectureConfig(ArchitectureConfig):
             "params": {
                 "block_type": "bottleneck",
                 "norm_type": "batch_norm",
+                "return_stage_idx": None,
+                "split_stem_conv": False,
+                "first_stage_shortcut_conv": False,
             },
             "stage_params": [
-                {"channels": 64, "num_blocks": 3},
-                {"channels": 128, "num_blocks": 4, "replace_stride_with_dilation": False},
-                {"channels": 256, "num_blocks": 6, "replace_stride_with_dilation": False},
-                {"channels": 512, "num_blocks": 3, "replace_stride_with_dilation": False},
+                {
+                    "channels": 64,
+                    "num_blocks": 3,
+                },
+                {
+                    "channels": 128,
+                    "num_blocks": 4,
+                    "replace_stride_with_dilation": False,
+                    "replace_stride_with_pooling": False,
+                },
+                {
+                    "channels": 256,
+                    "num_blocks": 6,
+                    "replace_stride_with_dilation": False,
+                    "replace_stride_with_pooling": False,
+                },
+                {
+                    "channels": 512,
+                    "num_blocks": 3,
+                    "replace_stride_with_dilation": False,
+                    "replace_stride_with_pooling": False,
+                },
             ],
         }
     )
@@ -157,6 +220,40 @@ class DetectionResNet50ModelConfig(ModelConfig):
     name: str = "resnet50"
     architecture: ArchitectureConfig = field(
         default_factory=lambda: ResNet50ArchitectureConfig(
+            backbone={
+                "name": "resnet",
+                "params": {
+                    "block_type": "bottleneck",
+                    "norm_type": "batch_norm",
+                    "return_stage_idx": [0, 1, 2, 3],
+                    "split_stem_conv": False,
+                    "first_stage_shortcut_conv": False,
+                },
+                "stage_params": [
+                    {
+                        "channels": 64,
+                        "num_blocks": 3,
+                    },
+                    {
+                        "channels": 128,
+                        "num_blocks": 4,
+                        "replace_stride_with_dilation": False,
+                        "replace_stride_with_pooling": False,
+                    },
+                    {
+                        "channels": 256,
+                        "num_blocks": 6,
+                        "replace_stride_with_dilation": False,
+                        "replace_stride_with_pooling": False,
+                    },
+                    {
+                        "channels": 512,
+                        "num_blocks": 3,
+                        "replace_stride_with_dilation": False,
+                        "replace_stride_with_pooling": False,
+                    },
+                ],
+            },
             neck={
                 "name": "fpn",
                 "params": {
