@@ -7,7 +7,7 @@ from netspresso.clients.tao import TAOTokenHandler
 from netspresso.compressor import CompressorV2
 from netspresso.converter import ConverterV2
 from netspresso.enums import Task
-from netspresso.inferencer.inferencer import NPInferencer, CustomInferencer
+from netspresso.inferencer.inferencer import CustomInferencer, NPInferencer
 from netspresso.tao import TAOTrainer
 from netspresso.trainer import Trainer
 
@@ -83,7 +83,7 @@ class NetsPresso:
         """
 
         return NPInferencer(config_path=config_path)
-    
+
     def custom_inferencer(self) -> CustomInferencer:
         """Initialize and return a Inferencer instance.
 

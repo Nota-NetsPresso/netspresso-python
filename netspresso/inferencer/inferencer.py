@@ -2,20 +2,21 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List
+
 import cv2
 import numpy as np
+from loguru import logger
 from netspresso_inference_package.inference.inference_service import InferenceService
 from omegaconf import OmegaConf
-from loguru import logger
 
-from netspresso.inferencer.preprocessors.base import Preprocessor
-from netspresso.inferencer.postprocessors.detection import DetectionPostprocessor
+from netspresso.enums import Runtime, Task
 from netspresso.inferencer.postprocessors.classification import ClassificationPostprocessor
+from netspresso.inferencer.postprocessors.detection import DetectionPostprocessor
 from netspresso.inferencer.postprocessors.segmentation import SegmentationPostprocessor
+from netspresso.inferencer.preprocessors.base import Preprocessor
 from netspresso.inferencer.visualizers.classification import ClassificationVisualizer
 from netspresso.inferencer.visualizers.detection import DetectionVisualizer
 from netspresso.inferencer.visualizers.segmentation import SegmentationVisualizer
-from netspresso.enums import Runtime, Task
 
 
 class BaseInferencer:
@@ -114,13 +115,12 @@ class NPInferencer(BaseInferencer):
         Path(dataset_path).unlink()
 
         # Postprocess outputs
-        outputs = [value for value in inference_results.values()]
+        outputs = list(inference_results.values())
         outputs = self.transpose_outputs(runtime, outputs)
         model_input_shape = None
 
         if self.runtime_config.task == Task.IMAGE_CLASSIFICATION:
             pred = self.postprocessor({"pred": outputs[0]}, k=1)[0]
-        
         elif self.runtime_config.task == Task.OBJECT_DETECTION:
             model_input_shape = img.shape[1:3]
             pred = self.postprocessor({"pred": outputs}, model_input_shape)[0]
@@ -146,7 +146,7 @@ class CustomInferencer(BaseInferencer):
 
         inference_results = self._inference(input_model_path, dataset_path)
 
-        outputs = [value for value in inference_results.values()]
+        outputs = list(inference_results.values())
         outputs = self.transpose_outputs(runtime, outputs)
 
         return outputs
