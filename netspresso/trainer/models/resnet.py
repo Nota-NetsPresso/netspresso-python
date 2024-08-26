@@ -199,6 +199,40 @@ class SegmentationResNet50ModelConfig(ModelConfig):
     name: str = "resnet50"
     architecture: ArchitectureConfig = field(
         default_factory=lambda: ResNet50ArchitectureConfig(
+            backbone={
+                "name": "resnet",
+                "params": {
+                    "block_type": "bottleneck",
+                    "norm_type": "batch_norm",
+                    "return_stage_idx": [0, 1, 2, 3],
+                    "split_stem_conv": False,
+                    "first_stage_shortcut_conv": False,
+                },
+                "stage_params": [
+                    {
+                        "channels": 64,
+                        "num_blocks": 3,
+                    },
+                    {
+                        "channels": 128,
+                        "num_blocks": 4,
+                        "replace_stride_with_dilation": False,
+                        "replace_stride_with_pooling": False,
+                    },
+                    {
+                        "channels": 256,
+                        "num_blocks": 6,
+                        "replace_stride_with_dilation": False,
+                        "replace_stride_with_pooling": False,
+                    },
+                    {
+                        "channels": 512,
+                        "num_blocks": 3,
+                        "replace_stride_with_dilation": False,
+                        "replace_stride_with_pooling": False,
+                    },
+                ],
+            },
             head={
                 "name": "all_mlp_decoder",
                 "params": {
