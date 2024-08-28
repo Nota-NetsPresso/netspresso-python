@@ -137,6 +137,9 @@ class NPInferencer(BaseInferencer):
         elif runtime == Runtime.TFLITE:
             outputs = self.dequantize_outputs(outputs)
         
+        outputs = list(outputs.values())
+        outputs = self.transpose_outputs(runtime, outputs)
+        
         return outputs
 
     def inference(self, input_model_path: str, image_path: str, save_path: str):
@@ -160,11 +163,9 @@ class NPInferencer(BaseInferencer):
         inference_results = self._inference(dataset_path)
         Path(dataset_path).unlink()
 
+        # Postprocess outputs
         outputs = self.postprocess_output(runtime, inference_results)
 
-        # Postprocess outputs
-        outputs = list(inference_results.values())
-        outputs = self.transpose_outputs(runtime, outputs)
         model_input_shape = None
 
         if self.runtime_config.task == Task.IMAGE_CLASSIFICATION:
