@@ -23,11 +23,13 @@ class BaseInferencer:
     def __init__(self) -> None:
         pass
 
-    def _inference(self, input_model_path: str, dataset_path: str):
-        inf_service = InferenceService(model_file_path=input_model_path, dataset_file_path=dataset_path)
-        inference_results = inf_service.inference()
+    def _inference(self, dataset_path: str):
+        inference_results = self.inferencer.inference(dataset_path)
 
         return inference_results
+
+    def _create_inferencer(self, input_model_path: str):
+        self.inferencer = InferenceService(model_file_path=input_model_path)
 
     def transpose_input(self, runtime, input):
         if runtime == Runtime.ONNX:
@@ -96,9 +98,51 @@ class NPInferencer(BaseInferencer):
         if self.runtime_config.task == Task.SEMANTIC_SEGMENTATION:
             self.visualizer = SegmentationVisualizer(**params)
 
+    def quantize_input(self, input):
+        input_details = self.inferencer.model_obj.interpreter_obj.get_input_details()
+
+        for input_detail in input_details:
+            if input_detail["dtype"] in [np.uint8, np.int8]:
+                input = input.astype("int8")
+                self.is_int8 = True
+
+        return input
+
+    def dequantize_outputs(self, results):
+        if not self.is_int8:
+            return results
+
+        output_details = self.inferencer.model_obj.interpreter_obj.get_output_details()
+        for output_detail in output_details:
+            index = output_detail["index"]
+            scale = output_detail["quantization_parameters"]["scales"]
+            zero_point = output_detail["quantization_parameters"]["zero_points"]
+            results[index] = (results[index].astype("float32") - zero_point.astype("float32")) * scale.astype("float32")
+
+        return results
+    
+    def preprocess_input(self, runtime: Runtime, inputs):
+        if runtime == Runtime.ONNX:
+            input_data = self.transpose_input(runtime=runtime, input=inputs)
+        elif runtime == Runtime.TFLITE:
+            input_data = self.quantize_input(inputs)
+
+        return input_data
+
+    def postprocess_output(self, runtime: Runtime, outputs):
+        if runtime == Runtime.ONNX:
+            pass
+        elif runtime == Runtime.TFLITE:
+            outputs = self.dequantize_outputs(outputs)
+        
+        return outputs
+
     def inference(self, input_model_path: str, image_path: str, save_path: str):
         suffix = Path(input_model_path).suffix
         runtime = Runtime.get_runtime_by_suffix(suffix)
+
+        # Create inferencer
+        self._create_inferencer(input_model_path)
 
         # Load image
         img = cv2.imread(image_path)
@@ -107,12 +151,14 @@ class NPInferencer(BaseInferencer):
 
         # Preprocess image
         img = self.preprocessor(img)
-        input_data = self.transpose_input(runtime=runtime, input=img)
+        input_data = self.preprocess_input(runtime=runtime, inputs=img)
         dataset_path = self.save_numpy_data(data=input_data)
 
         # Inference data
-        inference_results = self._inference(input_model_path, dataset_path)
+        inference_results = self._inference(dataset_path)
         Path(dataset_path).unlink()
+
+        outputs = self.postprocess_output(runtime, inference_results)
 
         # Postprocess outputs
         outputs = list(inference_results.values())
