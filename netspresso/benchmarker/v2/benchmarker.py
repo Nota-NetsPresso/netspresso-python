@@ -18,6 +18,7 @@ from netspresso.enums.device import (
     HardwareType,
     SoftwareVersion,
 )
+from netspresso.enums.model import DataType
 from netspresso.metadata.benchmarker import BenchmarkerMetadata
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
@@ -29,6 +30,14 @@ class BenchmarkerV2(NetsPressoBase):
 
         super().__init__(token_handler)
         self.user_info = user_info
+
+    def get_data_type(self, input_model_dir):
+        metadata_path = input_model_dir / "metadata.json"
+        metadata = MetadataHandler.load_json(metadata_path)
+
+        data_type = metadata["convert_task_info"]["data_type"] if metadata.get("convert_task_info") else DataType.FP32
+
+        return data_type
 
     def initialize_metadata(self, input_model_path: str):
         def create_metadata_with_status(status, error_message=None):
@@ -129,6 +138,7 @@ class BenchmarkerV2(NetsPressoBase):
             )
 
             metadata.benchmark_task_info = benchmark_response.data.to()
+            metadata.benchmark_task_info.data_type = self.get_data_type(output_dir)
             MetadataHandler.save_benchmark_result(data=metadatas, folder_path=output_dir)
 
             if wait_until_done:
