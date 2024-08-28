@@ -100,6 +100,7 @@ class NPInferencer(BaseInferencer):
 
     def quantize_input(self, input):
         input_details = self.inferencer.model_obj.interpreter_obj.get_input_details()
+        self.is_int8 = False
 
         for input_detail in input_details:
             if input_detail["dtype"] in [np.uint8, np.int8]:
