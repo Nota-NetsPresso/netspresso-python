@@ -103,6 +103,8 @@ class NPInferencer(BaseInferencer):
 
         for input_detail in input_details:
             if input_detail["dtype"] in [np.uint8, np.int8]:
+                scale, zero_point = input_detail['quantization']
+                input = (input / scale + zero_point).astype('int8')
                 input = input.astype("int8")
                 self.is_int8 = True
 
