@@ -122,7 +122,7 @@ class NPInferencer(BaseInferencer):
             results[index] = (results[index].astype("float32") - zero_point.astype("float32")) * scale.astype("float32")
 
         return results
-    
+
     def preprocess_input(self, runtime: Runtime, inputs):
         if runtime == Runtime.ONNX:
             input_data = self.transpose_input(runtime=runtime, input=inputs)
@@ -136,10 +136,10 @@ class NPInferencer(BaseInferencer):
             pass
         elif runtime == Runtime.TFLITE:
             outputs = self.dequantize_outputs(outputs)
-        
+
         outputs = list(outputs.values())
         outputs = self.transpose_outputs(runtime, outputs)
-        
+
         return outputs
 
     def inference(self, input_model_path: str, image_path: str, save_path: str):
