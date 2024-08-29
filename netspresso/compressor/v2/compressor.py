@@ -53,6 +53,7 @@ class CompressorV2(NetsPressoBase):
                 optimizer=trained_data["training_info"]["optimizer"],
             )
             metadata.update_is_retrainable(is_retrainable=True)
+            metadata.update_training_result(training_result=trained_data["training_result"])
 
         return metadata
 
