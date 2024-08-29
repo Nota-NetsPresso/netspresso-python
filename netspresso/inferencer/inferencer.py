@@ -132,7 +132,7 @@ class NPInferencer(BaseInferencer):
 
     def preprocess_input(self, inputs):
         if self.runtime == Runtime.ONNX:
-            input_data = self.transpose_input(runtime=self.runtime, input=inputs)
+            input_data = self.transpose_input(input=inputs)
         elif self.runtime == Runtime.TFLITE:
             input_data = self.quantize_input(inputs)
 
