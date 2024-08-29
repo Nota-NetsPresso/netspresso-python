@@ -54,6 +54,7 @@ class CompressorMetadata(BaseMetadata):
     compression_info: CompressionInfo = field(default_factory=CompressionInfo)
     results: Results = field(default_factory=Results)
     available_options: List[AvailableOption] = field(default_factory=list)
+    training_result: Dict = field(default_factory=dict)
 
     def update_is_retrainable(self, is_retrainable):
         self.is_retrainable = is_retrainable
@@ -103,3 +104,6 @@ class CompressorMetadata(BaseMetadata):
 
     def update_available_options(self, available_options):
         self.available_options = [available_option.to() for available_option in available_options]
+
+    def update_training_result(self, training_result):
+        self.training_result = training_result
