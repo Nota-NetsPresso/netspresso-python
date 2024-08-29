@@ -349,7 +349,6 @@ print(f"model cpu memory footprint: {benchmark_result.benchmark_result.memory_fo
 
   | Target / Source Framework | ONNX | TENSORFLOW_KERAS | TENSORFLOW |
   |:--------------------------|:----:|:----------------:|:----------:|
-  | DLC                       |  ✔️  |                  |            |
   | TENSORRT                  |  ✔️  |                  |            |
   | DRPAI                     |  ✔️  |                  |            |
   | OPENVINO                  |  ✔️  |                  |            |
