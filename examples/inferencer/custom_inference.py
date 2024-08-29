@@ -18,7 +18,8 @@ PASSWORD = "YOUR_PASSWORD"
 
 netspresso = NetsPresso(email=EMAIL, password=PASSWORD)
 
-inferencer = netspresso.custom_inferencer()
+input_model_path = "YOUR_MODEL_PATH"
+inferencer = netspresso.custom_inferencer(input_model_path=input_model_path)
 
 image_path = "YOUR_IMAGE_PATH"
 colored_img = cv2.imread(image_path)
@@ -31,8 +32,7 @@ dataset_path = "YOUR_DATASET_PATH"
 np.save(dataset_path, img)
 
 # Inference
-input_model_path = "YOUR_MODEL_PATH"
-outputs = inferencer.inference(input_model_path, dataset_path)
+outputs = inferencer.inference(dataset_path)
 
 # Postprocess
 pred = postprocessor()

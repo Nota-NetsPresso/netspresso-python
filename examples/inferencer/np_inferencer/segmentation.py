@@ -29,11 +29,11 @@ trained_result = trainer.train(gpus="0, 1", project_name="segmentation")
 
 # 1. Declare inferencer
 config_path = trained_result.runtime
-inferencer = netspresso.np_inferencer(config_path=config_path)
+input_model_path = trained_result.best_onnx_model_path
+inferencer = netspresso.np_inferencer(config_path=config_path, input_model_path=input_model_path)
 
 # 2. Inference image
 valid_imgs = glob("/root/datasets/voc2012_seg/images/valid/*.jpg")
 for valid_img in valid_imgs[:100]:
-    input_model_path = trained_result.best_onnx_model_path
     save_path = Path(input_model_path).parent / "inference_results" / Path(valid_img).name
-    outputs = inferencer.inference(input_model_path, valid_img, save_path)
+    outputs = inferencer.inference(image_path=valid_img, save_path=save_path)
