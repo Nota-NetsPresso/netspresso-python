@@ -20,8 +20,12 @@ from netspresso.inferencer.visualizers.segmentation import SegmentationVisualize
 
 
 class BaseInferencer:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, input_model_path) -> None:
+        self.input_model_path = input_model_path
+        self.inferencer = self._create_inferencer(input_model_path)
+
+        self.suffix = Path(input_model_path).suffix
+        self.runtime = Runtime.get_runtime_by_suffix(self.suffix)
 
     def _inference(self, dataset_path: str):
         inference_results = self.inferencer.inference(dataset_path)
@@ -29,20 +33,22 @@ class BaseInferencer:
         return inference_results
 
     def _create_inferencer(self, input_model_path: str):
-        self.inferencer = InferenceService(model_file_path=input_model_path)
+        inferencer = InferenceService(model_file_path=input_model_path)
 
-    def transpose_input(self, runtime, input):
-        if runtime == Runtime.ONNX:
+        return inferencer
+
+    def transpose_input(self, input):
+        if self.runtime == Runtime.ONNX:
             input = input.transpose(0, 3, 1, 2)
-        elif runtime == Runtime.TFLITE:
+        elif self.runtime == Runtime.TFLITE:
             pass
 
         return input
 
-    def transpose_outputs(self, runtime, outputs):
-        if runtime == Runtime.ONNX:
+    def transpose_outputs(self, outputs):
+        if self.runtime == Runtime.ONNX:
             pass
-        elif runtime == Runtime.TFLITE:
+        elif self.runtime == Runtime.TFLITE:
             outputs = [np.transpose(index, (0, 3, 1, 2)) for index in outputs] # (b, h, w, c) -> (b, c, h, w)
 
         return outputs
@@ -68,8 +74,8 @@ class BaseInferencer:
 
 
 class NPInferencer(BaseInferencer):
-    def __init__(self, config_path) -> None:
-        super().__init__()
+    def __init__(self, config_path: str, input_model_path: str) -> None:
+        super().__init__(input_model_path)
         self.config_path = config_path
         self.runtime_config = OmegaConf.load(config_path).runtime
         self.build_preprocessor()
@@ -124,32 +130,26 @@ class NPInferencer(BaseInferencer):
 
         return results
 
-    def preprocess_input(self, runtime: Runtime, inputs):
-        if runtime == Runtime.ONNX:
-            input_data = self.transpose_input(runtime=runtime, input=inputs)
-        elif runtime == Runtime.TFLITE:
+    def preprocess_input(self, inputs):
+        if self.runtime == Runtime.ONNX:
+            input_data = self.transpose_input(runtime=self.runtime, input=inputs)
+        elif self.runtime == Runtime.TFLITE:
             input_data = self.quantize_input(inputs)
 
         return input_data
 
-    def postprocess_output(self, runtime: Runtime, outputs):
-        if runtime == Runtime.ONNX:
+    def postprocess_output(self, outputs):
+        if self.runtime == Runtime.ONNX:
             pass
-        elif runtime == Runtime.TFLITE:
+        elif self.runtime == Runtime.TFLITE:
             outputs = self.dequantize_outputs(outputs)
 
         outputs = list(outputs.values())
-        outputs = self.transpose_outputs(runtime, outputs)
+        outputs = self.transpose_outputs(outputs)
 
         return outputs
 
-    def inference(self, input_model_path: str, image_path: str, save_path: str):
-        suffix = Path(input_model_path).suffix
-        runtime = Runtime.get_runtime_by_suffix(suffix)
-
-        # Create inferencer
-        self._create_inferencer(input_model_path)
-
+    def inference(self, image_path: str, save_path: str):
         # Load image
         img = cv2.imread(image_path)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -157,7 +157,7 @@ class NPInferencer(BaseInferencer):
 
         # Preprocess image
         img = self.preprocessor(img)
-        input_data = self.preprocess_input(runtime=runtime, inputs=img)
+        input_data = self.preprocess_input(inputs=img)
         dataset_path = self.save_numpy_data(data=input_data)
 
         # Inference data
@@ -165,7 +165,7 @@ class NPInferencer(BaseInferencer):
         Path(dataset_path).unlink()
 
         # Postprocess outputs
-        outputs = self.postprocess_output(runtime, inference_results)
+        outputs = self.postprocess_output(outputs=inference_results)
 
         model_input_shape = None
 
@@ -187,16 +187,10 @@ class NPInferencer(BaseInferencer):
 
 
 class CustomInferencer(BaseInferencer):
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, input_model_path: str) -> None:
+        super().__init__(input_model_path)
 
-    def inference(self, input_model_path: str, dataset_path: str):
-        suffix = Path(input_model_path).suffix
-        runtime = Runtime.get_runtime_by_suffix(suffix)
+    def inference(self, dataset_path: str):
+        inference_results = self._inference(dataset_path)
 
-        inference_results = self._inference(input_model_path, dataset_path)
-
-        outputs = list(inference_results.values())
-        outputs = self.transpose_outputs(runtime, outputs)
-
-        return outputs
+        return inference_results

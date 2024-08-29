@@ -75,22 +75,22 @@ class NetsPresso:
         """
         return BenchmarkerV2(token_handler=self.token_handler, user_info=self.user_info)
 
-    def np_inferencer(self, config_path) -> NPInferencer:
+    def np_inferencer(self, config_path: str, input_model_path: str) -> NPInferencer:
         """Initialize and return a Inferencer instance.
 
         Returns:
             Inferencer: Initialized Inferencer instance.
         """
 
-        return NPInferencer(config_path=config_path)
+        return NPInferencer(config_path=config_path, input_model_path=input_model_path)
 
-    def custom_inferencer(self) -> CustomInferencer:
+    def custom_inferencer(self, input_model_path: str) -> CustomInferencer:
         """Initialize and return a Inferencer instance.
 
         Returns:
             Inferencer: Initialized Inferencer instance.
         """
-        return CustomInferencer()
+        return CustomInferencer(input_model_path=input_model_path)
 
 
 class TAO:
