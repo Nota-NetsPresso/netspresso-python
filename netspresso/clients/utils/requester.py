@@ -3,7 +3,7 @@ from typing import Optional
 import requests
 from requests import Response
 
-from netspresso.exceptions.common import GatewayTimeoutException, UnexpetedException, InternalServerErrorException
+from netspresso.exceptions.common import GatewayTimeoutException, InternalServerErrorException, UnexpetedException
 
 
 class Requester:
@@ -11,7 +11,7 @@ class Requester:
     def __make_response(response: Response) -> Response:
         if response.ok:
             return response
-        
+
         try:
             error_message = response.json()
         except ValueError:
