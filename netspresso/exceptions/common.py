@@ -109,3 +109,14 @@ class UnexpetedException(PyNPException):
             name=self.__class__.__name__,
             message=message,
         )
+
+
+class InternalServerErrorException(PyNPException):
+    def __init__(self, error_log, status_code):
+        message = f"Internal server error occurred with status code {status_code}"
+        super().__init__(
+            data=AdditionalData(origin="pynp", error_log=error_log),
+            error_code="",
+            name=self.__class__.__name__,
+            message=message,
+        )
