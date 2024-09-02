@@ -8,7 +8,7 @@ from netspresso.clients.launcher.v2.schemas import (
     ResponseItems,
 )
 from netspresso.clients.launcher.v2.schemas.task.common import TaskStatusInfo
-from netspresso.enums import QuantizationDataType, QuantizationMode, SimilarityMetric, TaskStatusForDisplay 
+from netspresso.enums import QuantizationDataType, QuantizationMode, SimilarityMetric, TaskStatusForDisplay
 from netspresso.metadata.quantizer import QuantizeInfo
 
 
