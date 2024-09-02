@@ -207,11 +207,11 @@ class Quantizer(NetsPressoBase):
                 default_model_path = FileHandler.get_default_model_path(folder_path=output_dir)
                 self._download_quantized_model(
                     quantize_task=quantize_response.data,
-                    local_path=str(default_model_path.with_suffix(".onnx")),
+                    local_path=str(default_model_path.with_suffix(".zip")),
                 )
                 self.print_remaining_credit(service_task=ServiceTask.MODEL_QUANTIZE)
                 metadata.status = Status.COMPLETED
-                metadata.quantized_model_path = default_model_path.with_suffix(".onnx").as_posix()
+                metadata.quantized_model_path = default_model_path.with_suffix(".zip").as_posix()
                 logger.info("Quantization task was completed successfully.")
             else:
                 metadata = self.handle_error(metadata, ServiceTask.MODEL_QUANTIZE, quantize_response.data.error_log)
