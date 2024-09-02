@@ -7,6 +7,7 @@ class ServiceTask(str, Enum):
     AUTOMATIC_COMPRESSION = "Automatic Compression"
     MODEL_CONVERT = "Conversion"
     MODEL_BENCHMARK = "Benchmark"
+    MODEL_QUANTIZE = "Quantization"
 
 
 class ServiceCredit:
@@ -15,6 +16,7 @@ class ServiceCredit:
         ServiceTask.AUTOMATIC_COMPRESSION: 25,
         ServiceTask.MODEL_CONVERT: 50,
         ServiceTask.MODEL_BENCHMARK: 25,
+        ServiceTask.MODEL_QUANTIZE: 50,
     }
 
     @staticmethod

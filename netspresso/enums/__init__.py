@@ -22,6 +22,7 @@ from .module import Module
 from .tao.action import ConvertAction, ExperimentAction
 from .task import LauncherTask, Task, TaskStatusForDisplay
 from .train import Optimizer, Scheduler
+from .quantize import QuantizationDataType, QuantizationMode, SimilarityMetric
 
 __all__ = [
     "ServiceCredit",
@@ -59,4 +60,7 @@ __all__ = [
     "Optimizer",
     "Scheduler",
     "Runtime",
+    "QuantizationDataType",
+    "QuantizationMode",
+    "SimilarityMetric",
 ]

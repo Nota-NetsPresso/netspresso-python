@@ -12,6 +12,7 @@ class Task(str, Enum):
 class LauncherTask(str, Enum):
     CONVERT = "convert"
     BENCHMARK = "benchmark"
+    QUANTIZE = "quantize"
 
 
 class TaskStatusForDisplay(NamedConstant):
