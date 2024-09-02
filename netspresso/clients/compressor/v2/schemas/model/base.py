@@ -49,6 +49,7 @@ class ModelDetail:
 class ModelStatus:
     is_deleted: Optional[bool] = False
     is_convertible: Optional[bool] = False
+    is_quantizable: Optional[bool] = False
     is_compressible: Optional[bool] = False
     is_benchmarkable: Optional[bool] = False
     is_uploaded: Optional[bool] = False
