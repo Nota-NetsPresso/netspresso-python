@@ -8,6 +8,7 @@ from netspresso.compressor import CompressorV2
 from netspresso.converter import ConverterV2
 from netspresso.enums import Task
 from netspresso.inferencer.inferencer import CustomInferencer, NPInferencer
+from netspresso.quantizer import Quantizer
 from netspresso.tao import TAOTrainer
 from netspresso.trainer import Trainer
 
@@ -66,6 +67,14 @@ class NetsPresso:
             Converter: Initialized Converter instance.
         """
         return ConverterV2(token_handler=self.token_handler, user_info=self.user_info)
+
+    def quantizer(self) -> Quantizer:
+        """Initialize and return a Quantizer instance.
+
+        Returns:
+            Quantizer: Initialized Quantizer instance.
+        """
+        return Quantizer(token_handler=self.token_handler, user_info=self.user_info)
 
     def benchmarker_v2(self) -> BenchmarkerV2:
         """Initialize and return a Benchmarker instance.
