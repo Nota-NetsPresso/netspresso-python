@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Union
+from typing import Dict, Union
 
 from netspresso.enums import (
     QuantizationDataType,
@@ -30,3 +30,4 @@ class QuantizerMetadata(BaseMetadata):
     quantized_model_path: str = ""
     model_info: ModelInfo = field(default_factory=ModelInfo)
     quantize_task_info: QuantizeInfo = field(default_factory=QuantizeInfo)
+    compare_result: Dict = field(default_factory=dict)

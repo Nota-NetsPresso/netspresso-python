@@ -205,13 +205,25 @@ class Quantizer(NetsPressoBase):
 
             if quantize_response.data.status == TaskStatusForDisplay.FINISHED:
                 default_model_path = FileHandler.get_default_model_path(folder_path=output_dir)
-                self._download_quantized_model(
-                    quantize_task=quantize_response.data,
-                    local_path=str(default_model_path.with_suffix(".zip")),
-                )
+                download_model_path = default_model_path.with_suffix(".zip").as_posix()
+                self._download_quantized_model(quantize_task=quantize_response.data, local_path=download_model_path)
+
+                metadata.quantized_model_path = download_model_path
+                FileHandler.unzip(zip_file_path=download_model_path, target_path=output_dir)
+                FileHandler.remove_file(file_path=download_model_path)
+
+                old_file_path = Path(output_dir) / "quantized.onnx"
+                quantized_model_path = default_model_path.with_suffix(".onnx").as_posix()
+                metadata.quantized_model_path = old_file_path
+                FileHandler.rename_file(old_file_path=old_file_path, new_file_path=quantized_model_path)
+
+                compare_result = FileHandler.load_json(file_path=output_dir / "compare_result.json")
+
                 self.print_remaining_credit(service_task=ServiceTask.MODEL_QUANTIZE)
+
                 metadata.status = Status.COMPLETED
-                metadata.quantized_model_path = default_model_path.with_suffix(".zip").as_posix()
+                metadata.quantized_model_path = quantized_model_path
+                metadata.compare_result = compare_result
                 logger.info("Quantization task was completed successfully.")
             else:
                 metadata = self.handle_error(metadata, ServiceTask.MODEL_QUANTIZE, quantize_response.data.error_log)
