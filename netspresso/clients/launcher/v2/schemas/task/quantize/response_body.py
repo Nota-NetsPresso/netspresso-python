@@ -16,8 +16,8 @@ from netspresso.metadata.quantizer import QuantizeInfo
 class QuantizeOption:
     threshold: Union[float, int]
     metric: SimilarityMetric = field(default=SimilarityMetric.SNR)
-    weight_quantization_bandwidth: QuantizationDataType = field(default=QuantizationDataType.INT8)
-    activation_quantization_bandwidth: QuantizationDataType = field(default=QuantizationDataType.INT8)
+    weight_quantization_bitwidth: QuantizationDataType = field(default=QuantizationDataType.INT8)
+    activation_quantization_bitwidth: QuantizationDataType = field(default=QuantizationDataType.INT8)
 
 
 @dataclass
@@ -51,8 +51,8 @@ class QuantizeTask:
         quantize_info.quantization_mode = self.quantization_mode
         quantize_info.metric = self.options.metric
         quantize_info.threshold = self.options.threshold
-        quantize_info.weight_quantization_bandwidth = self.options.weight_quantization_bandwidth
-        quantize_info.activation_quantization_bandwidth = self.options.activation_quantization_bandwidth
+        quantize_info.weight_quantization_bitwidth = self.options.weight_quantization_bitwidth
+        quantize_info.activation_quantization_bitwidth = self.options.activation_quantization_bitwidth
 
         return quantize_info
 

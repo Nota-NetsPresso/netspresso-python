@@ -10,8 +10,8 @@ from netspresso.enums import QuantizationDataType, QuantizationMode, SimilarityM
 class QuantizationOptions:
     metric: SimilarityMetric = field(default=SimilarityMetric.SNR)
     threshold: Union[float, int] = field(default=0)
-    weight_quantization_bandwidth: QuantizationDataType = field(default=QuantizationDataType.INT8)
-    activation_quantization_bandwidth: QuantizationDataType = field(default=QuantizationDataType.INT8)
+    weight_quantization_bitwidth: QuantizationDataType = field(default=QuantizationDataType.INT8)
+    activation_quantization_bitwidth: QuantizationDataType = field(default=QuantizationDataType.INT8)
 
 
 @dataclass

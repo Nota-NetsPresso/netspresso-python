@@ -38,8 +38,8 @@ class Quantizer(NetsPressoBase):
         threshold,
         quantization_mode,
         metric,
-        weight_quantization_bandwidth,
-        activation_quantization_bandwidth,
+        weight_quantization_bitwidth,
+        activation_quantization_bitwidth,
     ):
         def create_metadata_with_status(status, error_message=None):
             metadata = QuantizerMetadata()
@@ -61,8 +61,8 @@ class Quantizer(NetsPressoBase):
             metadata.quantize_task_info.threshold = threshold
             metadata.quantize_task_info.quantization_mode = quantization_mode
             metadata.quantize_task_info.metric = metric
-            metadata.quantize_task_info.weight_quantization_bandwidth = weight_quantization_bandwidth
-            metadata.quantize_task_info.activation_quantization_bandwidth = activation_quantization_bandwidth
+            metadata.quantize_task_info.weight_quantization_bitwidth = weight_quantization_bitwidth
+            metadata.quantize_task_info.activation_quantization_bitwidth = activation_quantization_bitwidth
             MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
         return metadata
@@ -100,8 +100,8 @@ class Quantizer(NetsPressoBase):
         quantization_mode: QuantizationMode = QuantizationMode.PLAIN_QUANTIZATION,
         metric: SimilarityMetric = SimilarityMetric.SNR,
         threshold: Union[float, int] = 0,
-        weight_quantization_bandwidth: QuantizationDataType = QuantizationDataType.INT8,
-        activation_quantization_bandwidth: QuantizationDataType = QuantizationDataType.INT8,
+        weight_quantization_bitwidth: QuantizationDataType = QuantizationDataType.INT8,
+        activation_quantization_bitwidth: QuantizationDataType = QuantizationDataType.INT8,
         input_layers: List[Dict[str, int]] = None,
         wait_until_done: bool = True,
         sleep_interval: int = 30,
@@ -115,8 +115,8 @@ class Quantizer(NetsPressoBase):
             quantization_mode (QuantizationMode): Quantization mode
             metric (SimilarityMetric): Quantization quality metrics.
             threshold (Union[float, int]): Quantization quality threshold
-            weight_quantization_bandwidth (QuantizationDataType): Weight quantization bandwidth
-            activation_quantization_bandwidth (QuantizationDataType): Activation quantization bandwidth
+            weight_quantization_bitwidth (QuantizationDataType): Weight quantization bitwidth
+            activation_quantization_bitwidth (QuantizationDataType): Activation quantization bitwidth
             input_layers (List[InputShape], optional): Target input shape for quantization (e.g., dynamic batch to static batch).
             wait_until_done (bool): If True, wait for the quantization result before returning the function.
                                 If False, request the quantization and return  the function immediately.
@@ -136,8 +136,8 @@ class Quantizer(NetsPressoBase):
             threshold=threshold,
             quantization_mode=quantization_mode,
             metric=metric,
-            weight_quantization_bandwidth=weight_quantization_bandwidth,
-            activation_quantization_bandwidth=activation_quantization_bandwidth,
+            weight_quantization_bitwidth=weight_quantization_bitwidth,
+            activation_quantization_bitwidth=activation_quantization_bitwidth,
         )
 
         try:
@@ -171,8 +171,8 @@ class Quantizer(NetsPressoBase):
             quantization_options = QuantizationOptions(
                 metric=metric,
                 threshold=threshold,
-                weight_quantization_bandwidth=weight_quantization_bandwidth,
-                activation_quantization_bandwidth=activation_quantization_bandwidth,
+                weight_quantization_bitwidth=weight_quantization_bitwidth,
+                activation_quantization_bitwidth=activation_quantization_bitwidth,
             )
             quantize_response = launcher_client_v2.quantizer.start_task(
                 access_token=self.token_handler.tokens.access_token,

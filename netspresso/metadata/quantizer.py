@@ -17,8 +17,8 @@ class QuantizeInfo:
     quantization_mode: QuantizationMode = QuantizationMode.PLAIN_QUANTIZATION
     metric: SimilarityMetric = SimilarityMetric.SNR
     threshold: Union[float, int] = 0
-    weight_quantization_bandwidth: QuantizationDataType = QuantizationDataType.INT8
-    activation_quantization_bandwidth: QuantizationDataType = QuantizationDataType.INT8
+    weight_quantization_bitwidth: QuantizationDataType = QuantizationDataType.INT8
+    activation_quantization_bitwidth: QuantizationDataType = QuantizationDataType.INT8
     input_model_uuid: str = ""
     output_model_uuid: str = ""
 
