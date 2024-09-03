@@ -2,9 +2,6 @@ from enum import Enum
 
 
 class QuantizationDataType(str, Enum):
-    INT1 = "int1"
-    INT2 = "int2"
-    INT3 = "int3"
     INT4 = "int4"
     INT5 = "int5"
     INT6 = "int6"
@@ -33,11 +30,6 @@ class QuantizationDataType(str, Enum):
     INT29 = "int29"
     INT30 = "int30"
     INT31 = "int31"
-    FLOAT32 = "float32" # When set to that value, excludes quantization from being quantized
-
-    @classmethod
-    def extract_number(cls, enum_value):
-        return int(enum_value.lstrip("int"))
 
 
 class QuantizationMode(str, Enum):
