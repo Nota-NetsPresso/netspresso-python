@@ -77,9 +77,9 @@ class CompileOptions(CommonOptions):
         if self.quantize_io:
             args.append("--quantize_io")
         if self.quantize_io_type is not None:
-            args.append(f'--quantize_io_type "{self.quantize_io_type}"')
+            args.append(f'--quantize_io_type {self.quantize_io_type}')
         if self.qnn_context_binary_vtcm is not None:
-            args.append(f'--qnn_context_binary_vtcm "{self.qnn_context_binary_vtcm}"')
+            args.append(f'--qnn_context_binary_vtcm {self.qnn_context_binary_vtcm}')
         if self.qnn_context_binary_optimization_level is not None:
             args.append(f"--qnn_context_binary_optimization_level {self.qnn_context_binary_optimization_level}")
 
