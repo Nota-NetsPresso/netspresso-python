@@ -2,12 +2,27 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 import qai_hub as hub
-from qai_hub.client import Device, Job, SourceModelType
+from qai_hub.client import Device, Job, SourceModelType, Dataset
 
 from netspresso.qai_hub.options import Extension, Framework, Runtime
 
 
 class QAIHubBase:
+    def upload_dataset(self, data, name=None) -> Dataset:
+        dataset = hub.upload_dataset(data=data, name=name)
+
+        return dataset
+
+    def get_dataset(self, dataset_id: str) -> Dataset:
+        dataset = hub.get_dataset(dataset_id=dataset_id)
+
+        return dataset
+
+    def get_datasets() -> List[Dataset]:
+        datasets = hub.get_datasets()
+
+        return datasets
+
     def get_devices(self, name: str = "", os: str = "", attributes: Union[str, List[str]] = None) -> List[Device]:
         if attributes is None:
             attributes = []
