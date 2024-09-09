@@ -261,3 +261,24 @@ class ConverterV2(NetsPressoBase):
             task_id=conversion_task_id,
         )
         return response.data
+
+    def cancel_conversion_task(self, conversion_task_id: str) -> ConvertTask:
+        """Cancel the conversion task with given conversion task uuid.
+
+        Args:
+            conversion_task_id (str): Convert task UUID of the convert task.
+
+        Raises:
+            e: If an error occurs during the model conversion.
+
+        Returns:
+            ConversionTask: Model conversion task dictionary.
+        """
+
+        self.token_handler.validate_token()
+
+        response = launcher_client_v2.converter.cancel_task(
+            access_token=self.token_handler.tokens.access_token,
+            task_id=conversion_task_id,
+        )
+        return response.data
