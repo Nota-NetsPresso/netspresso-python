@@ -85,8 +85,8 @@ class BenchmarkerV2(NetsPressoBase):
             target_device_name (DeviceName): Target device name.
             target_software_version (Union[str, SoftwareVersion], optional): Target software version. Required if target_device_name is one of the Jetson devices.
             target_hardware_type (Union[str, HardwareType], optional): Hardware type. Acceleration options for processing the model inference.
-            wait_until_done (bool): If True, wait for the conversion result before returning the function.
-                                If False, request the conversion and return the function immediately.
+            wait_until_done (bool): If True, wait for the benchmark result before returning the function.
+                                If False, request the benchmark and return the function immediately.
 
         Raises:
             e: If an error occurs during the benchmarking of the model.
@@ -193,6 +193,27 @@ class BenchmarkerV2(NetsPressoBase):
         self.token_handler.validate_token()
 
         response = launcher_client_v2.benchmarker.read_task(
+            access_token=self.token_handler.tokens.access_token,
+            task_id=benchmark_task_id,
+        )
+        return response.data
+
+    def cancel_benchmark_task(self, benchmark_task_id: str) -> BenchmarkTask:
+        """Cancel the benchmark task with given benchmark task uuid.
+
+        Args:
+            benchmark_task_id (str): Benchmark task UUID of the benchmark task.
+
+        Raises:
+            e: If an error occurs during the task cancel.
+
+        Returns:
+            BenchmarkTask: Model benchmark task dictionary.
+        """
+
+        self.token_handler.validate_token()
+
+        response = launcher_client_v2.benchmarker.cancel_task(
             access_token=self.token_handler.tokens.access_token,
             task_id=benchmark_task_id,
         )

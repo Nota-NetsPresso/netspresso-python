@@ -269,7 +269,7 @@ class ConverterV2(NetsPressoBase):
             conversion_task_id (str): Convert task UUID of the convert task.
 
         Raises:
-            e: If an error occurs during the model conversion.
+            e: If an error occurs during the task cancel.
 
         Returns:
             ConversionTask: Model conversion task dictionary.
