@@ -257,3 +257,24 @@ class Quantizer(NetsPressoBase):
             task_id=quantization_task_id,
         )
         return response.data
+
+    def cancel_quantization_task(self, quantization_task_id: str) -> QuantizeTask:
+        """Cancel the quantization task with given quantization task uuid.
+
+        Args:
+            quantization_task_id (str): Quantize task UUID of the quantize task.
+
+        Raises:
+            e: If an error occurs during the task cancel.
+
+        Returns:
+            QuantizeTask: Model quantization task dictionary.
+        """
+
+        self.token_handler.validate_token()
+
+        response = launcher_client_v2.quantizer.cancel_task(
+            access_token=self.token_handler.tokens.access_token,
+            task_id=quantization_task_id,
+        )
+        return response.data
