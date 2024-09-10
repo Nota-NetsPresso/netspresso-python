@@ -3,7 +3,7 @@ import shutil
 import sys
 import zipfile
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Dict, List, Tuple, Union
 from urllib import request
 
 from loguru import logger
@@ -230,6 +230,25 @@ class FileHandler:
         with open(file_path, "r") as json_data:
             data = json.load(json_data)
         return data
+
+    @staticmethod
+    def save_json(data: Union[Dict, List[Dict]], file_path: str) -> None:
+        """Save data to a JSON file.
+
+        Args:
+            data (Union[Dict, List[Dict]]): The data to be saved. This can be a dictionary or a list of dictionaries.
+            file_path (str): The file path where the JSON file will be saved.
+
+        Returns:
+            None: This function does not return any value.
+
+        Notes:
+            The data is written to a JSON file with indentation for readability. The file is saved in the specified directory with the given name.
+        """
+
+        with open(file_path, "w") as json_file:
+            json.dump(data, json_file, indent=4)
+        logger.info(f"JSON file saved at {file_path}")
 
     @staticmethod
     def move_and_cleanup_folders(source_folder: str, destination_folder: str):
