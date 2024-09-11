@@ -26,6 +26,7 @@ class NetsPressoBase:
 
     def print_remaining_credit(self, service_task):
         if self.auth_client.is_cloud():
+            self.token_handler.validate_token()
             service_credit = ServiceCredit.get_credit(service_task)
             remaining_credit = self.auth_client.get_credit(
                 self.token_handler.tokens.access_token, verify_ssl=self.token_handler.verify_ssl

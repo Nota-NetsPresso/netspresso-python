@@ -1,8 +1,9 @@
 import json
 import shutil
 import sys
+import zipfile
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Dict, List, Tuple, Union
 from urllib import request
 
 from loguru import logger
@@ -231,6 +232,25 @@ class FileHandler:
         return data
 
     @staticmethod
+    def save_json(data: Union[Dict, List[Dict]], file_path: str) -> None:
+        """Save data to a JSON file.
+
+        Args:
+            data (Union[Dict, List[Dict]]): The data to be saved. This can be a dictionary or a list of dictionaries.
+            file_path (str): The file path where the JSON file will be saved.
+
+        Returns:
+            None: This function does not return any value.
+
+        Notes:
+            The data is written to a JSON file with indentation for readability. The file is saved in the specified directory with the given name.
+        """
+
+        with open(file_path, "w") as json_file:
+            json.dump(data, json_file, indent=4)
+        logger.info(f"JSON file saved at {file_path}")
+
+    @staticmethod
     def move_and_cleanup_folders(source_folder: str, destination_folder: str):
         """Move files from the source folder to the destination folder and remove the source folder.
 
@@ -260,6 +280,22 @@ class FileHandler:
         shutil.rmtree(folder_path, ignore_errors=True)
 
     @staticmethod
+    def remove_file(file_path: str) -> None:
+        """
+        Remove a file.
+
+        Args:
+            file_path (str): Path to the file.
+        """
+        file_path = Path(file_path)
+
+        if file_path.exists() and file_path.is_file():
+            file_path.unlink()
+            logger.info(f"File '{file_path}' has been removed.")
+        else:
+            logger.info(f"File '{file_path}' not found or is not a file.")
+
+    @staticmethod
     def read_file_bytes(file_path: str) -> bytes:
         """Read the contents of a file and return them as bytes.
 
@@ -272,3 +308,37 @@ class FileHandler:
         with open(file_path, "rb") as f:
             file_byte = f.read()
         return file_byte
+
+    @staticmethod
+    def unzip(zip_file_path: str, target_path: str) -> None:
+        """Unzip a ZIP file and extract its contents to a specified directory.
+
+        Args:
+            zip_path (str): The path to the ZIP file that needs to be unzipped.
+            target_path (str): The directory where the contents of the ZIP file will be extracted.
+
+        Returns:
+            None
+        """
+        with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
+            zip_ref.extractall(target_path)
+
+    @staticmethod
+    def rename_file(old_file_path: str, new_file_path: str):
+        """Rename a file if it exists.
+
+        Args:
+            old_file_path (str): The original file path.
+            new_file_path (str): The new file path.
+
+        Returns:
+            None
+        """
+        old_file_path = Path(old_file_path)
+        new_file_path = Path(new_file_path)
+
+        if old_file_path.exists():
+            old_file_path.rename(new_file_path)
+            logger.info(f"File '{old_file_path.name}' has been successfully renamed to '{new_file_path.name}'.")
+        else:
+            logger.info(f"File '{old_file_path.name}' not found.")
