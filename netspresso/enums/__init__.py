@@ -19,6 +19,7 @@ from .inference import Runtime
 from .metadata import Status, TaskType
 from .model import DataType, Extension, Framework, OriginFrom
 from .module import Module
+from .quantize import QuantizationDataType, QuantizationMode, SimilarityMetric
 from .tao.action import ConvertAction, ExperimentAction
 from .task import LauncherTask, Task, TaskStatusForDisplay
 from .train import Optimizer, Scheduler
@@ -59,4 +60,7 @@ __all__ = [
     "Optimizer",
     "Scheduler",
     "Runtime",
+    "QuantizationDataType",
+    "QuantizationMode",
+    "SimilarityMetric",
 ]
