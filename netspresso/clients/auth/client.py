@@ -57,10 +57,8 @@ class TokenHandler:
         self.verify_ssl = verify_ssl
 
     def check_jwt_exp(self):
-        payload = jwt.decode(
-            self.tokens.access_token, options={"verify_signature": False}
-        )
-        return datetime.now(pytz.utc).timestamp() <= payload["exp"]
+        payload = jwt.decode(self.tokens.access_token, options={"verify_signature": False})
+        return datetime.now(pytz.utc).timestamp() + 60 <= payload["exp"]
 
     def validate_token(self):
         if not self.check_jwt_exp():
