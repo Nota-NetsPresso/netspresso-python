@@ -1,4 +1,7 @@
+from pathlib import Path
 from typing import Optional, Union
+
+from loguru import logger
 
 from netspresso.benchmarker import BenchmarkerV2
 from netspresso.clients.auth import TokenHandler, auth_client
@@ -11,6 +14,7 @@ from netspresso.inferencer.inferencer import CustomInferencer, NPInferencer
 from netspresso.quantizer import Quantizer
 from netspresso.tao import TAOTrainer
 from netspresso.trainer import Trainer
+from netspresso.utils.file import FileHandler
 
 
 class NetsPresso:
@@ -37,6 +41,32 @@ class NetsPresso:
             self.token_handler.tokens.access_token, self.token_handler.verify_ssl
         )
         return user_info
+
+    def create_project(self, project_name: str, project_path: str = "./"):
+        # Create the main project folder
+        project_folder_path = Path(project_path) / project_name
+
+        # Check if the project folder already exists
+        if project_folder_path.exists():
+            logger.info(f"Project '{project_name}' already exists at {project_folder_path.resolve()}.")
+        else:
+            project_folder_path.mkdir(parents=True, exist_ok=True)
+            
+            # Subfolder names
+            subfolders = ["Trainer models", "Compressed models", "Pretrained models"]
+            
+            # Create subfolders
+            for folder in subfolders:
+                (project_folder_path / folder).mkdir(parents=True, exist_ok=True)
+            
+            # Create a metadata.json file
+            metadata_file_path = project_folder_path / "metadata.json"
+            metadata = {"is_project_folder": True}
+            
+            # Write metadata to the json file
+            FileHandler.save_json(data=metadata, file_path=metadata_file_path)
+
+            logger.info(f"Project '{project_name}' created at {project_folder_path.resolve()}.")
 
     def trainer(
         self, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None
