@@ -51,18 +51,18 @@ class NetsPresso:
             logger.info(f"Project '{project_name}' already exists at {project_folder_path.resolve()}.")
         else:
             project_folder_path.mkdir(parents=True, exist_ok=True)
-            
+
             # Subfolder names
             subfolders = ["Trainer models", "Compressed models", "Pretrained models"]
-            
+
             # Create subfolders
             for folder in subfolders:
                 (project_folder_path / folder).mkdir(parents=True, exist_ok=True)
-            
+
             # Create a metadata.json file
             metadata_file_path = project_folder_path / "metadata.json"
             metadata = {"is_project_folder": True}
-            
+
             # Write metadata to the json file
             FileHandler.save_json(data=metadata, file_path=metadata_file_path)
 
