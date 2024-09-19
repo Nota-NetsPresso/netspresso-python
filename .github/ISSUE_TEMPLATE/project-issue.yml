@@ -17,6 +17,4 @@ body:
       label: Checklits ✅
       options:
         - label: I would create a corresponding branch for this issue from the designated (mostly `develop`) branch.
-          required: true
         - label: This issue only contains a preceding agreement between project owners.
-          required: true
