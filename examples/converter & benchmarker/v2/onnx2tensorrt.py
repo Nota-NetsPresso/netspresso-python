@@ -42,15 +42,13 @@ converter = netspresso.converter_v2()
 # 2. Set variables for convert
 INPUT_MODEL_PATH = "./examples/sample_models/test.onnx"
 OUTPUT_DIR = "./outputs/converted/JETSON_NANO"
-TARGET_FRAMEWORK = Framework.TENSORRT
 TARGET_DEVICE_NAME = DeviceName.JETSON_NANO
 TARGET_SOFTWARE_VERSION = SoftwareVersion.JETPACK_4_6
 
 # 3. Run convert
-conversion_task = converter.convert_model(
+conversion_task = converter.convert_tensorrt(
     input_model_path=INPUT_MODEL_PATH,
     output_dir=OUTPUT_DIR,
-    target_framework=TARGET_FRAMEWORK,
     target_device_name=TARGET_DEVICE_NAME,
     target_software_version=TARGET_SOFTWARE_VERSION,
 )

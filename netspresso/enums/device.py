@@ -134,3 +134,44 @@ class TaskStatus(str, Enum):
 
 
 device_name_literal = DeviceName.create_literal()
+JETSON_DEVICES = [
+    DeviceName.JETSON_NANO,
+    DeviceName.JETSON_TX2,
+    DeviceName.JETSON_XAVIER,
+    DeviceName.JETSON_NX,
+    DeviceName.JETSON_AGX_ORIN,
+    DeviceName.JETSON_ORIN_NANO,
+]
+RASPBERRY_PI_DEVICES = [
+    DeviceName.RASPBERRY_PI_5,
+    DeviceName.RASPBERRY_PI_4B,
+    DeviceName.RASPBERRY_PI_3B,
+    DeviceName.RASPBERRY_PI_2B,
+    DeviceName.RASPBERRY_PI_3B_PLUS,
+    DeviceName.RASPBERRY_PI_ZERO_W,
+    DeviceName.RASPBERRY_PI_ZERO_2W,
+]
+RENESAS_DEVICES = [DeviceName.RENESAS_RZ_V2L, DeviceName.RENESAS_RZ_V2M]
+NVIDIA_GRAPHIC_CARDS = [DeviceName.AWS_T4]
+INTEL_DEVICES = [DeviceName.INTEL_XEON_W_2233]
+AVAILABLE_INT8_DEVICES = [
+    DeviceName.ALIF_ENSEMBLE_E7_DEVKIT_GEN2,
+    DeviceName.RENESAS_RA8D1,
+    DeviceName.RASPBERRY_PI_5,
+    DeviceName.RASPBERRY_PI_4B,
+    DeviceName.RASPBERRY_PI_3B_PLUS,
+    DeviceName.RASPBERRY_PI_3B,
+    DeviceName.RASPBERRY_PI_2B,
+    DeviceName.RASPBERRY_PI_ZERO_W,
+    DeviceName.RASPBERRY_PI_ZERO_2W,
+    DeviceName.ARM_ETHOS_U_SERIES,
+    DeviceName.NXP_iMX93,
+    DeviceName.ARDUINO_NICLA_VISION
+]
+ONLY_INT8_DEVICES = [
+    DeviceName.ALIF_ENSEMBLE_E7_DEVKIT_GEN2,
+    DeviceName.RENESAS_RA8D1,
+    DeviceName.ARM_ETHOS_U_SERIES,
+    DeviceName.NXP_iMX93,
+    DeviceName.ARDUINO_NICLA_VISION,
+]

@@ -1,6 +1,6 @@
 import time
 from pathlib import Path
-from typing import Optional, Union
+from typing import Literal, Optional, Union
 from urllib import request
 
 from loguru import logger
@@ -21,6 +21,8 @@ from netspresso.enums import (
     Status,
     TaskStatusForDisplay,
 )
+from netspresso.enums.device import JETSON_DEVICES
+from netspresso.exceptions.converter import NotSupportedDataTypeException, NotSupportedDeviceException, NotSupportedSoftwareVersionException
 from netspresso.metadata.converter import ConverterMetadata
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
@@ -282,3 +284,51 @@ class ConverterV2(NetsPressoBase):
             task_id=conversion_task_id,
         )
         return response.data
+
+    def validate_software_version(self, device, software_version):
+        valid_versions = {
+            DeviceName.JETSON_NANO: [SoftwareVersion.JETPACK_4_4_1, SoftwareVersion.JETPACK_4_6],
+            DeviceName.JETSON_TX2: [SoftwareVersion.JETPACK_4_6],
+            DeviceName.JETSON_XAVIER: [SoftwareVersion.JETPACK_4_6],
+            DeviceName.JETSON_NX: [SoftwareVersion.JETPACK_4_6, SoftwareVersion.JETPACK_5_0_2],
+            DeviceName.JETSON_AGX_ORIN: [SoftwareVersion.JETPACK_5_0_1],
+            DeviceName.JETSON_ORIN_NANO: [SoftwareVersion.JETPACK_6_0]
+        }
+
+        if software_version not in valid_versions[device]:
+            raise NotSupportedSoftwareVersionException(valid_versions[device], software_version)
+
+    def convert_tensorrt(
+        self,
+        input_model_path: str,
+        output_dir: str,
+        target_device_name: Literal[DeviceName.JETSON_NANO, DeviceName.JETSON_TX2, DeviceName.JETSON_XAVIER, DeviceName.JETSON_NX, DeviceName.JETSON_AGX_ORIN, DeviceName.JETSON_ORIN_NANO],
+        target_data_type: Literal[DataType.FP16] = DataType.FP16,
+        target_software_version: Optional[Union[str, SoftwareVersion]] = None,
+        input_layer: Optional[InputLayer] = None,
+        wait_until_done: bool = True,
+        sleep_interval: int = 30,
+    ) -> ConverterMetadata:
+
+        if target_device_name not in JETSON_DEVICES:
+            raise NotSupportedDeviceException(available_devices=JETSON_DEVICES, device=target_device_name)
+
+        if target_data_type not in [DataType.FP16]:
+            raise NotSupportedDataTypeException(available_data_types=[DataType.FP16], data_type=target_data_type)
+        
+        self.validate_software_version(device=target_device_name, software_version=target_software_version)
+
+        target_framework = Framework.TENSORRT
+        metadata = self.convert_model(
+            input_model_path,
+            output_dir,
+            target_framework,
+            target_device_name,
+            target_data_type,
+            target_software_version,
+            input_layer,
+            wait_until_done,
+            sleep_interval,
+        )
+
+        return metadata
