@@ -8,6 +8,13 @@
 </br>
 
 <div align="center">
+  <a href="https://netspresso.ai/?utm_source=git&utm_medium=text_signup&utm_campaign=np_renew"> Sign Up </a>
+    | <a href="https://colab.research.google.com/drive/15HBp88qfUDQl5PaEcZ5J-dnLo-1kvw-a"> Google Colab </a>
+    | <a href="https://nota-netspresso.github.io/PyNetsPresso"> Docs </a> 
+</div>
+</br>
+
+<div align="center">
   ☀️ NetsPresso Model Zoo ☀️ <br>
       <a href="https://github.com/Nota-NetsPresso/ModelZoo-YOLOFastest-for-ARM-U55-M85"> YOLO Fastest </a>
     | <a href="https://github.com/Nota-NetsPresso/yolox_nota"> YOLOX </a>
