@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import Dict, Union
 
 from netspresso.enums import (
-    QuantizationDataType,
+    QuantizationPrecision,
     QuantizationMode,
     SimilarityMetric,
     TaskType,
@@ -17,8 +17,8 @@ class QuantizeInfo:
     quantization_mode: QuantizationMode = QuantizationMode.PLAIN_QUANTIZATION
     metric: SimilarityMetric = SimilarityMetric.SNR
     threshold: Union[float, int] = 0
-    weight_quantization_bitwidth: QuantizationDataType = QuantizationDataType.INT8
-    activation_quantization_bitwidth: QuantizationDataType = QuantizationDataType.INT8
+    weight_precision: QuantizationPrecision = QuantizationPrecision.INT8
+    activation_precision: QuantizationPrecision = QuantizationPrecision.INT8
     input_model_uuid: str = ""
     output_model_uuid: str = ""
 
@@ -28,6 +28,7 @@ class QuantizerMetadata(BaseMetadata):
     task_type: TaskType = TaskType.QUANTIZE
     input_model_path: str = ""
     quantized_model_path: str = ""
+    recommendation_result_path: str = ""
     model_info: ModelInfo = field(default_factory=ModelInfo)
-    quantize_task_info: QuantizeInfo = field(default_factory=QuantizeInfo)
+    quantize_info: QuantizeInfo = field(default_factory=QuantizeInfo)
     compare_result: Dict = field(default_factory=dict)
