@@ -2,8 +2,8 @@ from dataclasses import dataclass, field
 from typing import Dict, Union
 
 from netspresso.enums import (
-    QuantizationPrecision,
     QuantizationMode,
+    QuantizationPrecision,
     SimilarityMetric,
     TaskType,
 )

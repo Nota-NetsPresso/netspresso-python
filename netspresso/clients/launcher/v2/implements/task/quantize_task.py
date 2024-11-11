@@ -34,7 +34,7 @@ class QuantizeTaskAPI(TaskInterface):
             return obj
 
         return {k: convert_value(v) for k, v in data}
-    
+
     def _request_to_quantizer(self, request_body, endpoint, headers, file):
         logger.info(f"Request_Body: {asdict(request_body)}")
         response = Requester().post_as_form(

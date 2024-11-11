@@ -1,5 +1,5 @@
-from dataclasses import dataclass
 import time
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 from urllib import request
@@ -11,15 +11,15 @@ from netspresso.clients.auth import TokenHandler
 from netspresso.clients.auth.response_body import UserResponse
 from netspresso.clients.launcher import launcher_client_v2
 from netspresso.clients.launcher.v2.schemas.task.quantize.request_body import (
+    AutoQuantizeOption,
+    CustomQuantizeOption,
     PlainQuantizationOption,
     RecommendationOption,
-    CustomQuantizeOption,
-    AutoQuantizeOption,
 )
 from netspresso.clients.launcher.v2.schemas.task.quantize.response_body import QuantizeTask
 from netspresso.enums import (
-    QuantizationPrecision,
     QuantizationMode,
+    QuantizationPrecision,
     ServiceTask,
     SimilarityMetric,
     Status,
@@ -134,7 +134,7 @@ class Quantizer(NetsPressoBase):
 
     def _download_recommendation_result(self, quantize_task: QuantizeTask, output_dir: str, metadata: QuantizerMetadata) -> None:
         self.token_handler.validate_token()
-        
+
         try:
             download_url = launcher_client_v2.quantizer.download_model_file(
                 quantize_task_uuid=quantize_task.quantize_task_id,
@@ -472,7 +472,7 @@ class Quantizer(NetsPressoBase):
         }
 
         custom_quantization_dictionary = {"layers": {}, "operators": operators}
-        
+
         quantization_options = CustomQuantizeOption(
             metric=metric,
             custom_precision=custom_quantization_dictionary,

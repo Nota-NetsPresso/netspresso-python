@@ -3,7 +3,7 @@ from dataclasses import asdict, dataclass, field
 from typing import Dict, List, Optional, Union
 
 from netspresso.clients.launcher.v2.schemas import InputLayer
-from netspresso.enums import QuantizationPrecision, QuantizationMode, SimilarityMetric
+from netspresso.enums import QuantizationMode, QuantizationPrecision, SimilarityMetric
 
 
 @dataclass
