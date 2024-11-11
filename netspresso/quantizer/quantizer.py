@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import time
 from pathlib import Path
 from typing import Dict, List, Optional, Union
@@ -9,10 +10,15 @@ from netspresso.base import NetsPressoBase
 from netspresso.clients.auth import TokenHandler
 from netspresso.clients.auth.response_body import UserResponse
 from netspresso.clients.launcher import launcher_client_v2
-from netspresso.clients.launcher.v2.schemas.task.quantize.request_body import QuantizationOptions
+from netspresso.clients.launcher.v2.schemas.task.quantize.request_body import (
+    PlainQuantizationOption,
+    RecommendationOption,
+    CustomQuantizeOption,
+    AutoQuantizeOption,
+)
 from netspresso.clients.launcher.v2.schemas.task.quantize.response_body import QuantizeTask
 from netspresso.enums import (
-    QuantizationDataType,
+    QuantizationPrecision,
     QuantizationMode,
     ServiceTask,
     SimilarityMetric,
@@ -22,6 +28,18 @@ from netspresso.enums import (
 from netspresso.metadata.quantizer import QuantizerMetadata
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
+
+
+@dataclass
+class PrecisionByLayer:
+    name: str
+    precision: QuantizationPrecision
+
+
+@dataclass
+class PrecisionByOperator:
+    type: str
+    precision: QuantizationPrecision
 
 
 class Quantizer(NetsPressoBase):
@@ -38,8 +56,8 @@ class Quantizer(NetsPressoBase):
         threshold,
         quantization_mode,
         metric,
-        weight_quantization_bitwidth,
-        activation_quantization_bitwidth,
+        weight_precision,
+        activation_precision,
     ):
         def create_metadata_with_status(status, error_message=None):
             metadata = QuantizerMetadata()
@@ -58,16 +76,16 @@ class Quantizer(NetsPressoBase):
             metadata = create_metadata_with_status(Status.STOPPED, warning_message)
         finally:
             metadata.input_model_path = Path(input_model_path).resolve().as_posix()
-            metadata.quantize_task_info.threshold = threshold
-            metadata.quantize_task_info.quantization_mode = quantization_mode
-            metadata.quantize_task_info.metric = metric
-            metadata.quantize_task_info.weight_quantization_bitwidth = weight_quantization_bitwidth
-            metadata.quantize_task_info.activation_quantization_bitwidth = activation_quantization_bitwidth
+            metadata.quantize_info.threshold = threshold
+            metadata.quantize_info.quantization_mode = quantization_mode
+            metadata.quantize_info.metric = metric
+            metadata.quantize_info.weight_precision = weight_precision
+            metadata.quantize_info.activation_precision = activation_precision
             MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
         return metadata
 
-    def _download_quantized_model(self, quantize_task: QuantizeTask, local_path: str) -> None:
+    def _download_quantized_model(self, quantize_task: QuantizeTask, output_dir: str, metadata: QuantizerMetadata) -> None:
         """Download the quantizeed model with given quantization task or quantization task uuid.
 
         Args:
@@ -85,23 +103,90 @@ class Quantizer(NetsPressoBase):
                 access_token=self.token_handler.tokens.access_token,
             ).data.presigned_download_url
 
-            request.urlretrieve(download_url, local_path)
-            logger.info(f"Model downloaded at {Path(local_path)}")
+            default_model_path = FileHandler.get_default_model_path(folder_path=output_dir)
+            download_model_path = default_model_path.with_suffix(".zip").as_posix()
+
+            request.urlretrieve(download_url, download_model_path)
+            logger.info(f"Model downloaded at {Path(download_model_path)}")
+
+            metadata.quantized_model_path = download_model_path
+            FileHandler.unzip(zip_file_path=download_model_path, target_path=output_dir)
+            FileHandler.remove_file(file_path=download_model_path)
+
+            old_file_path = Path(output_dir) / "quantized_qdq.onnx"
+            quantized_model_path = default_model_path.with_suffix(".onnx").as_posix()
+            metadata.quantized_model_path = old_file_path
+            FileHandler.rename_file(old_file_path=old_file_path, new_file_path=quantized_model_path)
+
+            compare_result = FileHandler.load_json(file_path=output_dir / "snr_compare_result.json")
+
+            self.print_remaining_credit(service_task=ServiceTask.MODEL_QUANTIZE)
+
+            metadata.status = Status.COMPLETED
+            metadata.quantized_model_path = quantized_model_path
+            metadata.compare_result = compare_result
+
+            return metadata
 
         except Exception as e:
             logger.error(f"Download quantized model failed. Error: {e}")
             raise e
 
-    def quantize_model(
+    def _download_recommendation_result(self, quantize_task: QuantizeTask, output_dir: str, metadata: QuantizerMetadata) -> None:
+        self.token_handler.validate_token()
+        
+        try:
+            download_url = launcher_client_v2.quantizer.download_model_file(
+                quantize_task_uuid=quantize_task.quantize_task_id,
+                access_token=self.token_handler.tokens.access_token,
+            ).data.presigned_download_url
+
+            download_path = (Path(output_dir) / "custom_quantization_suggestion.json").resolve()
+
+            request.urlretrieve(download_url, download_path)
+            logger.info(f"Model downloaded at {Path(download_path)}")
+
+            self.print_remaining_credit(service_task=ServiceTask.MODEL_QUANTIZE)
+
+            metadata.status = Status.COMPLETED
+            metadata.recommendation_result_path = download_path
+
+            return metadata
+
+        except Exception as e:
+            logger.error(f"Download quantized model failed. Error: {e}")
+            raise e
+
+    def _upload_model(self, input_model_path: str):
+        # Get presigned_model_upload_url
+        presigned_url_response = launcher_client_v2.quantizer.presigned_model_upload_url(
+            access_token=self.token_handler.tokens.access_token,
+            input_model_path=input_model_path,
+        )
+
+        # Upload model_file
+        launcher_client_v2.quantizer.upload_model_file(
+            access_token=self.token_handler.tokens.access_token,
+            input_model_path=input_model_path,
+            presigned_upload_url=presigned_url_response.data.presigned_upload_url,
+        )
+
+        # Validate model_file
+        validate_model_response = launcher_client_v2.quantizer.validate_model_file(
+            access_token=self.token_handler.tokens.access_token,
+            input_model_path=input_model_path,
+            ai_model_id=presigned_url_response.data.ai_model_id,
+        )
+
+        return validate_model_response
+
+    def _quantize_model(
         self,
         input_model_path: str,
         output_dir: str,
         dataset_path: Optional[str],
-        quantization_mode: QuantizationMode = QuantizationMode.PLAIN_QUANTIZATION,
-        metric: SimilarityMetric = SimilarityMetric.SNR,
-        threshold: Union[float, int] = 0,
-        weight_quantization_bitwidth: QuantizationDataType = QuantizationDataType.INT8,
-        activation_quantization_bitwidth: QuantizationDataType = QuantizationDataType.INT8,
+        quantization_mode: QuantizationMode,
+        quantization_options: Union[PlainQuantizationOption, CustomQuantizeOption, AutoQuantizeOption],
         input_layers: List[Dict[str, int]] = None,
         wait_until_done: bool = True,
         sleep_interval: int = 30,
@@ -115,8 +200,8 @@ class Quantizer(NetsPressoBase):
             quantization_mode (QuantizationMode): Quantization mode
             metric (SimilarityMetric): Quantization quality metrics.
             threshold (Union[float, int]): Quantization quality threshold
-            weight_quantization_bitwidth (QuantizationDataType): Weight quantization bitwidth
-            activation_quantization_bitwidth (QuantizationDataType): Activation quantization bitwidth
+            weight_precision (QuantizationPrecision): Weight quantization bitwidth
+            activation_precision (QuantizationPrecision): Activation quantization bitwidth
             input_layers (List[InputShape], optional): Target input shape for quantization (e.g., dynamic batch to static batch).
             wait_until_done (bool): If True, wait for the quantization result before returning the function.
                                 If False, request the quantization and return  the function immediately.
@@ -133,11 +218,11 @@ class Quantizer(NetsPressoBase):
         metadata = self.initialize_metadata(
             output_dir=output_dir,
             input_model_path=input_model_path,
-            threshold=threshold,
+            threshold=0,
             quantization_mode=quantization_mode,
-            metric=metric,
-            weight_quantization_bitwidth=weight_quantization_bitwidth,
-            activation_quantization_bitwidth=activation_quantization_bitwidth,
+            metric=quantization_options.metric,
+            weight_precision=QuantizationPrecision.INT8,
+            activation_precision=QuantizationPrecision.INT8,
         )
 
         try:
@@ -146,45 +231,21 @@ class Quantizer(NetsPressoBase):
 
             self.validate_token_and_check_credit(service_task=ServiceTask.MODEL_QUANTIZE)
 
-            # Get presigned_model_upload_url
-            presigned_url_response = launcher_client_v2.quantizer.presigned_model_upload_url(
-                access_token=self.token_handler.tokens.access_token,
-                input_model_path=input_model_path,
-            )
-
-            # Upload model_file
-            launcher_client_v2.quantizer.upload_model_file(
-                access_token=self.token_handler.tokens.access_token,
-                input_model_path=input_model_path,
-                presigned_upload_url=presigned_url_response.data.presigned_upload_url,
-            )
-
-            # Validate model_file
-            validate_model_response = launcher_client_v2.quantizer.validate_model_file(
-                access_token=self.token_handler.tokens.access_token,
-                input_model_path=input_model_path,
-                ai_model_id=presigned_url_response.data.ai_model_id,
-            )
+            uploaded_model_response = self._upload_model(input_model_path=input_model_path)
 
             # Start quantize task
-            input_layers = input_layers if input_layers else validate_model_response.data.detail.input_layers
-            quantization_options = QuantizationOptions(
-                metric=metric,
-                threshold=threshold,
-                weight_quantization_bitwidth=weight_quantization_bitwidth,
-                activation_quantization_bitwidth=activation_quantization_bitwidth,
-            )
+            input_layers = input_layers if input_layers else uploaded_model_response.data.detail.input_layers
             quantize_response = launcher_client_v2.quantizer.start_task(
                 access_token=self.token_handler.tokens.access_token,
-                input_model_id=presigned_url_response.data.ai_model_id,
+                input_model_id=uploaded_model_response.data.ai_model_id,
                 quantization_mode=quantization_mode,
                 quantization_options=quantization_options,
                 input_layers=input_layers,
                 dataset_path=dataset_path,
             )
 
-            metadata.model_info = validate_model_response.data.to()
-            metadata.quantize_task_info = quantize_response.data.to(validate_model_response.data.uploaded_file_name)
+            metadata.model_info = uploaded_model_response.data.to()
+            metadata.quantize_info = quantize_response.data.to(uploaded_model_response.data.uploaded_file_name)
             MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
             if wait_until_done:
@@ -204,26 +265,11 @@ class Quantizer(NetsPressoBase):
                     time.sleep(sleep_interval)
 
             if quantize_response.data.status == TaskStatusForDisplay.FINISHED:
-                default_model_path = FileHandler.get_default_model_path(folder_path=output_dir)
-                download_model_path = default_model_path.with_suffix(".zip").as_posix()
-                self._download_quantized_model(quantize_task=quantize_response.data, local_path=download_model_path)
+                if quantize_response.data.quantization_mode in [QuantizationMode.PLAIN_QUANTIZATION, QuantizationMode.CUSTOM_QUANTIZATION, QuantizationMode.AUTOMATIC_QUANTIZATION]:
+                    metadata = self._download_quantized_model(quantize_response.data, output_dir, metadata)
+                elif quantize_response.data.quantization_mode in [QuantizationMode.RECOMMEND_QUANTIZATION]:
+                    metadata = self._download_recommendation_result(quantize_response.data, output_dir, metadata)
 
-                metadata.quantized_model_path = download_model_path
-                FileHandler.unzip(zip_file_path=download_model_path, target_path=output_dir)
-                FileHandler.remove_file(file_path=download_model_path)
-
-                old_file_path = Path(output_dir) / "quantized.onnx"
-                quantized_model_path = default_model_path.with_suffix(".onnx").as_posix()
-                metadata.quantized_model_path = old_file_path
-                FileHandler.rename_file(old_file_path=old_file_path, new_file_path=quantized_model_path)
-
-                compare_result = FileHandler.load_json(file_path=output_dir / "compare_result.json")
-
-                self.print_remaining_credit(service_task=ServiceTask.MODEL_QUANTIZE)
-
-                metadata.status = Status.COMPLETED
-                metadata.quantized_model_path = quantized_model_path
-                metadata.compare_result = compare_result
                 logger.info("Quantization task was completed successfully.")
             else:
                 metadata = self.handle_error(metadata, ServiceTask.MODEL_QUANTIZE, quantize_response.data.error_log)
@@ -234,6 +280,249 @@ class Quantizer(NetsPressoBase):
             metadata = self.handle_stop(metadata, ServiceTask.MODEL_QUANTIZE)
         finally:
             MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
+
+        return metadata
+
+    def plain_quantization(
+        self,
+        input_model_path: str,
+        output_dir: str,
+        dataset_path: Optional[str],
+        metric: SimilarityMetric = SimilarityMetric.SNR,
+        weight_precision: QuantizationPrecision = QuantizationPrecision.INT8,
+        activation_precision: QuantizationPrecision = QuantizationPrecision.INT8,
+        input_layers: List[Dict[str, int]] = None,
+        wait_until_done: bool = True,
+        sleep_interval: int = 30,
+    ):
+        """Quantize a model to the specified framework.
+
+        Args:
+            input_model_path (str): The file path where the model is located.
+            output_dir (str): The local folder path to save the quantized model.
+            dataset_path (str): Path to the dataset. Useful for certain quantizations.
+            metric (SimilarityMetric): Quantization quality metrics.
+            weight_precision (QuantizationPrecision): Weight precision
+            activation_precision (QuantizationPrecision): Activation precision
+            input_layers (List[InputShape], optional): Target input shape for quantization (e.g., dynamic batch to static batch).
+            wait_until_done (bool): If True, wait for the quantization result before returning the function.
+                                If False, request the quantization and return  the function immediately.
+
+        Raises:
+            e: If an error occurs during the model quantization.
+
+        Returns:
+            QuantizerMetadata: Quantize metadata.
+        """
+        quantization_options = PlainQuantizationOption(
+            metric=metric,
+            weight_precision=weight_precision,
+            activation_precision=activation_precision,
+        )
+
+        metadata = self._quantize_model(
+            input_model_path=input_model_path,
+            output_dir=output_dir,
+            dataset_path=dataset_path,
+            quantization_mode=QuantizationMode.PLAIN_QUANTIZATION,
+            quantization_options=quantization_options,
+            input_layers=input_layers,
+            wait_until_done=wait_until_done,
+            sleep_interval=sleep_interval,
+        )
+
+        return metadata
+
+    def auto_quantization(
+        self,
+        input_model_path: str,
+        output_dir: str,
+        dataset_path: Optional[str],
+        weight_precision: QuantizationPrecision = QuantizationPrecision.INT8,
+        activation_precision: QuantizationPrecision = QuantizationPrecision.INT8,
+        metric: SimilarityMetric = SimilarityMetric.SNR,
+        threshold: Union[float, int] = 0,
+        input_layers: List[Dict[str, int]] = None,
+        wait_until_done: bool = True,
+        sleep_interval: int = 30,
+    ):
+        """Quantize a model to the specified framework.
+
+        Args:
+            input_model_path (str): The file path where the model is located.
+            output_dir (str): The local folder path to save the quantized model.
+            dataset_path (str): Path to the dataset. Useful for certain quantizations.
+            metric (SimilarityMetric): Quantization quality metrics.
+            weight_precision (QuantizationPrecision): Weight precision
+            activation_precision (QuantizationPrecision): Activation precision
+            input_layers (List[InputShape], optional): Target input shape for quantization (e.g., dynamic batch to static batch).
+            wait_until_done (bool): If True, wait for the quantization result before returning the function.
+                                If False, request the quantization and return  the function immediately.
+
+        Raises:
+            e: If an error occurs during the model quantization.
+
+        Returns:
+            QuantizerMetadata: Quantize metadata.
+        """
+        quantization_options = AutoQuantizeOption(
+            metric=metric,
+            threshold=threshold,
+            weight_precision=weight_precision,
+            activation_precision=activation_precision,
+        )
+
+        metadata = self._quantize_model(
+            input_model_path=input_model_path,
+            output_dir=output_dir,
+            dataset_path=dataset_path,
+            quantization_mode=QuantizationMode.AUTOMATIC_QUANTIZATION,
+            quantization_options=quantization_options,
+            input_layers=input_layers,
+            wait_until_done=wait_until_done,
+            sleep_interval=sleep_interval,
+        )
+
+        return metadata
+
+    def custom_quantization(
+        self,
+        input_model_path: str,
+        output_dir: str,
+        dataset_path: Optional[str],
+        custom_quantization_dictionary: Dict,
+        metric: SimilarityMetric = SimilarityMetric.SNR,
+        weight_precision: QuantizationPrecision = QuantizationPrecision.INT8,
+        activation_precision: QuantizationPrecision = QuantizationPrecision.INT8,
+        input_layers: List[Dict[str, int]] = None,
+        wait_until_done: bool = True,
+        sleep_interval: int = 30,
+    ):
+        quantization_options = CustomQuantizeOption(
+            metric=metric,
+            custom_precision=custom_quantization_dictionary,
+            weight_precision=weight_precision,
+            activation_precision=activation_precision,
+        )
+
+        metadata = self._quantize_model(
+            input_model_path=input_model_path,
+            output_dir=output_dir,
+            dataset_path=dataset_path,
+            quantization_mode=QuantizationMode.CUSTOM_QUANTIZATION,
+            quantization_options=quantization_options,
+            input_layers=input_layers,
+            wait_until_done=wait_until_done,
+            sleep_interval=sleep_interval,
+        )
+
+        return metadata
+
+    def custom_quantization_by_layer_name(
+        self,
+        input_model_path: str,
+        output_dir: str,
+        dataset_path: Optional[str],
+        precision_by_layer_name: List[PrecisionByLayer],
+        metric: SimilarityMetric = SimilarityMetric.SNR,
+        weight_precision: QuantizationPrecision = QuantizationPrecision.INT8,
+        activation_precision: QuantizationPrecision = QuantizationPrecision.INT8,
+        input_layers: List[Dict[str, int]] = None,
+        wait_until_done: bool = True,
+        sleep_interval: int = 30,
+    ):
+        layers = {
+            layer.name: layer.precision
+            for layer in precision_by_layer_name
+        }
+
+        custom_quantization_dictionary = {"layers": layers, "operators": {}}
+
+        metadata = self.custom_quantization(
+            input_model_path=input_model_path,
+            output_dir=output_dir,
+            dataset_path=dataset_path,
+            custom_quantization_dictionary=custom_quantization_dictionary,
+            metric=metric,
+            weight_precision=weight_precision,
+            activation_precision=activation_precision,
+            input_layers=input_layers,
+            wait_until_done=wait_until_done,
+            sleep_interval=sleep_interval,
+        )
+
+        return  metadata
+
+    def custom_quantization_by_operator_type(
+        self,
+        input_model_path: str,
+        output_dir: str,
+        dataset_path: Optional[str],
+        precision_by_operator_type: List[PrecisionByOperator],
+        metric: SimilarityMetric = SimilarityMetric.SNR,
+        default_weight_precision: QuantizationPrecision = QuantizationPrecision.INT8,
+        default_activation_precision: QuantizationPrecision = QuantizationPrecision.INT8,
+        input_layers: List[Dict[str, int]] = None,
+        wait_until_done: bool = True,
+        sleep_interval: int = 30,
+    ):
+        operators = {
+            layer.type: layer.precision
+            for layer in precision_by_operator_type
+        }
+
+        custom_quantization_dictionary = {"layers": {}, "operators": operators}
+        
+        quantization_options = CustomQuantizeOption(
+            metric=metric,
+            custom_precision=custom_quantization_dictionary,
+            weight_precision=default_weight_precision,
+            activation_precision=default_activation_precision,
+        )
+
+        metadata = self._quantize_model(
+            input_model_path=input_model_path,
+            output_dir=output_dir,
+            dataset_path=dataset_path,
+            quantization_mode=QuantizationMode.CUSTOM_QUANTIZATION,
+            quantization_options=quantization_options,
+            input_layers=input_layers,
+            wait_until_done=wait_until_done,
+            sleep_interval=sleep_interval,
+        )
+
+        return metadata
+
+    def get_recommendation_precision(
+        self,
+        input_model_path: str,
+        output_dir: str,
+        dataset_path: Optional[str],
+        weight_precision: QuantizationPrecision = QuantizationPrecision.INT8,
+        activation_precision: QuantizationPrecision = QuantizationPrecision.INT8,
+        metric: SimilarityMetric = SimilarityMetric.SNR,
+        threshold: Union[float, int] = 0,
+        input_layers: List[Dict[str, int]] = None,
+        wait_until_done: bool = True,
+        sleep_interval: int = 30,
+    ):
+        quantization_options = RecommendationOption(
+            metric=metric,
+            threshold=threshold,
+            weight_precision=weight_precision,
+            activation_precision=activation_precision,
+        )
+
+        metadata = self._quantize_model(
+            input_model_path=input_model_path,
+            output_dir=output_dir,
+            dataset_path=dataset_path,
+            quantization_mode=QuantizationMode.RECOMMEND_QUANTIZATION,
+            quantization_options=quantization_options,
+            input_layers=input_layers,
+            wait_until_done=wait_until_done,
+            sleep_interval=sleep_interval,
+        )
 
         return metadata
 
