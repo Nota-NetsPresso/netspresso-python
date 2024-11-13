@@ -255,7 +255,6 @@ class Quantizer(NetsPressoBase):
                 elif quantize_response.data.quantization_mode in [QuantizationMode.RECOMMEND_QUANTIZATION]:
                     metadata = self._download_recommendation_result(quantize_response.data, output_dir, metadata)
 
-                logger.info("Quantization task was completed successfully.")
             else:
                 metadata = self.handle_error(metadata, ServiceTask.MODEL_QUANTIZE, quantize_response.data.error_log)
 
@@ -281,6 +280,8 @@ class Quantizer(NetsPressoBase):
         sleep_interval: int = 30,
     ):
         """Apply full quantization to a model, specifying precision for weight & activation.
+
+        This method quantizes layers in the model based on the specified precision levels for weights and activations.
 
         Args:
             input_model_path (str): The file path where the model is located.
@@ -316,6 +317,8 @@ class Quantizer(NetsPressoBase):
             sleep_interval=sleep_interval,
         )
 
+        logger.info("Plain quantization task was completed successfully.")
+
         return metadata
 
     def auto_quantization(
@@ -333,6 +336,10 @@ class Quantizer(NetsPressoBase):
     ) -> QuantizerMetadata:
         """Apply auto quantization to a model, specifying precision for weight & activation.
 
+        This method quantizes layers in the model based on the specified precision levels for weights and activations, while evaluating 
+        the quality of quantization using the defined metric. Only layers that meet the specified quality `threshold` are quantized; 
+        layers that do not meet this threshold remain unquantized to preserve model accuracy.
+
         Args:
             input_model_path (str): The file path where the model is located.
             output_dir (str): The local folder path to save the quantized model.
@@ -340,7 +347,7 @@ class Quantizer(NetsPressoBase):
             weight_precision (QuantizationPrecision): Weight precision
             activation_precision (QuantizationPrecision): Activation precision
             metric (SimilarityMetric): Quantization quality metrics.
-            threshold (Union[float, int]): Quantization quality threshold
+            threshold (Union[float, int]): Quality threshold for quantization. Layers that do not meet this threshold based on the metric are not quantized.
             input_layers (List[InputShape], optional): Target input shape for quantization (e.g., dynamic batch to static batch).
             wait_until_done (bool): If True, wait for the quantization result before returning the function.
                                 If False, request the quantization and return  the function immediately.
@@ -368,6 +375,8 @@ class Quantizer(NetsPressoBase):
             wait_until_done=wait_until_done,
             sleep_interval=sleep_interval,
         )
+
+        logger.info("Auto quantization task was completed successfully.")
 
         return metadata
 
@@ -462,6 +471,8 @@ class Quantizer(NetsPressoBase):
             sleep_interval=sleep_interval,
         )
 
+        logger.info("Custom quantization by layer name task was completed successfully.")
+
         return  metadata
 
     def custom_quantization_by_operator_type(
@@ -521,6 +532,8 @@ class Quantizer(NetsPressoBase):
             sleep_interval=sleep_interval,
         )
 
+        logger.info("Custom quantization by operator type task was completed successfully.")
+
         return metadata
 
     def get_recommendation_precision(
@@ -536,6 +549,35 @@ class Quantizer(NetsPressoBase):
         wait_until_done: bool = True,
         sleep_interval: int = 30,
     ):
+        """Get recommended precision settings for a model based on a specified quality threshold.
+
+        This function analyzes each layer of the given model and recommends precision settings 
+        for layers that do not meet the specified threshold, helping to balance quantization 
+        quality and performance.
+
+        Args:
+            input_model_path (str): The file path where the model is located.
+            output_dir (str): The local folder path to save the quantized model.
+            dataset_path (str): Path to the dataset. Useful for certain quantizations.
+            weight_precision (QuantizationPrecision): Target precision for weights.
+            activation_precision (QuantizationPrecision): Target precision for activations.
+            metric (SimilarityMetric): Metric used to evaluate quantization quality.
+            threshold (Union[float, int]): Quality threshold; layers below this threshold will 
+                            receive precision recommendations.
+            input_layers (List[Dict[str, int]], optional): Specifications for input shapes 
+                            (e.g., to convert from dynamic to static batch size).
+            wait_until_done (bool): If True, waits for the quantization process to finish 
+                            before returning. If False, starts the process and returns immediately.
+            sleep_interval (int): Interval, in seconds, between checks when `wait_until_done` 
+                            is True.
+
+        Raises:
+            e: If an error occurs during the model quantization.
+
+        Returns:
+            QuantizerMetadata: Quantize metadata.
+
+        """
         quantization_options = RecommendationOption(
             metric=metric,
             threshold=threshold,
@@ -554,6 +596,8 @@ class Quantizer(NetsPressoBase):
             sleep_interval=sleep_interval,
         )
 
+        logger.info("Get recommendation precision task was completed successfully.")
+
         return metadata
 
     def load_recommendation_precision_result(self, file_path: str):
@@ -564,7 +608,7 @@ class Quantizer(NetsPressoBase):
         precision_by_layer_name = [
             PrecisionByLayer(
                 name=layer["name"],
-                precision=layer["recommendation"]["precision"][0],
+                precision=QuantizationPrecision.FLOAT32,
             )
             for layer in layers
         ]

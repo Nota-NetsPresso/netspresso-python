@@ -30,20 +30,12 @@ recommendation_metadata = quantizer.get_recommendation_precision(
     threshold=0,
 )
 
-recommendation_result = FileHandler.load_json(file_path=recommendation_metadata.recommendation_result_path)
-layers = recommendation_result["layers"]
-precision_by_layer_name = [
-    PrecisionByLayer(
-        name=layer["name"],
-        precision=layer["recommendation"]["precision"][0],
-    )
-    for layer in layers
-]
+recommendation_precisions = quantizer.load_recommendation_precision_result(recommendation_metadata.recommendation_result_path)
 
 # 3-2. Custom Quantization
 quantizer.custom_quantization_by_layer_name(
     input_model_path=input_model,
     output_dir=f"{OUTPUT_DIR}/{Path(input_model).stem}",
-    precision_by_layer_name=precision_by_layer_name,
+    precision_by_layer_name=recommendation_precisions.layers,
     dataset_path=CALIBRATION_DATASET_PATH,
 )
