@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List
+
 from netspresso.enums import QuantizationPrecision
 
 

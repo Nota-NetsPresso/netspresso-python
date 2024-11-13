@@ -26,9 +26,9 @@ from netspresso.enums import (
     TaskStatusForDisplay,
 )
 from netspresso.metadata.quantizer import QuantizerMetadata
+from netspresso.quantizer.schema import PrecisionByLayer, PrecisionByOperator, RecommendationPrecisions
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
-from netspresso.quantizer.schema import PrecisionByOperator, PrecisionByLayer, RecommendationPrecisions
 
 
 class Quantizer(NetsPressoBase):
@@ -336,8 +336,8 @@ class Quantizer(NetsPressoBase):
     ) -> QuantizerMetadata:
         """Apply auto quantization to a model, specifying precision for weight & activation.
 
-        This method quantizes layers in the model based on the specified precision levels for weights and activations, while evaluating 
-        the quality of quantization using the defined metric. Only layers that meet the specified quality `threshold` are quantized; 
+        This method quantizes layers in the model based on the specified precision levels for weights and activations, while evaluating
+        the quality of quantization using the defined metric. Only layers that meet the specified quality `threshold` are quantized;
         layers that do not meet this threshold remain unquantized to preserve model accuracy.
 
         Args:
@@ -433,8 +433,8 @@ class Quantizer(NetsPressoBase):
             output_dir (str): The local folder path to save the quantized model.
             dataset_path (str): Path to the dataset. Useful for certain quantizations.
             precision_by_layer_name (List[PrecisionByLayer]): A list specifying the precision for each layer name within the model.
-            precision_by_operator_type (List[PrecisionByLayer]): 
-                List of `PrecisionByLayer` objects that specify the desired precision for each layer name in the model. 
+            precision_by_operator_type (List[PrecisionByLayer]):
+                List of `PrecisionByLayer` objects that specify the desired precision for each layer name in the model.
                 Each entry includes:
                     - `name` (str): The layer name (e.g., /backbone/conv_first/block/act/Mul_output_0).
                     - `precision` (QuantizationPrecision): The quantization precision level for the operator.
@@ -494,8 +494,8 @@ class Quantizer(NetsPressoBase):
             input_model_path (str): The file path where the model is located.
             output_dir (str): The local folder path to save the quantized model.
             dataset_path (str): Path to the dataset. Useful for certain quantizations.
-            precision_by_operator_type (List[PrecisionByOperator]): 
-                List of `PrecisionByOperator` objects that specify the desired precision for each operator type in the model. 
+            precision_by_operator_type (List[PrecisionByOperator]):
+                List of `PrecisionByOperator` objects that specify the desired precision for each operator type in the model.
                 Each entry includes:
                     - `type` (str): The operator type (e.g., Conv, MatMul).
                     - `precision` (QuantizationPrecision): The quantization precision level for the operator.
@@ -551,8 +551,8 @@ class Quantizer(NetsPressoBase):
     ):
         """Get recommended precision settings for a model based on a specified quality threshold.
 
-        This function analyzes each layer of the given model and recommends precision settings 
-        for layers that do not meet the specified threshold, helping to balance quantization 
+        This function analyzes each layer of the given model and recommends precision settings
+        for layers that do not meet the specified threshold, helping to balance quantization
         quality and performance.
 
         Args:
@@ -562,13 +562,13 @@ class Quantizer(NetsPressoBase):
             weight_precision (QuantizationPrecision): Target precision for weights.
             activation_precision (QuantizationPrecision): Target precision for activations.
             metric (SimilarityMetric): Metric used to evaluate quantization quality.
-            threshold (Union[float, int]): Quality threshold; layers below this threshold will 
+            threshold (Union[float, int]): Quality threshold; layers below this threshold will
                             receive precision recommendations.
-            input_layers (List[Dict[str, int]], optional): Specifications for input shapes 
+            input_layers (List[Dict[str, int]], optional): Specifications for input shapes
                             (e.g., to convert from dynamic to static batch size).
-            wait_until_done (bool): If True, waits for the quantization process to finish 
+            wait_until_done (bool): If True, waits for the quantization process to finish
                             before returning. If False, starts the process and returns immediately.
-            sleep_interval (int): Interval, in seconds, between checks when `wait_until_done` 
+            sleep_interval (int): Interval, in seconds, between checks when `wait_until_done`
                             is True.
 
         Raises:
