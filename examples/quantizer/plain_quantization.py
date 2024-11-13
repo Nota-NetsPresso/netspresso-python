@@ -25,6 +25,6 @@ metadata = quantizer.plain_quantization(
     output_dir=f"{OUTPUT_DIR}/{Path(input_model).stem}_{BITWIDTH}",
     dataset_path=CALIBRATION_DATASET_PATH,
     metric=SimilarityMetric.SNR,
-    weight_precision=QuantizationPrecision.INT16,
-    activation_precision=QuantizationPrecision.INT16,
+    weight_precision=QuantizationPrecision.INT8,
+    activation_precision=QuantizationPrecision.INT8,
 )

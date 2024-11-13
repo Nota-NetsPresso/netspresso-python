@@ -1,9 +1,8 @@
 from pathlib import Path
 
 from netspresso import NetsPresso
-from netspresso.enums import QuantizationPrecision, SimilarityMetric, OnnxOperator
-from netspresso.quantizer.quantizer import PrecisionByLayer, PrecisionByOperator
-from netspresso.utils.file import FileHandler
+from netspresso.enums import QuantizationPrecision, OnnxOperator
+from netspresso.quantizer.quantizer import PrecisionByOperator
 
 
 EMAIL = "YOUR_EMAIL"

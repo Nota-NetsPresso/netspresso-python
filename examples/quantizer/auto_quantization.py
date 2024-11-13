@@ -13,7 +13,7 @@ netspresso = NetsPresso(email=EMAIL, password=PASSWORD)
 quantizer = netspresso.quantizer()
 
 # 2. Set variables for quantize
-input_model = "./examples/sample_models/yolo-fastest.onnx"
+input_model = "./examples/sample_models/test.onnx"
 OUTPUT_DIR = "./outputs/quantized/onnx2onnx_2"
 CALIBRATION_DATASET_PATH = "./examples/sample_datasets/pickle_calibration_dataset_128x128.npy"
 BITWIDTH = QuantizationPrecision.INT8
@@ -26,5 +26,5 @@ quantizer.auto_quantization(
     weight_precision=QuantizationPrecision.INT8,
     activation_precision=QuantizationPrecision.INT8,
     metric=SimilarityMetric.SNR,
-    threshod=0,
+    threshold=0,
 )
