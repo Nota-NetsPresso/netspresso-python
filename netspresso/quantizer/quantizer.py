@@ -28,18 +28,7 @@ from netspresso.enums import (
 from netspresso.metadata.quantizer import QuantizerMetadata
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
-
-
-@dataclass
-class PrecisionByLayer:
-    name: str
-    precision: QuantizationPrecision
-
-
-@dataclass
-class PrecisionByOperator:
-    type: str
-    precision: QuantizationPrecision
+from netspresso.quantizer.schema import PrecisionByOperator, PrecisionByLayer, RecommendationPrecisions
 
 
 class Quantizer(NetsPressoBase):
@@ -141,7 +130,7 @@ class Quantizer(NetsPressoBase):
                 access_token=self.token_handler.tokens.access_token,
             ).data.presigned_download_url
 
-            download_path = (Path(output_dir) / "custom_quantization_suggestion.json").resolve()
+            download_path = (Path(output_dir) / "custom_quantization_suggestion.json").resolve().as_posix()
 
             request.urlretrieve(download_url, download_path)
             logger.info(f"Model downloaded at {Path(download_path)}")
@@ -566,6 +555,33 @@ class Quantizer(NetsPressoBase):
         )
 
         return metadata
+
+    def load_recommendation_precision_result(self, file_path: str):
+        recommendation_result = FileHandler.load_json(file_path=file_path)
+        layers = recommendation_result["layers"]
+        operators = recommendation_result["operators"]
+
+        precision_by_layer_name = [
+            PrecisionByLayer(
+                name=layer["name"],
+                precision=QuantizationPrecision.FLOAT32,
+            )
+            for layer in layers
+        ]
+        precision_by_operator_type = [
+            PrecisionByOperator(
+                type=operator["type"],
+                precision=operator["recommendation"]["precision"][0],
+            )
+            for operator in operators
+        ]
+
+        recommendation_precisions = RecommendationPrecisions(
+            layers=precision_by_layer_name,
+            operators=precision_by_operator_type,
+        )
+
+        return recommendation_precisions
 
     def get_quantization_task(self, quantization_task_id: str) -> QuantizeTask:
         """Get the quantization task information with given quantization task uuid.
