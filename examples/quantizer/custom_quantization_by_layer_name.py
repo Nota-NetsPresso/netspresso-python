@@ -2,8 +2,6 @@ from pathlib import Path
 
 from netspresso import NetsPresso
 from netspresso.enums import QuantizationPrecision
-from netspresso.quantizer.quantizer import PrecisionByLayer
-from netspresso.utils.file import FileHandler
 
 
 EMAIL = "YOUR_EMAIL"
@@ -29,11 +27,10 @@ recommendation_metadata = quantizer.get_recommendation_precision(
     activation_precision=QuantizationPrecision.INT8,
     threshold=0,
 )
-
 recommendation_precisions = quantizer.load_recommendation_precision_result(recommendation_metadata.recommendation_result_path)
 
 # 3-2. Custom Quantization
-quantizer.custom_quantization_by_layer_name(
+quantization_result = quantizer.custom_quantization_by_layer_name(
     input_model_path=input_model,
     output_dir=f"{OUTPUT_DIR}/{Path(input_model).stem}",
     precision_by_layer_name=recommendation_precisions.layers,

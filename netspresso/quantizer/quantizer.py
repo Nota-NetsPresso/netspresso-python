@@ -11,7 +11,7 @@ from netspresso.clients.auth import TokenHandler
 from netspresso.clients.auth.response_body import UserResponse
 from netspresso.clients.launcher import launcher_client_v2
 from netspresso.clients.launcher.v2.schemas.task.quantize.request_body import (
-    AutoQuantizeOption,
+    AutomaticQuantizeOption,
     CustomQuantizeOption,
     PlainQuantizationOption,
     RecommendationOption,
@@ -175,7 +175,7 @@ class Quantizer(NetsPressoBase):
         output_dir: str,
         dataset_path: Optional[str],
         quantization_mode: QuantizationMode,
-        quantization_options: Union[PlainQuantizationOption, CustomQuantizeOption, AutoQuantizeOption],
+        quantization_options: Union[PlainQuantizationOption, CustomQuantizeOption, AutomaticQuantizeOption],
         input_layers: List[Dict[str, int]] = None,
         wait_until_done: bool = True,
         sleep_interval: int = 30,
@@ -321,7 +321,7 @@ class Quantizer(NetsPressoBase):
 
         return metadata
 
-    def auto_quantization(
+    def automatic_quantization(
         self,
         input_model_path: str,
         output_dir: str,
@@ -334,7 +334,7 @@ class Quantizer(NetsPressoBase):
         wait_until_done: bool = True,
         sleep_interval: int = 30,
     ) -> QuantizerMetadata:
-        """Apply auto quantization to a model, specifying precision for weight & activation.
+        """Apply automatic quantization to a model, specifying precision for weight & activation.
 
         This method quantizes layers in the model based on the specified precision levels for weights and activations, while evaluating
         the quality of quantization using the defined metric. Only layers that meet the specified quality `threshold` are quantized;
@@ -358,7 +358,7 @@ class Quantizer(NetsPressoBase):
         Returns:
             QuantizerMetadata: Quantize metadata.
         """
-        quantization_options = AutoQuantizeOption(
+        quantization_options = AutomaticQuantizeOption(
             metric=metric,
             threshold=threshold,
             weight_precision=weight_precision,
@@ -376,7 +376,7 @@ class Quantizer(NetsPressoBase):
             sleep_interval=sleep_interval,
         )
 
-        logger.info("Auto quantization task was completed successfully.")
+        logger.info("Automatic quantization task was completed successfully.")
 
         return metadata
 

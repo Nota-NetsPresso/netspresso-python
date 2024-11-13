@@ -36,7 +36,7 @@ class CustomQuantizeOption:
 
 
 @dataclass
-class AutoQuantizeOption(QuantizationOptions):
+class AutomaticQuantizeOption(QuantizationOptions):
     use_cuda: bool = False
     suggestion_only: bool = False
     metric: SimilarityMetric = SimilarityMetric.SNR  # Quantization quality metrics

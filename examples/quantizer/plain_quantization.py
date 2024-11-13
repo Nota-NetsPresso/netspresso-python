@@ -20,7 +20,7 @@ CALIBRATION_DATASET_PATH = "./examples/sample_datasets/pickle_calibration_datase
 BITWIDTH = QuantizationPrecision.INT8
 
 # 3. Plain Quantization
-metadata = quantizer.plain_quantization(
+quantization_result = quantizer.plain_quantization(
     input_model_path=input_model,
     output_dir=f"{OUTPUT_DIR}/{Path(input_model).stem}_{BITWIDTH}",
     dataset_path=CALIBRATION_DATASET_PATH,

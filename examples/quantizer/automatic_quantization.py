@@ -14,12 +14,12 @@ quantizer = netspresso.quantizer()
 
 # 2. Set variables for quantize
 input_model = "./examples/sample_models/test.onnx"
-OUTPUT_DIR = "./outputs/quantized/onnx2onnx_2"
+OUTPUT_DIR = "./outputs/quantized/automatic_quantization"
 CALIBRATION_DATASET_PATH = "./examples/sample_datasets/pickle_calibration_dataset_128x128.npy"
 BITWIDTH = QuantizationPrecision.INT8
 
 # 3. Automatic Quantization
-quantizer.auto_quantization(
+quantization_result = quantizer.automatic_quantization(
     input_model_path=input_model,
     output_dir=f"{OUTPUT_DIR}/{Path(input_model).stem}_{BITWIDTH}",
     dataset_path=CALIBRATION_DATASET_PATH,
