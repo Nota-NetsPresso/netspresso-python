@@ -63,9 +63,12 @@ class BenchmarkTask:
             if k in names:
                 setattr(self, k, v)
 
-        self.benchmark_task_option = TaskOption(**self.benchmark_task_option)
-        self.benchmark_result = BenchmarkResult(**self.benchmark_result)
-        self.benchmark_environment = BenchmarkEnvironment(**self.benchmark_environment)
+        if self.benchmark_task_option is not None:
+            self.benchmark_task_option = TaskOption(**self.benchmark_task_option)
+        if self.benchmark_result is not None:
+            self.benchmark_result = BenchmarkResult(**self.benchmark_result)
+        if self.benchmark_environment is not None:
+            self.benchmark_environment = BenchmarkEnvironment(**self.benchmark_environment)
 
     def to(self) -> BenchmarkTaskInfo:
         device_info = self.benchmark_task_option.target_device
