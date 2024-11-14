@@ -626,7 +626,7 @@ class Quantizer(NetsPressoBase):
         precision_by_layer_name = [
             PrecisionByLayer(
                 name=layer["name"],
-                precision=QuantizationPrecision.FLOAT32,
+                precision=layer["recommendation"]["precision"][0],
             )
             for layer in layers
         ]
