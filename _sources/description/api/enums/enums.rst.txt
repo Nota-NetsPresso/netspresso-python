@@ -18,3 +18,7 @@ Enums
    enum/hardware_type
    enum/task_status
    enum/data_type
+   enum/quantization_mode
+   enum/quantization_precision
+   enum/similarity_metric
+   enum/onnx_operator
