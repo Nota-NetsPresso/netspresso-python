@@ -15,6 +15,19 @@ class QuantizationOptions:
     weight_precision: QuantizationPrecision = QuantizationPrecision.INT8  # Weight precision
     activation_precision: QuantizationPrecision = QuantizationPrecision.INT8  # Activation precision
 
+    def __post_init__(self):
+        # weight_precision validation
+        if self.weight_precision not in [QuantizationPrecision.INT8, QuantizationPrecision.FLOAT32]:
+            if self.weight_precision == QuantizationPrecision.FLOAT16:
+                raise ValueError("weight_precision FLOAT16 is only available for custom precision quantization.")
+            raise ValueError(f"weight_precision must be either INT8 or FLOAT32, got {self.weight_precision}")
+
+        # activation_precision validation
+        if self.activation_precision not in [QuantizationPrecision.INT8, QuantizationPrecision.FLOAT32]:
+            if self.activation_precision == QuantizationPrecision.FLOAT16:
+                raise ValueError("activation_precision FLOAT16 is only available for custom precision quantization.")
+            raise ValueError(f"activation_precision must be either INT8 or FLOAT32, got {self.activation_precision}")
+
 
 @dataclass
 class PlainQuantizationOption(QuantizationOptions):
