@@ -17,7 +17,7 @@
 
 <div align="center">
   🔥 NetsPresso Tutorials (Google Colab) 🔥 <br>
-    <a href="https://colab.research.google.com/drive/15HBp88qfUDQl5PaEcZ5J-dnLo-1kvw-a"> NetsPresso Tutorial </a></br>
+    <a href="https://colab.research.google.com/drive/15HBp88qfUDQl5PaEcZ5J-dnLo-1kvw-a"> NetsPresso Tutorial(with Compressor) </a></br>
     <a href="https://colab.research.google.com/drive/1IJq9QXgQWVIdPasVApT1lrGyvrKq--Pp?usp=sharing"> NetsPresso Tutorial(with Quantizer) </a></br>
 </div>
 </br>
