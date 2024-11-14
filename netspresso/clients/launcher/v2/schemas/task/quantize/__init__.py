@@ -1,4 +1,4 @@
-from .request_body import RequestQuantize
+from .request_body import RequestQuantizeTask
 from .response_body import (
     ResponseQuantizeDownloadModelUrlItem,
     ResponseQuantizeOptionItems,
@@ -7,7 +7,7 @@ from .response_body import (
 )
 
 __all__ = [
-    "RequestQuantize",
+    "RequestQuantizeTask",
     "ResponseQuantizeDownloadModelUrlItem",
     "ResponseQuantizeOptionItems",
     "ResponseQuantizeStatusItem",

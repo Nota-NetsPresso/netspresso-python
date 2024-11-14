@@ -8,7 +8,7 @@ from netspresso.clients.launcher.v2.schemas import (
     ResponseItems,
 )
 from netspresso.clients.launcher.v2.schemas.task.common import TaskStatusInfo
-from netspresso.enums import QuantizationDataType, QuantizationMode, SimilarityMetric, TaskStatusForDisplay
+from netspresso.enums import QuantizationMode, QuantizationPrecision, SimilarityMetric, TaskStatusForDisplay
 from netspresso.metadata.quantizer import QuantizeInfo
 
 
@@ -16,8 +16,8 @@ from netspresso.metadata.quantizer import QuantizeInfo
 class QuantizeOption:
     threshold: Union[float, int]
     metric: SimilarityMetric = field(default=SimilarityMetric.SNR)
-    weight_quantization_bitwidth: QuantizationDataType = field(default=QuantizationDataType.INT8)
-    activation_quantization_bitwidth: QuantizationDataType = field(default=QuantizationDataType.INT8)
+    weight_precision: QuantizationPrecision = field(default=QuantizationPrecision.INT8)
+    activation_precision: QuantizationPrecision = field(default=QuantizationPrecision.INT8)
 
 
 @dataclass
@@ -26,7 +26,7 @@ class QuantizeTask:
     input_model_id: str
     output_model_id: str
 
-    quantization_mode: QuantizationMode = field(default=QuantizationMode.PLAIN_QUANTIZATION)
+    quantization_mode: QuantizationMode = field(default=QuantizationMode.UNIFORM_PRECISION_QUANTIZATION)
     options: Optional[QuantizeOption] = field(default_factory=QuantizeOption)
     task_input_layers: List[InputLayer] = field(default_factory=[])
 
@@ -51,8 +51,8 @@ class QuantizeTask:
         quantize_info.quantization_mode = self.quantization_mode
         quantize_info.metric = self.options.metric
         quantize_info.threshold = self.options.threshold
-        quantize_info.weight_quantization_bitwidth = self.options.weight_quantization_bitwidth
-        quantize_info.activation_quantization_bitwidth = self.options.activation_quantization_bitwidth
+        quantize_info.weight_precision = self.options.weight_precision
+        quantize_info.activation_precision = self.options.activation_precision
 
         return quantize_info
 

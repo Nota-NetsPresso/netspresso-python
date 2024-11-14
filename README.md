@@ -188,6 +188,87 @@ from netspresso import NetsPresso
 netspresso = NetsPresso(email="YOUR_EMAIL", password="YOUR_PASSWORD")
 ```
 
+### ⭐⭐⭐ (New Feature) Quantizer ⭐⭐⭐
+
+#### Automatic quantization
+
+To start quantize a model, enter the model path, dataset path, and the desired quantization precision.
+
+The quantized model will be saved to the specified output directory (`output_dir`).
+
+```python
+from netspresso.enums import QuantizationPrecision, SimilarityMetric
+
+# 1. Declare quantizer
+quantizer = netspresso.quantizer()
+
+# 2. Run automatic quantization
+quantization_result = quantizer.automatic_quantization(
+    input_model_path="./examples/sample_models/test.onnx",
+    output_dir="./outputs/quantized/automatic_quantization",
+    dataset_path="./examples/sample_datasets/pickle_calibration_dataset_128x128.npy",
+    weight_precision=QuantizationPrecision.INT8,
+    activation_precision=QuantizationPrecision.INT8,
+    threshold=0,
+)
+```
+
+#### Custom precision quantization by layer name
+
+This method enables you to apply precision settings tailored to each layer, based on the recommendations, to optimize model.
+
+Or, you can modify it to your desired precision and optimize it.
+
+```python
+from netspresso.enums import QuantizationPrecision
+
+# 1. Declare quantizer
+quantizer = netspresso.quantizer()
+
+# 2. Recommendation precision
+metadata = quantizer.get_recommendation_precision(
+    input_model_path="./examples/sample_models/test.onnx",
+    output_dir="./outputs/quantized/recommendation",
+    dataset_path="./examples/sample_datasets/pickle_calibration_dataset_128x128.npy",
+    weight_precision=QuantizationPrecision.INT8,
+    activation_precision=QuantizationPrecision.INT8,
+    threshold=0,
+)
+recommendation_precisions = quantizer.load_recommendation_precision_result(metadata.recommendation_result_path)
+
+# 2. Run quantization by layer name
+quantization_result = quantizer.custom_precision_quantization_by_layer_name(
+    input_model_path="./examples/sample_models/test.onnx",
+    output_dir="./outputs/quantized/custom_precision_quantization_by_layer_name",
+    precision_by_layer_name=recommendation_precisions.layers,
+    dataset_path="./examples/sample_datasets/pickle_calibration_dataset_128x128.npy",
+)
+```
+
+#### Automatic quantization
+
+To start quantize a model, enter the model path, dataset path, and the desired quantization precision.
+
+The quantized model will be saved to the specified output directory (`output_dir`).
+
+```python
+from netspresso.enums import QuantizationPrecision, SimilarityMetric
+
+# 1. Declare quantizer
+quantizer = netspresso.quantizer()
+
+# 2. Run automatic quantization
+compression_result = quantizer.automatic_quantization(
+    input_model_path="./examples/sample_models/test.onnx",
+    output_dir="./outputs/quantized/automatic_quantization",
+    dataset_path="./examples/sample_datasets/pickle_calibration_dataset_128x128.npy",
+    weight_precision=QuantizationPrecision.INT8,
+    activation_precision=QuantizationPrecision.INT8,
+    threshold=0,
+)
+```
+
+
 ### Trainer
 
 #### Train

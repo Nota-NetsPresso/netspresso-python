@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Optional
 
 from loguru import logger
 
@@ -8,7 +8,6 @@ from netspresso.clients.launcher.v2.schemas import (
     AuthorizationHeader,
     InputLayer,
     RequestModelUploadUrl,
-    RequestQuantize,
     RequestUploadModel,
     RequestValidateModel,
     ResponseModelItem,
@@ -21,7 +20,10 @@ from netspresso.clients.launcher.v2.schemas import (
     UploadDataset,
     UploadFile,
 )
-from netspresso.clients.launcher.v2.schemas.task.quantize.request_body import QuantizationOptions
+from netspresso.clients.launcher.v2.schemas.task.quantize.request_body import (
+    QuantizationOptions,
+    RequestQuantizeTask,
+)
 from netspresso.clients.utils.common import read_file_bytes
 from netspresso.enums import (
     LauncherTask,
@@ -98,6 +100,15 @@ class Quantizer:
         logger.info(f"Request model task_options: {model_task_options}")
         return model_task_options
 
+    def create_upload_dataset(self, dataset_path: str) -> Optional[UploadDataset]:
+        if dataset_path:
+            dataset_filename = os.path.basename(dataset_path)
+            return UploadDataset(
+                file_name=dataset_filename,
+                file_content=read_file_bytes(dataset_path),
+            )
+        return None
+
     def start_task(
         self,
         access_token: str,
@@ -106,29 +117,29 @@ class Quantizer:
         quantization_options: QuantizationOptions,
         input_layers: List[InputLayer] = None,
         dataset_path: str = None,
-    ) -> ResponseQuantizeTaskItem:
-        token_header = AuthorizationHeader(access_token=access_token)
-        request_body = RequestQuantize(
+    ):
+        request_body = RequestQuantizeTask(
             input_model_id=input_model_id,
             quantization_mode=quantization_mode,
             quantization_options=quantization_options,
             input_layers=input_layers,
         )
         logger.info(f"Request Quantize body: {request_body}")
+        token_header = AuthorizationHeader(access_token=access_token)
 
-        if dataset_path:
-            dataset_filename = os.path.basename(dataset_path)
-            file_object = UploadDataset(
-                file_name=dataset_filename,
-                file_content=read_file_bytes(dataset_path),
-            )
-        else:
-            file_object = None
-        quantize_task_response = self.quantize_task.start(
-            request_body=request_body, headers=token_header, file=file_object
-        )
-        logger.info(f"Request Quantize result: {quantize_task_response}")
-        return quantize_task_response
+        file_object = self.create_upload_dataset(dataset_path)
+
+        if quantization_mode == QuantizationMode.UNIFORM_PRECISION_QUANTIZATION:
+            response = self.quantize_task.start_plain_quantization(request_body, token_header, file_object)
+        elif quantization_mode == QuantizationMode.RECOMMEND_QUANTIZATION:
+            response = self.quantize_task.start_recommendation_precision(request_body, token_header, file_object)
+        elif quantization_mode == QuantizationMode.CUSTOM_PRECISION_QUANTIZATION:
+            response = self.quantize_task.start_custom_quantization(request_body, token_header, file_object)
+        elif quantization_mode == QuantizationMode.AUTOMATIC_QUANTIZATION:
+            response = self.quantize_task.start_auto_quantization(request_body, token_header, file_object)
+
+        logger.info(f"Request Quantize result: {response}")
+        return response
 
     def cancel_task(self, access_token: str, task_id: str) -> ResponseQuantizeTaskItem:
         token_header = AuthorizationHeader(access_token=access_token)

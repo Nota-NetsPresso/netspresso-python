@@ -26,7 +26,7 @@ from .model import (
 from .task import (
     RequestBenchmark,
     RequestConvert,
-    RequestQuantize,
+    RequestQuantizeTask,
     ResponseBenchmarkFrameworkOptionItems,
     ResponseBenchmarkOptionItems,
     ResponseBenchmarkStatusItem,
