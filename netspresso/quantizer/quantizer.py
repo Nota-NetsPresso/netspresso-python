@@ -250,7 +250,7 @@ class Quantizer(NetsPressoBase):
                     time.sleep(sleep_interval)
 
             if quantize_response.data.status == TaskStatusForDisplay.FINISHED:
-                if quantize_response.data.quantization_mode in [QuantizationMode.UNIFORM_PRECISION_QUANTIZATION, QuantizationMode.CUSTOM_PRECISION_QUANTIZATION, QuantizationMode.AUTOMATIC_QUANTIZATION]:
+                if quantize_response.data.quantization_mode in ["plain_quantization", "custom_quantization", "automatic_quantization"]:
                     metadata = self._download_quantized_model(quantize_response.data, output_dir, metadata)
                 elif quantize_response.data.quantization_mode in [QuantizationMode.RECOMMEND_QUANTIZATION]:
                     metadata = self._download_recommendation_result(quantize_response.data, output_dir, metadata)
