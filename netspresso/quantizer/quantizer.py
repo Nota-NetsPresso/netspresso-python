@@ -428,6 +428,15 @@ class Quantizer(NetsPressoBase):
     ) -> QuantizerMetadata:
         """Apply custom quantization to a model, specifying precision for each layer name.
 
+        This function allows precise control over the quantization process by enabling the user to assign specific 
+        quantization precision (e.g., INT8, FP16) for each named layer within the model. The `precision_by_layer_name` 
+        parameter provides a list where each item details the target precision for a specific layer name, enabling 
+        customized quantization that can enhance model performance or compatibility.
+
+        Users can target specific layers to be quantized to lower precision for optimized model size and performance 
+        while keeping critical layers at higher precision for accuracy. Layers not explicitly listed in 
+        `precision_by_layer_name` will use `default_weight_precision` and `default_activation_precision`.
+
         Args:
             input_model_path (str): The file path where the model is located.
             output_dir (str): The local folder path to save the quantized model.
@@ -490,6 +499,15 @@ class Quantizer(NetsPressoBase):
     ) -> QuantizerMetadata:
         """Apply custom quantization to a model, specifying precision for each operator type.
 
+        This function allows for highly customizable quantization by enabling the user to specify the quantization 
+        precision (e.g., INT8, FP16) for each operator type within a model. The `precision_by_operator_type` parameter 
+        is a list of mappings where each entry indicates the quantization precision for a specific operator type, 
+        such as convolution (Conv), matrix multiplication (MatMul), etc. 
+
+        Using `precision_by_operator_type`, users can selectively fine-tune the quantization strategy for different 
+        operators within the model, based on performance requirements or hardware capabilities. Operators not explicitly 
+        specified in `precision_by_operator_type` will fall back to `default_weight_precision` and `default_activation_precision`.
+
         Args:
             input_model_path (str): The file path where the model is located.
             output_dir (str): The local folder path to save the quantized model.
@@ -549,7 +567,7 @@ class Quantizer(NetsPressoBase):
         wait_until_done: bool = True,
         sleep_interval: int = 30,
     ):
-        """Get recommended precision settings for a model based on a specified quality threshold.
+        """Get recommended precision for a model based on a specified quality threshold.
 
         This function analyzes each layer of the given model and recommends precision settings
         for layers that do not meet the specified threshold, helping to balance quantization
