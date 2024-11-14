@@ -17,12 +17,11 @@ quantizer = netspresso.quantizer()
 input_model = "./examples/sample_models/test.onnx"
 OUTPUT_DIR = "./outputs/quantized/onnx2onnx_2"
 CALIBRATION_DATASET_PATH = "./examples/sample_datasets/pickle_calibration_dataset_128x128.npy"
-BITWIDTH = QuantizationPrecision.INT8
 
 # 3. Plain Quantization
 quantization_result = quantizer.plain_quantization(
     input_model_path=input_model,
-    output_dir=f"{OUTPUT_DIR}/{Path(input_model).stem}_{BITWIDTH}",
+    output_dir=f"{OUTPUT_DIR}/{Path(input_model).stem}",
     dataset_path=CALIBRATION_DATASET_PATH,
     metric=SimilarityMetric.SNR,
     weight_precision=QuantizationPrecision.INT8,
