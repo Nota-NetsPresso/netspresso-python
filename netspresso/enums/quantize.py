@@ -9,8 +9,8 @@ class QuantizationPrecision(str, Enum):
 
 class QuantizationMode(str, Enum):
     AUTOMATIC_QUANTIZATION = "automatic_quantization"
-    PLAIN_QUANTIZATION = "plain_quantization"
-    CUSTOM_QUANTIZATION = "custom_quantization"
+    UNIFORM_PRECISION_QUANTIZATION = "uniform_precision_quantization"
+    CUSTOM_PRECISION_QUANTIZATION = "custom_precision_quantization"
     ADVANCED_QUANTIZATION = "advanced_quantization"
     RECOMMEND_QUANTIZATION = "recommend_quantization"
 

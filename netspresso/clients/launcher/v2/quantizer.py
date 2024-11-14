@@ -129,11 +129,11 @@ class Quantizer:
 
         file_object = self.create_upload_dataset(dataset_path)
 
-        if quantization_mode == QuantizationMode.PLAIN_QUANTIZATION:
+        if quantization_mode == QuantizationMode.UNIFORM_PRECISION_QUANTIZATION:
             response = self.quantize_task.start_plain_quantization(request_body, token_header, file_object)
         elif quantization_mode == QuantizationMode.RECOMMEND_QUANTIZATION:
             response = self.quantize_task.start_recommendation_precision(request_body, token_header, file_object)
-        elif quantization_mode == QuantizationMode.CUSTOM_QUANTIZATION:
+        elif quantization_mode == QuantizationMode.CUSTOM_PRECISION_QUANTIZATION:
             response = self.quantize_task.start_custom_quantization(request_body, token_header, file_object)
         elif quantization_mode == QuantizationMode.AUTOMATIC_QUANTIZATION:
             response = self.quantize_task.start_auto_quantization(request_body, token_header, file_object)

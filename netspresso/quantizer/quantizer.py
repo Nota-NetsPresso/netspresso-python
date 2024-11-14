@@ -250,7 +250,7 @@ class Quantizer(NetsPressoBase):
                     time.sleep(sleep_interval)
 
             if quantize_response.data.status == TaskStatusForDisplay.FINISHED:
-                if quantize_response.data.quantization_mode in [QuantizationMode.PLAIN_QUANTIZATION, QuantizationMode.CUSTOM_QUANTIZATION, QuantizationMode.AUTOMATIC_QUANTIZATION]:
+                if quantize_response.data.quantization_mode in [QuantizationMode.UNIFORM_PRECISION_QUANTIZATION, QuantizationMode.CUSTOM_PRECISION_QUANTIZATION, QuantizationMode.AUTOMATIC_QUANTIZATION]:
                     metadata = self._download_quantized_model(quantize_response.data, output_dir, metadata)
                 elif quantize_response.data.quantization_mode in [QuantizationMode.RECOMMEND_QUANTIZATION]:
                     metadata = self._download_recommendation_result(quantize_response.data, output_dir, metadata)
@@ -267,7 +267,7 @@ class Quantizer(NetsPressoBase):
 
         return metadata
 
-    def plain_quantization(
+    def uniform_precision_quantization(
         self,
         input_model_path: str,
         output_dir: str,
@@ -279,9 +279,9 @@ class Quantizer(NetsPressoBase):
         wait_until_done: bool = True,
         sleep_interval: int = 30,
     ):
-        """Apply full quantization to a model, specifying precision for weight & activation.
+        """Apply uniform precision quantization to a model, specifying precision for weight & activation.
 
-        This method quantizes layers in the model based on the specified precision levels for weights and activations.
+        This method quantizes all layers in the model uniformly based on the specified precision levels for weights and activations.
 
         Args:
             input_model_path (str): The file path where the model is located.
@@ -310,7 +310,7 @@ class Quantizer(NetsPressoBase):
             input_model_path=input_model_path,
             output_dir=output_dir,
             dataset_path=dataset_path,
-            quantization_mode=QuantizationMode.PLAIN_QUANTIZATION,
+            quantization_mode=QuantizationMode.UNIFORM_PRECISION_QUANTIZATION,
             quantization_options=quantization_options,
             input_layers=input_layers,
             wait_until_done=wait_until_done,
@@ -404,7 +404,7 @@ class Quantizer(NetsPressoBase):
             input_model_path=input_model_path,
             output_dir=output_dir,
             dataset_path=dataset_path,
-            quantization_mode=QuantizationMode.CUSTOM_QUANTIZATION,
+            quantization_mode=QuantizationMode.CUSTOM_PRECISION_QUANTIZATION,
             quantization_options=quantization_options,
             input_layers=input_layers,
             wait_until_done=wait_until_done,
@@ -413,7 +413,7 @@ class Quantizer(NetsPressoBase):
 
         return metadata
 
-    def custom_quantization_by_layer_name(
+    def custom_precision_quantization_by_layer_name(
         self,
         input_model_path: str,
         output_dir: str,
@@ -426,7 +426,7 @@ class Quantizer(NetsPressoBase):
         wait_until_done: bool = True,
         sleep_interval: int = 30,
     ) -> QuantizerMetadata:
-        """Apply custom quantization to a model, specifying precision for each layer name.
+        """Apply custom precision quantization to a model, specifying precision for each layer name.
 
         This function allows precise control over the quantization process by enabling the user to assign specific
         quantization precision (e.g., INT8, FP16) for each named layer within the model. The `precision_by_layer_name`
@@ -484,7 +484,7 @@ class Quantizer(NetsPressoBase):
 
         return  metadata
 
-    def custom_quantization_by_operator_type(
+    def custom_precision_quantization_by_operator_type(
         self,
         input_model_path: str,
         output_dir: str,

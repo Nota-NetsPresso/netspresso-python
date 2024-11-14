@@ -30,9 +30,9 @@ recommendation_metadata = quantizer.get_recommendation_precision(
 recommendation_precisions = quantizer.load_recommendation_precision_result(recommendation_metadata.recommendation_result_path)
 
 # 3-2. Custom Quantization
-quantization_result = quantizer.custom_quantization_by_operator_type(
+quantization_result = quantizer.custom_precision_quantization_by_layer_name(
     input_model_path=input_model,
     output_dir=f"{OUTPUT_DIR}/{Path(input_model).stem}",
-    precision_by_operator_type=recommendation_precisions.operators,
+    precision_by_layer_name=recommendation_precisions.layers,
     dataset_path=CALIBRATION_DATASET_PATH,
 )

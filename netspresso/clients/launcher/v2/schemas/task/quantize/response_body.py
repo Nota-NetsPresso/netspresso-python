@@ -26,7 +26,7 @@ class QuantizeTask:
     input_model_id: str
     output_model_id: str
 
-    quantization_mode: QuantizationMode = field(default=QuantizationMode.PLAIN_QUANTIZATION)
+    quantization_mode: QuantizationMode = field(default=QuantizationMode.UNIFORM_PRECISION_QUANTIZATION)
     options: Optional[QuantizeOption] = field(default_factory=QuantizeOption)
     task_input_layers: List[InputLayer] = field(default_factory=[])
 

@@ -14,7 +14,7 @@ from netspresso.metadata.common import BaseMetadata, ModelInfo
 class QuantizeInfo:
     quantize_task_uuid: str = ""
     model_file_name: str = ""
-    quantization_mode: QuantizationMode = QuantizationMode.PLAIN_QUANTIZATION
+    quantization_mode: QuantizationMode = QuantizationMode.UNIFORM_PRECISION_QUANTIZATION
     metric: SimilarityMetric = SimilarityMetric.SNR
     threshold: Union[float, int] = 0
     weight_precision: QuantizationPrecision = QuantizationPrecision.INT8

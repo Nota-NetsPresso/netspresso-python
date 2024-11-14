@@ -213,7 +213,7 @@ quantization_result = quantizer.automatic_quantization(
 )
 ```
 
-#### Quantization by layer name
+#### Custom precision quantization by layer name
 
 This method enables you to apply precision settings tailored to each layer, based on the recommendations, to optimize model.
 
@@ -237,9 +237,9 @@ metadata = quantizer.get_recommendation_precision(
 recommendation_precisions = quantizer.load_recommendation_precision_result(metadata.recommendation_result_path)
 
 # 2. Run quantization by layer name
-quantization_result = quantizer.custom_quantization_by_layer_name(
+quantization_result = quantizer.custom_precision_quantization_by_layer_name(
     input_model_path="./examples/sample_models/test.onnx",
-    output_dir="./outputs/quantized/custom_quantization_by_layer_name",
+    output_dir="./outputs/quantized/custom_precision_quantization_by_layer_name",
     precision_by_layer_name=recommendation_precisions.layers,
     dataset_path="./examples/sample_datasets/pickle_calibration_dataset_128x128.npy",
 )
