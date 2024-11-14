@@ -9,8 +9,16 @@
 
 <div align="center">
   <a href="https://netspresso.ai/?utm_source=git&utm_medium=text_signup&utm_campaign=np_renew"> Sign Up </a>
-    | <a href="https://colab.research.google.com/drive/15HBp88qfUDQl5PaEcZ5J-dnLo-1kvw-a"> Google Colab </a>
     | <a href="https://nota-netspresso.github.io/PyNetsPresso"> Docs </a> 
+</div>
+</br>
+
+
+
+<div align="center">
+  🔥 NetsPresso Tutorials (Google Colab) 🔥 <br>
+    <a href="https://colab.research.google.com/drive/15HBp88qfUDQl5PaEcZ5J-dnLo-1kvw-a"> NetsPresso Tutorial </a></br>
+    <a href="https://colab.research.google.com/drive/1IJq9QXgQWVIdPasVApT1lrGyvrKq--Pp?usp=sharing"> NetsPresso Tutorial(with Quantizer) </a></br>
 </div>
 </br>
 
@@ -146,6 +154,11 @@ We offer a comprehensive guide to walk you through the process of optimizing an 
           <td width="30%" align="center">Compress</td>
           <td width="30%" align="center">np.compressor</td>
           <td width="40%" align="center">Compress and optimize the user’s model.</td>
+      </tr>
+      <tr>
+          <td width="30%" align="center">Quantize</td>
+          <td width="30%" align="center">np.quantizer</td>
+          <td width="40%" align="center">Quantize the user’s model.</td>
       </tr>
       <tr>
           <td width="30%" align="center">Convert</td>
