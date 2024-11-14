@@ -566,7 +566,7 @@ class Quantizer(NetsPressoBase):
         input_layers: List[Dict[str, int]] = None,
         wait_until_done: bool = True,
         sleep_interval: int = 30,
-    ):
+    ) -> QuantizerMetadata:
         """Get recommended precision for a model based on a specified quality threshold.
 
         This function analyzes each layer of the given model and recommends precision settings
