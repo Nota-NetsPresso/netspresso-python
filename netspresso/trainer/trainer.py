@@ -186,6 +186,8 @@ class Trainer(NetsPressoBase):
         train_label: str = "labels/train",
         valid_image: str = "images/valid",
         valid_label: str = "labels/valid",
+        test_image: str = "images/valid",
+        test_label: str = "labels/valid",
         id_mapping: Optional[Union[List[str], Dict[str, str], str]] = None,
     ):
         """Set the dataset configuration for the Trainer.
@@ -206,6 +208,7 @@ class Trainer(NetsPressoBase):
                 root=root_path,
                 train=ImageLabelPathConfig(image=train_image, label=train_label),
                 valid=ImageLabelPathConfig(image=valid_image, label=valid_label),
+                test=ImageLabelPathConfig(image=test_image, label=test_label)
             ),
             "id_mapping": id_mapping,
         }
@@ -535,7 +538,7 @@ class Trainer(NetsPressoBase):
 
         preprocess = hparams.augmentation.inference
         for _preprocess in preprocess:
-            if _preprocess.size:
+            if hasattr(_preprocess, 'size') and _preprocess.size:
                 _preprocess.size = _preprocess.size[0]
             if _preprocess.name == "resize":
                 _preprocess.resize_criteria = "long"
