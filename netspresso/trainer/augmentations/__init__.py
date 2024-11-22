@@ -21,6 +21,8 @@ from netspresso.trainer.augmentations.augmentation import (
     SegmentationAugmentationConfig,
     Transform,
     TrivialAugmentWide,
+    ToTensor,
+    Normalize,
 )
 
 AUGMENTATION_CONFIG_TYPE = {
@@ -51,4 +53,6 @@ __all__ = [
     "Transform",
     "AugmentationConfig",
     "AUGMENTATION_CONFIG_TYPE",
+    "ToTensor",
+    "Normalize",
 ]
