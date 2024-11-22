@@ -7,6 +7,7 @@ from netspresso.trainer.augmentations.augmentation import (
     HSVJitter,
     Mixing,
     MosaicDetection,
+    Normalize,
     Pad,
     PoseTopDownAffine,
     RandomCrop,
@@ -19,10 +20,9 @@ from netspresso.trainer.augmentations.augmentation import (
     RandomVerticalFlip,
     Resize,
     SegmentationAugmentationConfig,
+    ToTensor,
     Transform,
     TrivialAugmentWide,
-    ToTensor,
-    Normalize,
 )
 
 AUGMENTATION_CONFIG_TYPE = {
