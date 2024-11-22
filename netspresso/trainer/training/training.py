@@ -11,6 +11,9 @@ class ScheduleConfig:
         "lr": 6e-5,
         "betas": [0.9, 0.999],
         "weight_decay": 0.0005,
+        "no_bias_decay": False,
+        "no_norm_weight_decay": False,
+        "overwrite": None
     })
     scheduler: Dict = field(default_factory=lambda: {
         "name": "cosine_no_sgdr",

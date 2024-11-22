@@ -1,9 +1,13 @@
 from dataclasses import asdict, dataclass, field
-from typing import Dict, List
+from typing import Any, Dict, List
 
 
 @dataclass
 class BaseOptimizer:
+    no_bias_decay: bool = False
+    no_norm_weight_decay: bool = False
+    overwrite: Any = None
+
     def asdict(self) -> Dict:
         return asdict(self)
 
