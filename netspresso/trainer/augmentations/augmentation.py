@@ -165,6 +165,20 @@ class RandomCutmix(Transform):
 
 
 @dataclass
+class ToTensor(Transform):
+    name: str = 'totensor'
+    pixel_range: float = 1.0
+
+
+@dataclass
+class Normalize(Transform):
+    name: str = 'normalize'
+    mean: List[float] = field(default_factory=lambda: [0.485, 0.456, 0.406])
+    std: List[float] = field(default_factory=lambda: [0.229, 0.224, 0.225])
+
+
+
+@dataclass
 class ClassificationAugmentationConfig(AugmentationConfig):
     img_size: int = 256
     train: Optional[List] = field(default_factory=lambda: [
