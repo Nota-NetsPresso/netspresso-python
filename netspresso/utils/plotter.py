@@ -194,7 +194,7 @@ class Plotter:
                 axs[idx],
                 metric_data1[_metric],
                 metric_data2[_metric],
-                metric_data2[_metric] - metric_data2[_metric],
+                metric_data1[_metric] - metric_data2[_metric],
                 ["Original Model", "Quantized Model"],
             )
 
