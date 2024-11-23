@@ -32,9 +32,11 @@ class Plotter:
         )
 
     @staticmethod
-    def _add_difference_annotations(ax, original_value, compressed_value, difference):
+    def _add_difference_annotations(ax, original_value, compressed_value, difference, scatter_names = None):
+        if scatter_names is None:
+            scatter_names = ["Original Model", "Compressed Model"]
         ax.scatter(
-            ["Original Model", "Compressed Model"],
+            scatter_names,
             [original_value, compressed_value],
             color="red",
             marker="o",
@@ -42,7 +44,7 @@ class Plotter:
         )
 
         ax.plot(
-            ["Original Model", "Compressed Model"],
+            scatter_names,
             [original_value, compressed_value],
             color="red",
             linestyle="--",
@@ -193,6 +195,7 @@ class Plotter:
                 metric_data1[_metric],
                 metric_data2[_metric],
                 metric_data2[_metric] - metric_data2[_metric],
+                ["Original Model", "Quantized Model"],
             )
 
             Plotter._set_common_plot_settings(axs[idx], metric)
