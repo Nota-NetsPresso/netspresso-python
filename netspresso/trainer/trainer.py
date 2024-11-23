@@ -304,7 +304,7 @@ class Trainer(NetsPressoBase):
         self.model_name = model_name
         model = self._get_available_models_w_deprecated_names().get(model_name)
         self.img_size = img_size
-        self.logging.onnx_input_size = [img_size, img_size]
+        self.logging.sample_input_size = [img_size, img_size]
 
         if model is None:
             raise NotSupportedModelException()

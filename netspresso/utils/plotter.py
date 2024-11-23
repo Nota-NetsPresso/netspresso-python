@@ -186,7 +186,7 @@ class Plotter:
                 Plotter._add_value_annotations(axs[idx], bar, metric_data1[_metric])
 
             for bar in bars_compressed:
-                Plotter._add_value_annotations(axs[idx], bar, metric_data2[idx])
+                Plotter._add_value_annotations(axs[idx], bar, metric_data2[_metric])
 
             Plotter._add_difference_annotations(
                 axs[idx],
