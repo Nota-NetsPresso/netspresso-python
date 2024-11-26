@@ -1,3 +1,5 @@
+from typing import List
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -30,9 +32,11 @@ class Plotter:
         )
 
     @staticmethod
-    def _add_difference_annotations(ax, original_value, compressed_value, difference):
+    def _add_difference_annotations(ax, original_value, compressed_value, difference, scatter_names = None):
+        if scatter_names is None:
+            scatter_names = ["Original Model", "Compressed Model"]
         ax.scatter(
-            ["Original Model", "Compressed Model"],
+            scatter_names,
             [original_value, compressed_value],
             color="red",
             marker="o",
@@ -40,7 +44,7 @@ class Plotter:
         )
 
         ax.plot(
-            ["Original Model", "Compressed Model"],
+            scatter_names,
             [original_value, compressed_value],
             color="red",
             linestyle="--",
@@ -155,6 +159,43 @@ class Plotter:
                 original_best_metrics[idx],
                 compressed_best_metrics[idx],
                 compressed_best_metrics[idx] - original_best_metrics[idx],
+            )
+
+            Plotter._set_common_plot_settings(axs[idx], metric)
+
+        plt.tight_layout()
+        plt.show()
+
+    @staticmethod
+    def compare_metrics(metric_data1, metric_data2, metric_labels: List[str]):
+        fig, axs = plt.subplots(ncols=len(metric_labels), figsize=(15, 6))
+
+        for idx, _metric in enumerate(metric_labels):
+            labels = {
+                "map50": "mAP@[.50]",
+                "map75": "mAP@[.75]",
+                "map50_95": "mAP@[.50:.95]",
+            }
+            metric = labels[_metric]
+            bars_original = Plotter._plot_single_bar(
+                axs[idx], "Original Model", metric_data1[_metric], "slategray"
+            )
+            bars_compressed = Plotter._plot_single_bar(
+                axs[idx], "Quantized Model", metric_data2[_metric], "dodgerblue"
+            )
+
+            for bar in bars_original:
+                Plotter._add_value_annotations(axs[idx], bar, metric_data1[_metric])
+
+            for bar in bars_compressed:
+                Plotter._add_value_annotations(axs[idx], bar, metric_data2[_metric])
+
+            Plotter._add_difference_annotations(
+                axs[idx],
+                metric_data1[_metric],
+                metric_data2[_metric],
+                metric_data1[_metric] - metric_data2[_metric],
+                ["Original Model", "Quantized Model"],
             )
 
             Plotter._set_common_plot_settings(axs[idx], metric)
