@@ -33,11 +33,15 @@ class BenchmarkerV2(NetsPressoBase):
 
     def get_data_type(self, input_model_dir):
         metadata_path = input_model_dir / "metadata.json"
-        metadata = MetadataHandler.load_json(metadata_path)
+        try:
+            if metadata_path.exists():
+                metadata = MetadataHandler.load_json(metadata_path)
+                convert_task_info = metadata.get("convert_task_info", {})
+                return convert_task_info.get("data_type", DataType.FP32)
+        except (FileNotFoundError, ValueError, KeyError) as e:
+            print(f"Error loading metadata: {e}")
 
-        data_type = metadata["convert_task_info"]["data_type"] if metadata.get("convert_task_info") else DataType.FP32
-
-        return data_type
+        return DataType.FP32
 
     def initialize_metadata(self, input_model_path: str):
         def create_metadata_with_status(status, error_message=None):
