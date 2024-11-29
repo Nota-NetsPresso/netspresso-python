@@ -520,6 +520,8 @@ class CompressorV2(NetsPressoBase):
         finally:
             MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
+        return metadata
+
     def automatic_compression(
         self,
         input_model_path: str,
