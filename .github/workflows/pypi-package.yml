@@ -27,7 +27,7 @@ jobs:
 
     - name: Extract version in package 
       run: |
-        VERSION_PKG=$(cat netspresso/VERSION)
+        VERSION_PKG=$(cat src/netspresso/VERSION)
         echo "VERSION_PKG=$VERSION_PKG" >> $GITHUB_ENV
 
     - name: Build a binary wheel if tag is valid

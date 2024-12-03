@@ -21,6 +21,6 @@ ignore = [
 
 [tool.ruff.per-file-ignores]
 
-"netspresso/__init__.py" = [
+"src/netspresso/__init__.py" = [
   "F401", # "Imported but unused"
 ]
