@@ -2,7 +2,7 @@ from pathlib import Path
 
 from setuptools import find_packages, setup
 
-version = (Path("netspresso") / "VERSION").read_text().strip()
+version = (Path("src/netspresso") / "VERSION").read_text().strip()
 
 long_description = Path("README.md").read_text(encoding="UTF8")
 
@@ -18,8 +18,9 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Nota-NetsPresso/PyNetsPresso",
     install_requires=install_requires,
-    packages=find_packages(exclude=("tests",)),
-    package_data={"netspresso.clients": ["configs/*.ini"], "netspresso": ["VERSION"]},
+    package_dir={"": "src"},
+    packages=find_packages("src", exclude=("tests",)),
+    package_data={"clients": ["configs/*.ini"], "": ["VERSION"]},
     python_requires=">=3.8",
     classifiers=[
         "Intended Audience :: Developers",
