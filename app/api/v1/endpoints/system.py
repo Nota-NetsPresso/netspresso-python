@@ -31,7 +31,7 @@ def get_gpu_infos() -> GpuInfosResponse:
             uuid=gpu.uuid,
             name=gpu.name,
             temperature_gpu=gpu.temperature,
-            fan_speed=gpu.fan_speed or 0,
+            fan_speed=gpu.fan_speed,
             utilization_gpu=gpu.utilization,
             utilization_enc=gpu.utilization_enc,
             utilization_dec=gpu.utilization_dec,
