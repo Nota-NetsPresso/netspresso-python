@@ -9,9 +9,9 @@ from app.api.v1.schemas.project import (
     ProjectCreate,
     ProjectDetailPayload,
     ProjectDetailResponse,
-    ProjectPayload,
     ProjectResponse,
     ProjectsResponse,
+    ProjectSummaryPayload,
 )
 
 router = APIRouter()
@@ -23,7 +23,7 @@ def create_project(
     request_body: ProjectCreate,
 ) -> ProjectResponse:
 
-    project = ProjectPayload(
+    project = ProjectSummaryPayload(
         project_id=str(uuid4()),
         project_name=request_body.project_name,
         user_id=str(uuid4()),
@@ -41,7 +41,7 @@ def get_projects(
 ) -> ProjectsResponse:
 
     projects = [
-        ProjectPayload(
+        ProjectSummaryPayload(
             project_id=str(uuid4()),
             project_name="project_test_1",
             user_id=str(uuid4()),

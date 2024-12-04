@@ -16,7 +16,7 @@ class ProjectCreate(BaseModel):
         return project_name
 
 
-class ProjectPayload(ProjectCreate):
+class ProjectSummaryPayload(ProjectCreate):
     model_config = ConfigDict(from_attributes=True)
 
     project_id: str = Field(..., description="The unique identifier for the project.")
@@ -36,12 +36,12 @@ class ModelSummary(BaseModel):
     latest_experiments: ExperimentStatus = Field(..., description="The latest status of experiments for the model.")
 
 
-class ProjectDetailPayload(ProjectPayload):
+class ProjectDetailPayload(ProjectSummaryPayload):
     models: List[ModelSummary] = Field(..., description="The list of models associated with the project.")
 
 
 class ProjectResponse(ResponseItem):
-    data: ProjectPayload
+    data: ProjectSummaryPayload
 
 
 class ProjectDetailResponse(ResponseItem):
@@ -49,4 +49,4 @@ class ProjectDetailResponse(ResponseItem):
 
 
 class ProjectsResponse(ResponsePaginationItems):
-    data: List[ProjectPayload]
+    data: List[ProjectSummaryPayload]
