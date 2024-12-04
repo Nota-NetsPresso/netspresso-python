@@ -24,15 +24,15 @@ class ProjectSummaryPayload(ProjectCreate):
 
 
 class ExperimentStatus(BaseModel):
-    convert: Status = Field(Status.NOT_STARTED, description="The status of the conversion experiment.")
-    benchmark: Status = Field(Status.NOT_STARTED, description="The status of the benchmark experiment.")
+    convert: Status = Field(default=Status.NOT_STARTED, description="The status of the conversion experiment.")
+    benchmark: Status = Field(default=Status.NOT_STARTED, description="The status of the benchmark experiment.")
 
 
 class ModelSummary(BaseModel):
     model_id: str = Field(..., description="The unique identifier for the model.")
     name: str = Field(..., description="The name of the model.")
     type: str = Field(..., description="The type of the model (e.g., trained_model, compressed_model).")
-    status: Status = Field(Status.NOT_STARTED, description="The current status of the model.")
+    status: Status = Field(default=Status.NOT_STARTED, description="The current status of the model.")
     latest_experiments: ExperimentStatus = Field(..., description="The latest status of experiments for the model.")
 
 
