@@ -9,6 +9,8 @@ from app.api.v1.schemas.project import (
     ProjectCreate,
     ProjectDetailPayload,
     ProjectDetailResponse,
+    ProjectDuplicationCheckResponse,
+    ProjectDuplicationStatus,
     ProjectResponse,
     ProjectsResponse,
     ProjectSummaryPayload,
@@ -30,6 +32,17 @@ def create_project(
     )
 
     return ProjectResponse(data=project)
+
+
+@router.post("/duplicate", response_model=ProjectDuplicationCheckResponse)
+def check_project_duplication(
+    *,
+    request_body: ProjectCreate,
+) -> ProjectDuplicationCheckResponse:
+
+    duplication_status = ProjectDuplicationStatus(is_duplicated=False)
+
+    return ProjectDuplicationCheckResponse(data=duplication_status)
 
 
 @router.get("", response_model=ProjectsResponse)

@@ -16,6 +16,10 @@ class ProjectCreate(BaseModel):
         return project_name
 
 
+class ProjectDuplicationStatus(BaseModel):
+    is_duplicated: bool = Field(..., description="Indicates if the project name is duplicated.")
+
+
 class ProjectSummaryPayload(ProjectCreate):
     model_config = ConfigDict(from_attributes=True)
 
@@ -42,6 +46,10 @@ class ProjectDetailPayload(ProjectSummaryPayload):
 
 class ProjectResponse(ResponseItem):
     data: ProjectSummaryPayload
+
+
+class ProjectDuplicationCheckResponse(ResponseItem):
+    data: ProjectDuplicationStatus
 
 
 class ProjectDetailResponse(ResponseItem):
