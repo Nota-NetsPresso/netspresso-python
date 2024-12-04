@@ -1,6 +1,8 @@
+from typing import List
+
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.api.v1.schemas.base import ResponseItem
+from app.api.v1.schemas.base import ResponseItem, ResponsePaginationItems
 
 
 class ProjectCreate(BaseModel):
@@ -22,3 +24,7 @@ class ProjectPayload(ProjectCreate):
 
 class ProjectResponse(ResponseItem):
     data: ProjectPayload
+
+
+class ProjectsResponse(ResponsePaginationItems):
+    data: List[ProjectPayload]
