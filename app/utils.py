@@ -1,4 +1,5 @@
-import bcrypt
+import hashlib
+
 from nanoid import generate
 
 
@@ -8,5 +9,4 @@ def generate_id(entity: str, size: int = 10) -> str:
 
 
 def hash_password(password: str) -> str:
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    return hashed_password.decode('utf-8')
+    return hashlib.sha256(password.encode()).hexdigest()

@@ -25,9 +25,13 @@ class UserService:
         user = user_repository.get_by_email(db=db, email=email)
 
         if user:
-            user.api_key = generated_id
-            user.password = hash_password(password)
-            user_repository.save(db=db, model=user)
+            hashed_password = hash_password(password)
+            if user.password != hashed_password:
+                user.password = hashed_password
+                user.api_key = generated_id
+            elif user.api_key != generated_id:
+                user.api_key = generated_id
+            user = user_repository.save(db=db, model=user)
         else:
             user = self.create_user(
                 db=db,
@@ -36,7 +40,7 @@ class UserService:
                 api_key=generated_id,
             )
 
-        api_key = ApiKeyPayload(api_key=generated_id)
+        api_key = ApiKeyPayload(api_key=user.api_key)
 
         return api_key
 
