@@ -34,5 +34,5 @@ class ServerInfoResponse(ResponseItem):
     data: ServerInfoPayload
 
 
-class GpuInfosResponse(ResponseItem):
+class GpusInfoResponse(ResponseItem):
     data: List[GpuInfoPayload]
