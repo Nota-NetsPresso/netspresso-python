@@ -4,18 +4,19 @@ from gpustat import GPUStatCollection
 from app.api.v1.schemas.system import (
     GpuInfoPayload,
     GpuInfosResponse,
-    LibraryInfo,
     ServerInfoPayload,
     ServerInfoResponse,
 )
+from app.services.system import system_service
 
 router = APIRouter()
 
 
 @router.get("/server-info", response_model=ServerInfoResponse)
 def get_server_info() -> ServerInfoResponse:
+    installed_libraries = system_service.get_installed_libraries()
 
-    server_info = ServerInfoPayload(installed_libraries=[LibraryInfo(name="netspresso", version="1.14.0")])
+    server_info = ServerInfoPayload(installed_libraries=installed_libraries)
 
     return ServerInfoResponse(data=server_info)
 
