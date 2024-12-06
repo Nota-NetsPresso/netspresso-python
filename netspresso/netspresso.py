@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 from loguru import logger
 
@@ -51,13 +51,13 @@ class NetsPresso:
 
         # Create the main project folder
         project_folder_path = Path(project_path) / project_name
-        project_abs_path = project_folder_path.resolve()
 
         # Check if the project folder already exists
         if project_folder_path.exists():
-            logger.warning(f"Project '{project_name}' already exists at {project_abs_path}.")
+            logger.warning(f"Project '{project_name}' already exists at {project_folder_path.resolve()}.")
         else:
             project_folder_path.mkdir(parents=True, exist_ok=True)
+            project_abs_path = project_folder_path.resolve()
 
             # Create subfolders
             for folder in SUB_FOLDERS:
@@ -65,19 +65,30 @@ class NetsPresso:
 
             logger.info(f"Project '{project_name}' created at {project_abs_path}.")
 
+            try:
+                with get_db() as db:
+                    project = Project(
+                        project_name=project_name,
+                        user_id=self.user_info.user_id,
+                        project_abs_path=project_abs_path.as_posix(),
+                    )
+                    project = project_repository.save(db=db, model=project)
+
+                    return project
+
+            except Exception as e:
+                logger.error(f"Failed to save project '{project_name}' to the database: {e}")
+                raise
+
+    def get_projects(self) -> List[Project]:
         try:
             with get_db() as db:
-                project = Project(
-                    project_name=project_name,
-                    user_id=self.user_info.user_id,
-                    project_abs_path=project_abs_path.as_posix(),
-                )
-                project = project_repository.save(db=db, model=project)
+                projects = project_repository.get_all_by_user_id(db=db, user_id=self.user_info.user_id)
 
-                return project
+                return projects
 
         except Exception as e:
-            logger.error(f"Failed to save project '{project_name}' to the database: {e}")
+            logger.error(f"Failed to get project list from the database: {e}")
             raise
 
     def trainer(
