@@ -17,7 +17,7 @@ from netspresso.tao import TAOTrainer
 from netspresso.trainer import Trainer
 from netspresso.utils.db.models.project import Project
 from netspresso.utils.db.repositories.project import project_repository
-from netspresso.utils.db.session import get_db
+from netspresso.utils.db.session import SessionLocal
 
 
 class NetsPresso:
@@ -65,31 +65,39 @@ class NetsPresso:
 
             logger.info(f"Project '{project_name}' created at {project_abs_path}.")
 
+            db = None
             try:
-                with get_db() as db:
-                    project = Project(
-                        project_name=project_name,
-                        user_id=self.user_info.user_id,
-                        project_abs_path=project_abs_path.as_posix(),
-                    )
-                    project = project_repository.save(db=db, model=project)
+                db = SessionLocal()
+                project = Project(
+                    project_name=project_name,
+                    user_id=self.user_info.user_id,
+                    project_abs_path=project_abs_path.as_posix(),
+                )
+                project = project_repository.save(db=db, model=project)
 
-                    return project
+                return project
 
             except Exception as e:
                 logger.error(f"Failed to save project '{project_name}' to the database: {e}")
                 raise
+            finally:
+                if db:
+                    db.close()
 
     def get_projects(self) -> List[Project]:
+        db = None
         try:
-            with get_db() as db:
-                projects = project_repository.get_all_by_user_id(db=db, user_id=self.user_info.user_id)
+            db = SessionLocal()
+            projects = project_repository.get_all_by_user_id(db=db, user_id=self.user_info.user_id)
 
-                return projects
+            return projects
 
         except Exception as e:
             logger.error(f"Failed to get project list from the database: {e}")
             raise
+        finally:
+            if db:
+                db.close()
 
     def trainer(
         self, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None
