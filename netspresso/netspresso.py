@@ -81,8 +81,7 @@ class NetsPresso:
                 logger.error(f"Failed to save project '{project_name}' to the database: {e}")
                 raise
             finally:
-                if db:
-                    db.close()
+                db and db.close()
 
     def get_projects(self) -> List[Project]:
         db = None
@@ -96,8 +95,7 @@ class NetsPresso:
             logger.error(f"Failed to get project list from the database: {e}")
             raise
         finally:
-            if db:
-                db.close()
+            db and db.close()
 
     def trainer(
         self, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None
