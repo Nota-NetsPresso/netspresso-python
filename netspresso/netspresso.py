@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 from loguru import logger
 
@@ -79,6 +79,17 @@ class NetsPresso:
             except Exception as e:
                 logger.error(f"Failed to save project '{project_name}' to the database: {e}")
                 raise
+
+    def get_projects(self) -> List[Project]:
+        try:
+            with get_db() as db:
+                projects = project_repository.get_all_by_user_id(db=db, user_id=self.user_info.user_id)
+
+                return projects
+
+        except Exception as e:
+            logger.error(f"Failed to get project list from the database: {e}")
+            raise
 
     def trainer(
         self, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None
