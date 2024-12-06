@@ -1,5 +1,7 @@
+from contextlib import contextmanager
 from typing import Generator
 
+from loguru import logger
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy_utils import create_database, database_exists
@@ -21,13 +23,22 @@ SessionLocal = sessionmaker(
 Base = declarative_base()
 
 
+@contextmanager
 def get_db() -> Generator:
+    db = None
     try:
         db = SessionLocal()
         yield db
     finally:
-        db.close()
+        if db:
+            db.close()
 
 
-if not database_exists(engine.url):
-    create_database(engine.url)
+def check_database(engine):
+    if not database_exists(engine.url):
+        logger.info("The database did not exist, so it has been created.")
+        create_database(engine.url)
+    else:
+        logger.info("The database has already been created.")
+
+check_database(engine=engine)

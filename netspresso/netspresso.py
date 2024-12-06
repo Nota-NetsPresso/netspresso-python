@@ -8,13 +8,16 @@ from netspresso.clients.auth import TokenHandler, auth_client
 from netspresso.clients.auth.response_body import UserResponse
 from netspresso.clients.tao import TAOTokenHandler
 from netspresso.compressor import CompressorV2
+from netspresso.constant.project import SUB_FOLDERS
 from netspresso.converter import ConverterV2
 from netspresso.enums import Task
 from netspresso.inferencer.inferencer import CustomInferencer, NPInferencer
 from netspresso.quantizer import Quantizer
 from netspresso.tao import TAOTrainer
 from netspresso.trainer import Trainer
-from netspresso.utils.file import FileHandler
+from netspresso.utils.db.models.project import Project
+from netspresso.utils.db.repositories.project import project_repository
+from netspresso.utils.db.session import get_db
 
 
 class NetsPresso:
@@ -42,31 +45,40 @@ class NetsPresso:
         )
         return user_info
 
-    def create_project(self, project_name: str, project_path: str = "./"):
+    def create_project(self, project_name: str, project_path: str = "./projects") -> Project:
+        if len(project_name) > 30:
+            raise ValueError("The project_name can't exceed 30 characters.")
+
         # Create the main project folder
         project_folder_path = Path(project_path) / project_name
+        project_abs_path = project_folder_path.resolve()
 
         # Check if the project folder already exists
         if project_folder_path.exists():
-            logger.info(f"Project '{project_name}' already exists at {project_folder_path.resolve()}.")
+            logger.warning(f"Project '{project_name}' already exists at {project_abs_path}.")
         else:
             project_folder_path.mkdir(parents=True, exist_ok=True)
 
-            # Subfolder names
-            subfolders = ["Trainer models", "Compressed models", "Pretrained models"]
-
             # Create subfolders
-            for folder in subfolders:
+            for folder in SUB_FOLDERS:
                 (project_folder_path / folder).mkdir(parents=True, exist_ok=True)
 
-            # Create a metadata.json file
-            metadata_file_path = project_folder_path / "metadata.json"
-            metadata = {"is_project_folder": True}
+            logger.info(f"Project '{project_name}' created at {project_abs_path}.")
 
-            # Write metadata to the json file
-            FileHandler.save_json(data=metadata, file_path=metadata_file_path)
+        try:
+            with get_db() as db:
+                project = Project(
+                    project_name=project_name,
+                    user_id=self.user_info.user_id,
+                    project_abs_path=project_abs_path.as_posix(),
+                )
+                project = project_repository.save(db=db, model=project)
 
-            logger.info(f"Project '{project_name}' created at {project_folder_path.resolve()}.")
+                return project
+
+        except Exception as e:
+            logger.error(f"Failed to save project '{project_name}' to the database: {e}")
+            raise
 
     def trainer(
         self, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None
