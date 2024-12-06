@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.api.v1.schemas.user import ApiKeyCreate, ApiKeyResponse, CreditInfo, DetailData, UserPayload, UserResponse
+from app.api.deps import api_key_header
+from app.api.v1.schemas.user import ApiKeyCreate, ApiKeyResponse, UserResponse
 from app.services.user import user_service
 from netspresso.utils.db.session import get_db
 
@@ -16,19 +17,7 @@ def generate_api_key(*, db: Session = Depends(get_db), request_body: ApiKeyCreat
 
 
 @router.get("/me", response_model=UserResponse)
-def get_user() -> UserResponse:
-    user = UserPayload(
-        user_id="e8e8df79-2a62-4562-8e4d-06f51dd795b2",
-        email="nppd_test_001@nota.ai",
-        detail_data=DetailData(
-            first_name="Byeongman",
-            last_name="Lee",
-            company="Nota AI",
-        ),
-        credit_info=CreditInfo(
-            free=1000,
-            total=1000,
-        ),
-    )
+def get_user(*, db: Session = Depends(get_db), api_key: str = Depends(api_key_header)) -> UserResponse:
+    user = user_service.get_user_info(db=db, api_key=api_key)
 
     return UserResponse(data=user)
