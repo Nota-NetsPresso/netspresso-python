@@ -10,6 +10,6 @@ class Project(Base, TimestampMixin):
 
     id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True, nullable=False)
     project_id = Column(String(36), index=True, unique=True, nullable=False, default=lambda: generate_uuid(entity="project"))
-    project_name = Column(String(30), nullable=False)
+    project_name = Column(String(30), nullable=False, unique=True)
     user_id = Column(String(36), nullable=False)
     project_abs_path = Column(String(500), nullable=False)
