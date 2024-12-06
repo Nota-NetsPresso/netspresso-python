@@ -1,18 +1,16 @@
 from sqlalchemy.orm import Session
 
 from app.api.v1.schemas.user import ApiKeyPayload
-from app.utils import generate_id, hash_password
+from app.utils import generate_id
 from netspresso.utils.db.models.user import User
 from netspresso.utils.db.repositories.user import user_repository
 
 
 class UserService:
     def create_user(self, db: Session, email: str, password: str, api_key: str):
-        hashed_password = hash_password(password)
-
         user = User(
             email=email,
-            password=hashed_password,
+            password=password,
             api_key=api_key,
         )
         user = user_repository.save(db=db, model=user)
@@ -25,9 +23,8 @@ class UserService:
         user = user_repository.get_by_email(db=db, email=email)
 
         if user:
-            hashed_password = hash_password(password)
-            if user.password != hashed_password:
-                user.password = hashed_password
+            if user.password != password:
+                user.password = password
                 user.api_key = generated_id
             elif user.api_key != generated_id:
                 user.api_key = generated_id
