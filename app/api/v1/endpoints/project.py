@@ -40,10 +40,15 @@ def create_project(
 @router.post("/duplicate", response_model=ProjectDuplicationCheckResponse)
 def check_project_duplication(
     *,
+    db: Session = Depends(get_db),
+    api_key: str = Depends(api_key_header),
     request_body: ProjectCreate,
 ) -> ProjectDuplicationCheckResponse:
+    is_duplicated = project_service.check_project_duplication(
+        db=db, project_name=request_body.project_name, api_key=api_key
+    )
 
-    duplication_status = ProjectDuplicationStatus(is_duplicated=False)
+    duplication_status = ProjectDuplicationStatus(is_duplicated=is_duplicated)
 
     return ProjectDuplicationCheckResponse(data=duplication_status)
 
@@ -68,10 +73,7 @@ def get_projects(
 
 
 @router.get("/{project_id}", response_model=ProjectDetailResponse)
-def get_project(
-    *,
-    project_id: str
-) -> ProjectDetailResponse:
+def get_project(*, project_id: str) -> ProjectDetailResponse:
 
     models = [
         ModelSummary(
@@ -79,22 +81,19 @@ def get_project(
             name="yolox_s_test",
             type="trained_model",
             status="in_progress",
-            latest_experiments=ExperimentStatus(convert="not_started", benchmark="not_started")
+            latest_experiments=ExperimentStatus(convert="not_started", benchmark="not_started"),
         ),
         ModelSummary(
             model_id="3aab6fb0-9852-4794-b668-676c06246564",
             name="yolox_l_test",
             type="compressed_model",
             status="completed",
-            latest_experiments=ExperimentStatus(convert="completed", benchmark="completed")
-        )
+            latest_experiments=ExperimentStatus(convert="completed", benchmark="completed"),
+        ),
     ]
 
     project = ProjectDetailPayload(
-        project_id=str(uuid4()),
-        project_name="project_test_1",
-        user_id=str(uuid4()),
-        models=models
+        project_id=str(uuid4()), project_name="project_test_1", user_id=str(uuid4()), models=models
     )
 
     return ProjectDetailResponse(data=project)

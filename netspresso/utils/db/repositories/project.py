@@ -49,5 +49,22 @@ class ProjectRepository(BaseRepository[Project]):
             order=order,
         )
 
+    def is_project_name_duplicated(self, db: Session, project_name: str, user_id: str) -> bool:
+        """
+        Check if a project with the same name already exists for the given API key.
+
+        Args:
+            db (Session): Database session.
+            project_name (str): The name of the project to check.
+            api_key (str): API key to filter the user's projects.
+
+        Returns:
+            bool: True if the project name exists, False otherwise.
+        """
+        return db.query(self.model).filter(
+            self.model.project_name == project_name,
+            self.model.user_id == user_id,
+        ).first() is not None
+
 
 project_repository = ProjectRepository(Project)
