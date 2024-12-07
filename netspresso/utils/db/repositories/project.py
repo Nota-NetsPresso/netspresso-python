@@ -56,7 +56,7 @@ class ProjectRepository(BaseRepository[Project]):
         Args:
             db (Session): Database session.
             project_name (str): The name of the project to check.
-            api_key (str): API key to filter the user's projects.
+            user_id (str): The ID of the user to filter the user's projects.
 
         Returns:
             bool: True if the project name exists, False otherwise.
