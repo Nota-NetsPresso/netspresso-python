@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.api.deps import api_key_header
+from app.api.v1.schemas.base import Order
 from app.api.v1.schemas.project import (
     ExperimentStatus,
     ModelSummary,
@@ -56,20 +57,17 @@ def check_project_duplication(
 @router.get("", response_model=ProjectsResponse)
 def get_projects(
     *,
-    user_id: str,
-    skip: Optional[int] = 0,
-    limit: Optional[int] = 100,
+    db: Session = Depends(get_db),
+    api_key: str = Depends(api_key_header),
+    start: Optional[int] = 0,
+    size: Optional[int] = 10,
+    order: Order = Order.DESC.value,
 ) -> ProjectsResponse:
+    projects = project_service.get_projects(db=db, start=start, size=size, order=order, api_key=api_key)
+    projects = [ProjectSummaryPayload.model_validate(project) for project in projects]
+    total_count = project_service.count_project_by_user_id(db=db, api_key=api_key)
 
-    projects = [
-        ProjectSummaryPayload(
-            project_id=str(uuid4()),
-            project_name="project_test_1",
-            user_id=str(uuid4()),
-        )
-    ]
-
-    return ProjectsResponse(data=projects)
+    return ProjectsResponse(data=projects, result_count=len(projects), total_count=total_count)
 
 
 @router.get("/{project_id}", response_model=ProjectDetailResponse)

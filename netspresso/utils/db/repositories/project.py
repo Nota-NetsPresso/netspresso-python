@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from netspresso.utils.db.models.project import Project
@@ -65,6 +66,13 @@ class ProjectRepository(BaseRepository[Project]):
             self.model.project_name == project_name,
             self.model.user_id == user_id,
         ).first() is not None
+
+    def count_by_user_id(self, db: Session, user_id: str) -> int:
+        return (
+            db.query(func.count(self.model.user_id))
+            .filter(self.model.user_id == user_id)
+            .scalar()
+        )
 
 
 project_repository = ProjectRepository(Project)
