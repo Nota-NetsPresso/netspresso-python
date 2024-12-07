@@ -4,6 +4,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.api.v1.schemas.base import ResponseItem, ResponsePaginationItems
 from netspresso.enums import Status
+from netspresso.exceptions.project import ProjectNameTooLongException
 
 
 class ProjectCreate(BaseModel):
@@ -12,7 +13,7 @@ class ProjectCreate(BaseModel):
     @field_validator("project_name")
     def validate_length_of_project_name(cls, project_name: str) -> str:
         if len(project_name) > 30:
-            raise ValueError("The project_name can't exceed 30 characters.")
+            raise ProjectNameTooLongException(max_length=30, actual_length=len(project_name))
         return project_name
 
 

@@ -11,6 +11,11 @@ from netspresso.compressor import CompressorV2
 from netspresso.constant.project import SUB_FOLDERS
 from netspresso.converter import ConverterV2
 from netspresso.enums import Task
+from netspresso.exceptions.project import (
+    ProjectAlreadyExistsException,
+    ProjectNameTooLongException,
+    ProjectSaveException,
+)
 from netspresso.inferencer.inferencer import CustomInferencer, NPInferencer
 from netspresso.quantizer import Quantizer
 from netspresso.tao import TAOTrainer
@@ -47,7 +52,7 @@ class NetsPresso:
 
     def create_project(self, project_name: str, project_path: str = "./projects") -> Project:
         if len(project_name) > 30:
-            raise ValueError("The project_name can't exceed 30 characters.")
+            raise ProjectNameTooLongException(max_length=30, actual_length=len(project_name))
 
         # Create the main project folder
         project_folder_path = Path(project_path) / project_name
@@ -55,6 +60,10 @@ class NetsPresso:
         # Check if the project folder already exists
         if project_folder_path.exists():
             logger.warning(f"Project '{project_name}' already exists at {project_folder_path.resolve()}.")
+            raise ProjectAlreadyExistsException(
+                project_name=project_name,
+                project_path=project_folder_path.resolve().as_posix()
+            )
         else:
             project_folder_path.mkdir(parents=True, exist_ok=True)
             project_abs_path = project_folder_path.resolve()
@@ -79,7 +88,7 @@ class NetsPresso:
 
             except Exception as e:
                 logger.error(f"Failed to save project '{project_name}' to the database: {e}")
-                raise
+                raise ProjectSaveException(error=e, project_name=project_name)
             finally:
                 db and db.close()
 
