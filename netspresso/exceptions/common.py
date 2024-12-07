@@ -3,6 +3,15 @@ from enum import Enum
 from typing import List, Optional
 
 
+class Origin(str, Enum):
+    ROUTER = "router"
+    SERVICE = "service"
+    REPOSITORY = "repository"
+    CORE = "core"
+    CLIENT = "client"
+    LIBRARY = "library"
+
+
 class LinkType(str, Enum):
     DOCS = "docs"
     CONTACT = "contact"
