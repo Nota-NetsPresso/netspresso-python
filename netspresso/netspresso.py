@@ -51,6 +51,31 @@ class NetsPresso:
         return user_info
 
     def create_project(self, project_name: str, project_path: str = "./projects") -> Project:
+        """
+        Create a new project with the specified name and path.
+
+        This method creates a project directory structure on the file system
+        and saves the project information in the database. It also handles
+        scenarios where the project name is too long or already exists.
+
+        Args:
+            project_name (str): The name of the project to create.
+                Must not exceed 30 characters.
+            project_path (str, optional): The base path where the project
+                will be created. Defaults to "./projects".
+
+        Returns:
+            Project: The created project object containing information
+            such as project name, user ID, and absolute path.
+
+        Raises:
+            ProjectNameTooLongException: If the `project_name` exceeds the
+                maximum allowed length of 30 characters.
+            ProjectAlreadyExistsException: If a project with the same name
+                already exists at the specified `project_path`.
+            ProjectSaveException: If an error occurs while saving the project
+                to the database.
+        """
         if len(project_name) > 30:
             raise ProjectNameTooLongException(max_length=30, actual_length=len(project_name))
 
@@ -93,6 +118,18 @@ class NetsPresso:
                 db and db.close()
 
     def get_projects(self) -> List[Project]:
+        """
+        Retrieve all projects associated with the current user.
+
+        This method fetches project information from the database for
+        the user identified by `self.user_info.user_id`.
+
+        Returns:
+            List[Project]: A list of projects associated with the current user.
+
+        Raises:
+            Exception: If an error occurs while querying the database.
+        """
         db = None
         try:
             db = SessionLocal()
