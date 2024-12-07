@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -26,6 +27,8 @@ class ProjectSummaryPayload(ProjectCreate):
 
     project_id: str = Field(..., description="The unique identifier for the project.")
     user_id: str = Field(..., description="The unique identifier for the user associated with the project.")
+    created_at: datetime = Field(..., description="The timestamp when the project was created.")
+    updated_at: datetime = Field(..., description="The timestamp when the project was last updated.")
 
 
 class ExperimentStatus(BaseModel):

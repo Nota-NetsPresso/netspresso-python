@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 warnings.filterwarnings("ignore")
 
 
-class Order(Enum):
+class Order(str, Enum):
     DESC = "desc"
     ASC = "asc"
 

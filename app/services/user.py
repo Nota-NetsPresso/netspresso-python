@@ -45,10 +45,14 @@ class UserService:
 
         return user
 
-    def get_user_info(self, db: Session, api_key: str) -> UserPayload:
-        user = self.get_user_by_api_key(db=db, api_key=api_key)
-
+    def build_netspresso_with_api_key(self, db: Session, api_key: str) -> NetsPresso:
+        user = user_repository.get_by_api_key(db=db, api_key=api_key)
         netspresso = NetsPresso(email=user.email, password=user.password)
+
+        return netspresso
+
+    def get_user_info(self, db: Session, api_key: str) -> UserPayload:
+        netspresso = self.build_netspresso_with_api_key(db=db, api_key=api_key)
 
         user = UserPayload(
             user_id=netspresso.user_info.user_id,
