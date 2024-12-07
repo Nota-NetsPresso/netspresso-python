@@ -8,7 +8,7 @@ from netspresso.utils.db.repositories.base import BaseRepository
 
 class UserRepository(BaseRepository[User]):
     def get_by_email(self, db: Session, email: str) -> Optional[User]:
-        user = db.query(User).filter(User.email == email).first()
+        user = db.query(self.model).filter(self.model.email == email).first()
 
         return user
 

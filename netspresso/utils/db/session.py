@@ -23,15 +23,12 @@ SessionLocal = sessionmaker(
 Base = declarative_base()
 
 
-@contextmanager
 def get_db() -> Generator:
-    db = None
     try:
         db = SessionLocal()
         yield db
     finally:
-        if db:
-            db.close()
+        db.close()
 
 
 def check_database(engine):

@@ -1,8 +1,10 @@
 from typing import Optional
 from uuid import uuid4
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
+from app.api.deps import api_key_header
 from app.api.v1.schemas.project import (
     ExperimentStatus,
     ModelSummary,
@@ -15,6 +17,8 @@ from app.api.v1.schemas.project import (
     ProjectsResponse,
     ProjectSummaryPayload,
 )
+from app.services.project import project_service
+from netspresso.utils.db.session import get_db
 
 router = APIRouter()
 
@@ -22,14 +26,13 @@ router = APIRouter()
 @router.post("", response_model=ProjectResponse)
 def create_project(
     *,
+    db: Session = Depends(get_db),
+    api_key: str = Depends(api_key_header),
     request_body: ProjectCreate,
 ) -> ProjectResponse:
+    project = project_service.create_project(db=db, project_name=request_body.project_name, api_key=api_key)
 
-    project = ProjectSummaryPayload(
-        project_id=str(uuid4()),
-        project_name=request_body.project_name,
-        user_id=str(uuid4()),
-    )
+    project = ProjectSummaryPayload.model_validate(project)
 
     return ProjectResponse(data=project)
 

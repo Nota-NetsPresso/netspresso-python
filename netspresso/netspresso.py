@@ -11,13 +11,18 @@ from netspresso.compressor import CompressorV2
 from netspresso.constant.project import SUB_FOLDERS
 from netspresso.converter import ConverterV2
 from netspresso.enums import Task
+from netspresso.exceptions.project import (
+    ProjectAlreadyExistsException,
+    ProjectNameTooLongException,
+    ProjectSaveException,
+)
 from netspresso.inferencer.inferencer import CustomInferencer, NPInferencer
 from netspresso.quantizer import Quantizer
 from netspresso.tao import TAOTrainer
 from netspresso.trainer import Trainer
 from netspresso.utils.db.models.project import Project
 from netspresso.utils.db.repositories.project import project_repository
-from netspresso.utils.db.session import get_db
+from netspresso.utils.db.session import SessionLocal
 
 
 class NetsPresso:
@@ -46,8 +51,33 @@ class NetsPresso:
         return user_info
 
     def create_project(self, project_name: str, project_path: str = "./projects") -> Project:
+        """
+        Create a new project with the specified name and path.
+
+        This method creates a project directory structure on the file system
+        and saves the project information in the database. It also handles
+        scenarios where the project name is too long or already exists.
+
+        Args:
+            project_name (str): The name of the project to create.
+                Must not exceed 30 characters.
+            project_path (str, optional): The base path where the project
+                will be created. Defaults to "./projects".
+
+        Returns:
+            Project: The created project object containing information
+            such as project name, user ID, and absolute path.
+
+        Raises:
+            ProjectNameTooLongException: If the `project_name` exceeds the
+                maximum allowed length of 30 characters.
+            ProjectAlreadyExistsException: If a project with the same name
+                already exists at the specified `project_path`.
+            ProjectSaveException: If an error occurs while saving the project
+                to the database.
+        """
         if len(project_name) > 30:
-            raise ValueError("The project_name can't exceed 30 characters.")
+            raise ProjectNameTooLongException(max_length=30, actual_length=len(project_name))
 
         # Create the main project folder
         project_folder_path = Path(project_path) / project_name
@@ -55,6 +85,10 @@ class NetsPresso:
         # Check if the project folder already exists
         if project_folder_path.exists():
             logger.warning(f"Project '{project_name}' already exists at {project_folder_path.resolve()}.")
+            raise ProjectAlreadyExistsException(
+                project_name=project_name,
+                project_path=project_folder_path.resolve().as_posix()
+            )
         else:
             project_folder_path.mkdir(parents=True, exist_ok=True)
             project_abs_path = project_folder_path.resolve()
@@ -65,31 +99,49 @@ class NetsPresso:
 
             logger.info(f"Project '{project_name}' created at {project_abs_path}.")
 
+            db = None
             try:
-                with get_db() as db:
-                    project = Project(
-                        project_name=project_name,
-                        user_id=self.user_info.user_id,
-                        project_abs_path=project_abs_path.as_posix(),
-                    )
-                    project = project_repository.save(db=db, model=project)
+                db = SessionLocal()
+                project = Project(
+                    project_name=project_name,
+                    user_id=self.user_info.user_id,
+                    project_abs_path=project_abs_path.as_posix(),
+                )
+                project = project_repository.save(db=db, model=project)
 
-                    return project
+                return project
 
             except Exception as e:
                 logger.error(f"Failed to save project '{project_name}' to the database: {e}")
-                raise
+                raise ProjectSaveException(error=e, project_name=project_name)
+            finally:
+                db and db.close()
 
     def get_projects(self) -> List[Project]:
-        try:
-            with get_db() as db:
-                projects = project_repository.get_all_by_user_id(db=db, user_id=self.user_info.user_id)
+        """
+        Retrieve all projects associated with the current user.
 
-                return projects
+        This method fetches project information from the database for
+        the user identified by `self.user_info.user_id`.
+
+        Returns:
+            List[Project]: A list of projects associated with the current user.
+
+        Raises:
+            Exception: If an error occurs while querying the database.
+        """
+        db = None
+        try:
+            db = SessionLocal()
+            projects = project_repository.get_all_by_user_id(db=db, user_id=self.user_info.user_id)
+
+            return projects
 
         except Exception as e:
             logger.error(f"Failed to get project list from the database: {e}")
             raise
+        finally:
+            db and db.close()
 
     def trainer(
         self, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None
