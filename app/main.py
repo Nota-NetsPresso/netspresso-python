@@ -22,6 +22,7 @@ def init_exceptions(app: FastAPI) -> None:
 
         return JSONResponse(status_code=status_code, content=exc.detail)
 
+
 def make_middleware() -> List[Middleware]:
     origins = ["*"]
     middleware = [

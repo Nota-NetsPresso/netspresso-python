@@ -29,7 +29,7 @@ class ExceptionDetail(BaseModel):
                 {
                     "data": {
                         "origin": Origin.ROUTER,
-                        "error_log": "AttributeError(\"module 'np_compressor_core.torch.pruning' has no attribute 'VBMF'\")"
+                        "error_log": "AttributeError(\"module 'np_compressor_core.torch.pruning' has no attribute 'VBMF'\")",
                     },
                     "error_code": "CS40020",
                     "name": "NotFoundMethodClassException",

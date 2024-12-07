@@ -1,10 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1.schemas.system import (
-    GpusInfoResponse,
-    ServerInfoPayload,
-    ServerInfoResponse,
-)
+from app.api.v1.schemas.system import GpusInfoResponse, ServerInfoPayload, ServerInfoResponse
 from app.services.system import system_service
 
 router = APIRouter()
