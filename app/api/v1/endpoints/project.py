@@ -61,7 +61,7 @@ def get_projects(
     api_key: str = Depends(api_key_header),
     start: Optional[int] = 0,
     size: Optional[int] = 10,
-    order: Order = Order.DESC.value,
+    order: Order = Order.DESC,
 ) -> ProjectsResponse:
     projects = project_service.get_projects(db=db, start=start, size=size, order=order, api_key=api_key)
     projects = [ProjectSummaryPayload.model_validate(project) for project in projects]
