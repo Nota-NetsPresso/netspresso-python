@@ -41,5 +41,11 @@ class ProjectService:
 
         return project_repository.count_by_user_id(db=db, user_id=netspresso.user_info.user_id)
 
+    def get_project(self, *, db: Session, project_id: str, api_key: str) -> Project:
+        netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
+        project = project_repository.get_by_project_id(db=db, project_id=project_id, user_id=netspresso.user_info.user_id)
+
+        return project
+
 
 project_service = ProjectService()

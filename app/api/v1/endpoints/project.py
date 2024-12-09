@@ -1,5 +1,4 @@
 from typing import Optional
-from uuid import uuid4
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
@@ -71,8 +70,15 @@ def get_projects(
 
 
 @router.get("/{project_id}", response_model=ProjectDetailResponse)
-def get_project(*, project_id: str) -> ProjectDetailResponse:
+def get_project(
+    *, project_id: str,
+    db: Session = Depends(get_db),
+    api_key: str = Depends(api_key_header),
+) -> ProjectDetailResponse:
+    project_summary = project_service.get_project(db=db, project_id=project_id, api_key=api_key)
+    project_summary_payload = ProjectSummaryPayload.model_validate(project_summary)
 
+    # TODO: Add get_model_summary
     models = [
         ModelSummary(
             model_id="9beb6f14-fe8a-4d70-8243-c51f5d7f36f8",
@@ -90,8 +96,6 @@ def get_project(*, project_id: str) -> ProjectDetailResponse:
         ),
     ]
 
-    project = ProjectDetailPayload(
-        project_id=str(uuid4()), project_name="project_test_1", user_id=str(uuid4()), models=models
-    )
+    project_detail = ProjectDetailPayload(**project_summary_payload.model_dump(), models=models)
 
-    return ProjectDetailResponse(data=project)
+    return ProjectDetailResponse(data=project_detail)
