@@ -3,13 +3,17 @@ from typing import List, Optional
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from netspresso.exceptions.project import ProjectNotFoundException
 from netspresso.utils.db.models.project import Project
 from netspresso.utils.db.repositories.base import BaseRepository, Order
 
 
 class ProjectRepository(BaseRepository[Project]):
-    def get_by_project_id(self, db: Session, project_id: str) -> Optional[Project]:
-        project = db.query(self.model).filter(self.model.project_id == project_id)
+    def get_by_project_id(self, db: Session, project_id: str, user_id: str) -> Optional[Project]:
+        project = db.query(self.model).filter(self.model.project_id == project_id, self.model.user_id == user_id).first()
+
+        if not project:
+            raise ProjectNotFoundException(project_id=project_id, user_id=user_id)
 
         return project
 
