@@ -661,7 +661,7 @@ class Trainer(NetsPressoBase):
 
         return task
 
-    def train(self, gpus: str, model_name: str, project_id: str, output_dir: Optional[str] = "./outputs") -> TrainerMetadata:
+    def train(self, gpus: str, model_name: str, project_id: str, output_dir: Optional[str] = "./outputs") -> TrainedModel:
         """Train the model with the specified configuration.
 
         Args:
