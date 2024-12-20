@@ -9,6 +9,8 @@ from netspresso.base import NetsPressoBase
 from netspresso.clients.auth import TokenHandler
 from netspresso.clients.launcher import launcher_client_v2
 from netspresso.enums import Framework, Optimizer, Scheduler, ServiceTask, Status, Task
+from netspresso.enums.project import SubFolder
+from netspresso.enums.train import StorageLocation
 from netspresso.exceptions.trainer import (
     BaseDirectoryNotFoundException,
     DirectoryNotFoundException,
@@ -35,6 +37,11 @@ from netspresso.trainer.models import (
 from netspresso.trainer.trainer_configs import TrainerConfigs
 from netspresso.trainer.training import TRAINING_CONFIG_TYPE, EnvironmentConfig, LoggingConfig, ScheduleConfig
 from netspresso.utils import FileHandler
+from netspresso.utils.db.models.model import TrainedModel
+from netspresso.utils.db.models.train import Augmentation, Dataset, Environment, Hyperparameter, Performance, TrainTask
+from netspresso.utils.db.repositories.model import trained_model_repository
+from netspresso.utils.db.repositories.task import train_task_repository
+from netspresso.utils.db.session import get_db_session
 from netspresso.utils.metadata import MetadataHandler
 
 
@@ -351,6 +358,8 @@ class Trainer(NetsPressoBase):
             batch_size (int, optional): The number of samples in single batch input. Defaults to 8.
         """
 
+        self.optimizer = optimizer
+        self.scheduler = scheduler
         self.training = ScheduleConfig(
             epochs=epochs,
             optimizer=optimizer.asdict(),
@@ -563,7 +572,96 @@ class Trainer(NetsPressoBase):
 
         return save_path
 
-    def train(self, gpus: str, project_name: str, output_dir: Optional[str] = "./outputs") -> TrainerMetadata:
+    def _save_train_task(self, train_task):
+        with get_db_session() as db:
+            train_task = train_task_repository.save(db=db, task=train_task)
+
+            return train_task
+
+    def save_trained_model(self, model_name, train_task, project_id, user_id):
+        trained_model = TrainedModel(
+            name=model_name,
+            type=SubFolder.TRAINED_MODELS,
+            is_retrainable=True,
+            project_id=project_id,
+            user_id=user_id,
+            train_task=train_task,
+        )
+        with get_db_session() as db:
+            model = trained_model_repository.save(db=db, model=trained_model)
+            return model
+
+    def create_train_task(self):
+        dataset = Dataset(
+            name=self.data.name,
+            format=self.data.format,
+            root_path=self.data.path.root,
+            train_path="train",
+            valid_path="valid",
+            test_path="test",
+            storage_location=StorageLocation.LOCAL,
+            train_valid_split_ratio=0,
+            id_mapping=self.data.id_mapping,
+            palette=self.data.pallete,
+        )
+        hyperparameter = Hyperparameter(
+            epochs=self.training.epochs,
+            batch_size=self.environment.batch_size,
+            learning_rate=self.training.optimizer["lr"],
+            optimizer_name=Optimizer.to_display_name(self.training.optimizer["name"]),
+            optimizer_params=self.optimizer.to_parameters(),
+            scheduler_name=Scheduler.to_display_name(self.training.scheduler["name"]),
+            scheduler_params=self.scheduler.to_parameters(),
+        )
+        environment = Environment(
+            seed=self.environment.seed,
+            num_workers=self.environment.num_workers,
+            gpus=self.environment.gpus,
+        )
+
+        train_augs = [
+            Augmentation(
+                name=train_aug.name,
+                parameters=train_aug.to_parameters(),
+                phase="train",
+            )
+            for train_aug in self.augmentation.train
+        ]
+        inference_augs = [
+            Augmentation(
+                name=inference_aug.name,
+                parameters=inference_aug.to_parameters(),
+                phase="inference",
+            )
+            for inference_aug in self.augmentation.inference
+        ]
+        hyperparameter.augmentations.extend(train_augs + inference_augs)
+
+        task = TrainTask(
+            pretrained_model_name=self.model_name,
+            task=self.task,
+            framework=Framework.PYTORCH,
+            input_shapes=[InputShape(batch=1, channel=3, dimension=[self.img_size, self.img_size]).__dict__],
+            status=Status.IN_PROGRESS,
+            dataset=dataset,
+            hyperparameter=hyperparameter,
+            environment=environment,
+        )
+
+        task = self._save_train_task(train_task=task)
+
+        return task
+
+    def create_performance(self, task: TrainTask, training_summary):
+        performance = Performance(**training_summary)
+
+        task.performance = performance
+
+        task = self._save_train_task(train_task=task)
+
+        return task
+
+    def train(self, gpus: str, model_name: str, project_id: str, output_dir: Optional[str] = "./outputs") -> TrainerMetadata:
         """Train the model with the specified configuration.
 
         Args:
@@ -579,10 +677,15 @@ class Trainer(NetsPressoBase):
         self._validate_config()
         self._apply_img_size()
 
-        project_name = project_name if project_name else f"{self.task}_{self.model_name}".lower()
-        destination_folder = Path(output_dir) / project_name
+        model_name = model_name if model_name else f"{self.task}_{self.model_name}".lower()
+        project = self.get_project(project_id=project_id)
+        project_abs_path = project.project_abs_path
+
+        destination_folder = Path(project_abs_path) / SubFolder.TRAINED_MODELS.value / model_name
         destination_folder = FileHandler.create_unique_folder(folder_path=destination_folder)
-        metadata = self.initialize_metadata(output_dir=destination_folder)
+
+        train_task = self.create_train_task()
+        trained_model = self.save_trained_model(model_name=model_name, train_task=train_task, project_id=project.project_id, user_id=project.user_id)
 
         try:
             self.logging.output_dir = output_dir
@@ -608,14 +711,11 @@ class Trainer(NetsPressoBase):
                 environment=configs.environment,
             )
 
-            available_options = self._get_available_options()
-            metadata.update_available_options(available_options)
-
         except Exception as e:
             e = FailedTrainingException(error_log=e.args[0])
-            metadata = self.handle_error(metadata, ServiceTask.TRAINING, e.args[0])
+            train_task = self.handle_error(train_task, ServiceTask.TRAINING, e.args[0])
         except KeyboardInterrupt:
-            metadata = self.handle_stop(metadata, ServiceTask.TRAINING)
+            train_task = self.handle_stop(train_task, ServiceTask.TRAINING)
         finally:
             FileHandler.remove_folder(configs.temp_folder)
             logger.info(f"Removed {configs.temp_folder} folder.")
@@ -623,24 +723,17 @@ class Trainer(NetsPressoBase):
             FileHandler.move_and_cleanup_folders(source_folder=self.logging_dir, destination_folder=destination_folder)
             logger.info(f"Files in {self.logging_dir} were moved to {destination_folder}.")
 
-            runtime_config_path = self.create_runtime_config(yaml_path=destination_folder / "hparams.yaml")
-            metadata.runtime = runtime_config_path.as_posix()
-
             training_summary = FileHandler.load_json(file_path=destination_folder / "training_summary.json")
-            metadata.update_training_result(training_summary=training_summary)
+            train_task = self.create_performance(training_summary)
 
-            status = self._get_status_by_training_summary(training_summary.get("status"))
-            metadata.update_status(status=status)
-            if status == Status.ERROR:
+            train_task.status = self._get_status_by_training_summary(training_summary.get("status"))
+            if train_task.status == Status.ERROR:
                 error_stats = training_summary.get("error_stats", "")
                 e = FailedTrainingException(error_log=error_stats)
-                metadata.update_message(exception_detail=e.args[0])
+                train_task.error_detail = e.args[0]
 
-            best_fx_paths, best_onnx_paths = self.find_best_model_paths(destination_folder)
-            if best_fx_paths:
-                metadata.update_best_fx_model_path(best_fx_model_path=best_fx_paths[0].resolve().as_posix())
-            if best_onnx_paths:
-                metadata.update_best_onnx_model_path(best_onnx_model_path=best_onnx_paths[0].resolve().as_posix())
-            MetadataHandler.save_metadata(data=metadata, folder_path=destination_folder)
+            train_task = self._save_train_task(train_task=train_task)
 
-        return metadata
+        trained_model.train_task = train_task
+
+        return trained_model

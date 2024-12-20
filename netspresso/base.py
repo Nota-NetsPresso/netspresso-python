@@ -4,6 +4,8 @@ from netspresso.clients.auth import TokenHandler, auth_client
 from netspresso.enums import ServiceCredit, ServiceTask, Status
 from netspresso.exceptions.common import NotEnoughCreditException
 from netspresso.metadata.common import BaseMetadata
+from netspresso.utils.db.repositories.project import project_repository
+from netspresso.utils.db.session import get_db_session
 
 
 class NetsPressoBase:
@@ -49,3 +51,9 @@ class NetsPressoBase:
         logger.error(f"{task_name} task was interrupted by the user.")
 
         return metadata
+
+    def get_project(self, project_id):
+        with get_db_session() as db:
+            project = project_repository.get_by_project_id(db=db, project_id=project_id)
+
+            return project
