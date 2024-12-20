@@ -7,6 +7,12 @@ class BaseScheduler:
     def asdict(self) -> Dict:
         return asdict(self)
 
+    def to_parameters(self) -> Dict:
+        """
+        Extract all fields except 'name' as parameters.
+        """
+        return {k: v for k, v in asdict(self).items() if k != 'name'}
+
 
 @dataclass
 class StepLR(BaseScheduler):
