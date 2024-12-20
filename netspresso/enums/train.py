@@ -39,3 +39,13 @@ class Scheduler(str, Enum):
             "cosine": cls.COSINE_ANNEALING_WARM_RESTARTS_WITH_CUSTOM_WARM_UP,
         }
         return name_map[name.lower()].value
+
+
+class StorageLocation(str, Enum):
+    LOCAL = "local"
+    STORAGE = "storage"
+
+
+class AugmentationType(str, Enum):
+    train = "train"
+    inference = "inference"
