@@ -3,7 +3,7 @@ version: "3"
 services:
   maria :
     image: mariadb:10.6
-    container_name: fluence-mariadb
+    container_name: netspresso-mariadb
     ports:
       - 3306:3306
     volumes:
