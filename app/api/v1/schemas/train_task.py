@@ -77,11 +77,11 @@ class TrainTaskSchema(BaseModel):
     framework: str
     input_shapes: List[Dict]
     status: str
-    error_detail: Dict
+    error_detail: Optional[Dict] = None
     dataset: Optional[DatasetSchema]
     hyperparameter: Optional[HyperparameterSchema]
     environment: Optional[EnvironmentSchema]
     performance: Optional[PerformanceSchema]
     model_id: Optional[str]
-    created_at: datetime = Field(..., description="The timestamp when the train task was created.")
-    updated_at: datetime = Field(..., description="The timestamp when the train task was last updated.")
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None

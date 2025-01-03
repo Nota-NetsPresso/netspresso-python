@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -16,11 +16,12 @@ class ModelDetailPayload(BaseModel):
     type: str = Field(..., description="The type of the model (e.g., trained_model, compressed_model).")
     is_retrainable: bool
     status: Status = Field(default=Status.NOT_STARTED, description="The current status of the model.")
+    train_task_id: str
     train_task: TrainTaskSchema
     project_id: str
     user_id: str
-    created_at: datetime = Field(..., description="The timestamp when the model was created.")
-    updated_at: datetime = Field(..., description="The timestamp when the model was last updated.")
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 class ModelDetailResponse(ResponseItem):
