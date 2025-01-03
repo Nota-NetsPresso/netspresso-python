@@ -16,4 +16,6 @@ class TrainedModel(Base, TimestampMixin):
     is_retrainable = Column(Boolean, nullable=False, default=False)
     project_id = Column(String(36), nullable=False)
     user_id = Column(String(36), nullable=False)
+
+    train_task_id = Column(String(36), ForeignKey("train_task.task_id"), nullable=False)
     train_task = relationship("TrainTask", back_populates="model", uselist=False, cascade="all, delete-orphan")

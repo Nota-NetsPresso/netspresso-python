@@ -110,7 +110,7 @@ class Performance(Base, TimestampMixin):
     best_epoch = Column(Integer, nullable=False, default=0)
     last_epoch = Column(Integer, nullable=False, default=0)
     total_epoch = Column(Integer, nullable=False, default=0)
-    success = Column(Boolean, nullable=False, default=False)
+    status = Column(String(36), nullable=True)
 
     # Relationship to TrainTask
     task_id = Column(String(36), ForeignKey("train_task.task_id", ondelete="CASCADE"), unique=True, nullable=False)

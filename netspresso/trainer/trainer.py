@@ -724,7 +724,7 @@ class Trainer(NetsPressoBase):
             logger.info(f"Files in {self.logging_dir} were moved to {destination_folder}.")
 
             training_summary = FileHandler.load_json(file_path=destination_folder / "training_summary.json")
-            train_task = self.create_performance(training_summary)
+            train_task = self.create_performance(train_task, training_summary)
 
             train_task.status = self._get_status_by_training_summary(training_summary.get("status"))
             if train_task.status == Status.ERROR:
