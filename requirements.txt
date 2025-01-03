@@ -15,3 +15,4 @@ scipy
 sqlalchemy
 sqlalchemy_utils
 nanoid
+pydantic_settings

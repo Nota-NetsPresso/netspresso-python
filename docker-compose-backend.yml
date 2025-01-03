@@ -11,4 +11,23 @@ services:
       - ./mariadb/data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: netspresso1234!
+    networks:
+      - backend
     restart: always
+
+  backend:
+    image: netspresso-backend:latest
+    container_name: netspresso-backend
+    ports:
+      - 80:80
+    env_file:
+      - .env-dev
+    networks:
+      - backend
+    stdin_open: true
+    tty: true
+    #command: bash
+
+networks:
+  backend:
+    driver: bridge
