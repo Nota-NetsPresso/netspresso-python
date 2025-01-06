@@ -20,6 +20,9 @@ class ModelDetailPayload(BaseModel):
     train_task: TrainTaskSchema
     project_id: str
     user_id: str
+    compress_tasks: Optional[List] = []
+    convert_tasks: Optional[List] = []
+    benchmark_tasks: Optional[List] = []
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
