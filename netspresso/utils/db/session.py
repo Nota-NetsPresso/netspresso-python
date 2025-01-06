@@ -1,5 +1,4 @@
 from contextlib import contextmanager
-import os
 from typing import Generator
 
 from loguru import logger
@@ -7,15 +6,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy_utils import create_database, database_exists
 
-DB_USER: str = os.environ.get("DB_USER")
-DB_PASSWORD: str = os.environ.get("DB_PASSWORD")
-DB_ADDRESS: str = os.environ.get("DB_ADDRESS")
-DB_PORT: int = int(os.environ.get("DB_PORT"))
-DB_NAME: str = os.environ.get("DB_NAME")
-DB_URI: str = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_ADDRESS}:{DB_PORT}/{DB_NAME}"
-
+DB_URL = "sqlite:///netspresso.db"
 engine = create_engine(
-    DB_URI,
+    f"{DB_URL}",
     pool_pre_ping=True,
     pool_use_lifo=True,
     pool_recycle=3600,
