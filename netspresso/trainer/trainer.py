@@ -653,7 +653,21 @@ class Trainer(NetsPressoBase):
         return task
 
     def create_performance(self, task: TrainTask, training_summary):
-        performance = Performance(**training_summary)
+        performance = Performance(
+            train_losses=training_summary["train_losses"],
+            valid_losses=training_summary["valid_losses"],
+            train_metrics=training_summary["train_metrics"],
+            valid_metrics=training_summary["valid_metrics"],
+            metrics_list=training_summary["metrics_list"],
+            primary_metric=training_summary["primary_metric"],
+            flops=training_summary["flops"],
+            params=training_summary["params"],
+            total_train_time=training_summary["total_train_time"],
+            best_epoch=training_summary["best_epoch"],
+            last_epoch=training_summary["last_epoch"],
+            total_epoch=training_summary["total_epoch"],
+            status=training_summary["status"],
+        )
 
         task.performance = performance
 

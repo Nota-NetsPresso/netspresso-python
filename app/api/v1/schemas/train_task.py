@@ -56,16 +56,15 @@ class PerformanceSchema(BaseModel):
     valid_losses: dict
     train_metrics: dict
     valid_metrics: dict
-    metrics_list: dict
+    metrics_list: List[str]
     primary_metric: str
-    start_epoch_at_one: bool
-    macs: int
+    flops: int
     params: int
     total_train_time: float
     best_epoch: int
     last_epoch: int
     total_epoch: int
-    success: bool
+    status: str
 
 
 class TrainTaskSchema(BaseModel):
@@ -82,6 +81,5 @@ class TrainTaskSchema(BaseModel):
     hyperparameter: Optional[HyperparameterSchema]
     environment: Optional[EnvironmentSchema]
     performance: Optional[PerformanceSchema]
-    model_id: Optional[str]
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
