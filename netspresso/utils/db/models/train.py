@@ -37,8 +37,11 @@ class TrainTask(Base, TimestampMixin):
     performance = relationship("Performance", back_populates="task", uselist=False, cascade="all, delete-orphan")
 
     # Relationship to TrainedModel
-    model_id = Column(String(36), ForeignKey("trained_model.model_id"), nullable=True)
-    model = relationship("TrainedModel", back_populates="train_task")
+    model = relationship(
+        "TrainedModel",
+        back_populates="train_task",
+        uselist=False,
+    )
 
 
 class Dataset(Base, TimestampMixin):
