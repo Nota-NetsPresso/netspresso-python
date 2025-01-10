@@ -7,7 +7,6 @@ from app.api.deps import api_key_header
 from app.api.v1.schemas.base import Order
 from app.api.v1.schemas.project import (
     ProjectCreate,
-    ProjectResponse,
     ProjectDuplicationCheckResponse,
     ProjectDuplicationStatus,
     ProjectResponse,
