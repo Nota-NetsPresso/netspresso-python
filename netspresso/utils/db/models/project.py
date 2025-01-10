@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import Boolean, Column, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship
 
 from netspresso.utils.db.generate_uuid import generate_uuid
 from netspresso.utils.db.mixins import TimestampMixin
@@ -15,6 +15,7 @@ class Project(Base, TimestampMixin):
     project_name = Column(String(30), nullable=False, unique=True)
     user_id = Column(String(36), nullable=False)
     project_abs_path = Column(String(500), nullable=False)
+    is_deleted = Column(Boolean, nullable=False, default=False)
 
     # Relationship to TrainedModel
     models = relationship(

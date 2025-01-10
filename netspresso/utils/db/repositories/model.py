@@ -52,7 +52,7 @@ class TrainedModelRepository(BaseRepository[TrainedModel]):
             size=size,
             order=order,
         )
-    
+
     def get_all_by_project_id(
         self,
         db: Session,

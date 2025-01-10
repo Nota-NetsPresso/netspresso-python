@@ -1,8 +1,9 @@
 from typing import List
+
 from sqlalchemy.orm import Session
 
-from app.services.user import user_service
 from app.api.v1.schemas.model import ModelPayload
+from app.services.user import user_service
 from netspresso.utils.db.repositories.model import trained_model_repository
 
 

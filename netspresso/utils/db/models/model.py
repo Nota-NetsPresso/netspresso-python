@@ -16,6 +16,7 @@ class TrainedModel(Base, TimestampMixin):
     is_retrainable = Column(Boolean, nullable=False, default=False)
     project_id = Column(String(36), ForeignKey("project.project_id", ondelete="CASCADE"), nullable=False)
     user_id = Column(String(36), nullable=False)
+    is_deleted = Column(Boolean, nullable=False, default=False)
 
     # Foreign key for 1:1 relationship
     train_task_id = Column(

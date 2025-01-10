@@ -3,16 +3,28 @@ from typing import List, Optional
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from netspresso.exceptions.project import ProjectIsDeletedException, ProjectNotFoundException
 from netspresso.utils.db.models.project import Project
 from netspresso.utils.db.repositories.base import BaseRepository, Order
 
 
 class ProjectRepository(BaseRepository[Project]):
+    def __is_available(self, project: Optional[Project], project_id: str) -> Project:
+        if project is None:
+            raise ProjectNotFoundException(project_id=project_id)
+
+        if project.is_deleted:
+            raise ProjectIsDeletedException(project_id=project.project_id)
+
+        return project
+
     def get_by_project_id(self, db: Session, project_id: str, user_id: str) -> Optional[Project]:
         project = db.query(self.model).filter(
             self.model.project_id == project_id,
             self.model.user_id == user_id
         ).first()
+
+        project = self.__is_available(project=project, project_id=project_id)
 
         return project
 

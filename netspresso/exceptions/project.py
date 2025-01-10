@@ -32,3 +32,25 @@ class ProjectSaveException(PyNPException):
             name=self.__class__.__name__,
             message=message,
         )
+
+
+class ProjectNotFoundException(PyNPException):
+    def __init__(self, project_id: str, user_id: str):
+        message = f"The project with ID '{project_id}' does not exist for user ID '{user_id}'."
+        super().__init__(
+            data=AdditionalData(origin=Origin.REPOSITORY),
+            error_code="PROJECT40401",
+            name=self.__class__.__name__,
+            message=message,
+        )
+
+
+class ProjectIsDeletedException(PyNPException):
+    def __init__(self, project_id: str):
+        message = f"The project with ID '{project_id}' has been deleted."
+        super().__init__(
+            data=AdditionalData(origin=Origin.REPOSITORY),
+            error_code="PROJECT40002",
+            name=self.__class__.__name__,
+            message=message,
+        )

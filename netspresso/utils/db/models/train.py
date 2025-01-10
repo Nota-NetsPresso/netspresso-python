@@ -29,6 +29,7 @@ class TrainTask(Base, TimestampMixin):
     input_shapes = Column(JSON, nullable=False)
     status = Column(String(30), nullable=False)
     error_detail = Column(JSON, nullable=True)
+    is_deleted = Column(Boolean, nullable=False, default=False)
 
     # Relationships (1:1 Mapping)
     dataset = relationship("Dataset", back_populates="task", uselist=False, cascade="all, delete-orphan")

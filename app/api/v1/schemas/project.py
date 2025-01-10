@@ -31,34 +31,23 @@ class ProjectSummaryPayload(ProjectCreate):
     updated_at: datetime = Field(..., description="The timestamp when the project was last updated.")
 
 
-class ExperimentStatus(BaseModel):
-    convert: Status = Field(default=Status.NOT_STARTED, description="The status of the conversion experiment.")
-    benchmark: Status = Field(default=Status.NOT_STARTED, description="The status of the benchmark experiment.")
+class ProjectPayload(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
 
-
-class ModelSummary(BaseModel):
-    model_id: str = Field(..., description="The unique identifier for the model.")
-    name: str = Field(..., description="The name of the model.")
-    type: str = Field(..., description="The type of the model (e.g., trained_model, compressed_model).")
-    status: Status = Field(default=Status.NOT_STARTED, description="The current status of the model.")
-    latest_experiments: ExperimentStatus = Field(..., description="The latest status of experiments for the model.")
-
-
-class ProjectDetailPayload(ProjectSummaryPayload):
-    models: List[ModelSummary] = Field(..., description="The list of models associated with the project.")
-
-
-class ProjectResponse(ResponseItem):
-    data: ProjectSummaryPayload
+    project_id: str = Field(..., description="The unique identifier for the project.")
+    model_ids: List[str] = Field(default_factory=list, description="The list of models associated with the project.")
+    user_id: str = Field(..., description="The unique identifier for the user associated with the project.")
+    created_at: datetime = Field(..., description="The timestamp when the project was created.")
+    updated_at: datetime = Field(..., description="The timestamp when the project was last updated.")
 
 
 class ProjectDuplicationCheckResponse(ResponseItem):
     data: ProjectDuplicationStatus
 
 
-class ProjectDetailResponse(ResponseItem):
-    data: ProjectDetailPayload
+class ProjectResponse(ResponseItem):
+    data: ProjectPayload
 
 
 class ProjectsResponse(ResponsePaginationItems):
-    data: List[ProjectSummaryPayload]
+    data: List[ProjectPayload]
