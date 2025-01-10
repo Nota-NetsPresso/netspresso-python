@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
+from app.api.v1.schemas.project import ProjectPayload
 from app.services.user import user_service
 from netspresso.utils.db.models.project import Project
 from netspresso.utils.db.repositories.base import Order
@@ -13,6 +14,7 @@ class ProjectService:
         netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
 
         project = netspresso.create_project(project_name=project_name)
+        project = ProjectPayload.model_validate(project)
 
         return project
 
@@ -33,6 +35,7 @@ class ProjectService:
         projects = project_repository.get_all_by_user_id(
             db=db, user_id=netspresso.user_info.user_id, start=start, size=size, order=order
         )
+        projects = [ProjectPayload.model_validate(project) for project in projects]
 
         return projects
 
@@ -40,6 +43,13 @@ class ProjectService:
         netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
 
         return project_repository.count_by_user_id(db=db, user_id=netspresso.user_info.user_id)
+
+    def get_project(self, *, db: Session, project_id: str, api_key: str) -> Project:
+        netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
+        project = project_repository.get_by_project_id(db=db, project_id=project_id, user_id=netspresso.user_info.user_id)
+        project = ProjectPayload.model_validate(project)
+
+        return project
 
 
 project_service = ProjectService()
