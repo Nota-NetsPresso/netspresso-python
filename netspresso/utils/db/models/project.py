@@ -1,6 +1,6 @@
 from sqlalchemy import Boolean, Column, Integer, String
-from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship
 
 from netspresso.utils.db.generate_uuid import generate_uuid
 from netspresso.utils.db.mixins import TimestampMixin

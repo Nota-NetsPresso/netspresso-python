@@ -3,9 +3,9 @@ from typing import List, Optional
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from netspresso.exceptions.project import ProjectIsDeletedException, ProjectNotFoundException
 from netspresso.utils.db.models.project import Project
 from netspresso.utils.db.repositories.base import BaseRepository, Order
-from netspresso.exceptions.project import ProjectNotFoundException, ProjectIsDeletedException
 
 
 class ProjectRepository(BaseRepository[Project]):
