@@ -1,14 +1,14 @@
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.api.v1.schemas.base import ResponseItem, ResponsePaginationItems
 from app.api.v1.schemas.train_task import TrainTaskSchema
 from netspresso.enums import Status
 
 
-class ModelDetailPayload(BaseModel):
+class ModelPayload(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     model_id: str = Field(..., description="The unique identifier for the model.")
@@ -17,7 +17,6 @@ class ModelDetailPayload(BaseModel):
     is_retrainable: bool
     status: Status = Field(default=Status.NOT_STARTED, description="The current status of the model.")
     train_task_id: str
-    train_task: TrainTaskSchema
     project_id: str
     user_id: str
     compress_tasks: Optional[List] = []
@@ -25,11 +24,27 @@ class ModelDetailPayload(BaseModel):
     benchmark_tasks: Optional[List] = []
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+    train_task: TrainTaskSchema = Field(exclude=True)
+
+    @model_validator(mode="after")
+    def set_status(cls, values):
+        values.status = values.train_task.status
+
+        return values
+
+
+class ExperimentStatus(BaseModel):
+    convert: Status = Field(default=Status.NOT_STARTED, description="The status of the conversion experiment.")
+    benchmark: Status = Field(default=Status.NOT_STARTED, description="The status of the benchmark experiment.")
+
+
+class ExperimentStatusResponse(ResponseItem):
+    data: ExperimentStatus
 
 
 class ModelDetailResponse(ResponseItem):
-    data: ModelDetailPayload
+    data: ModelPayload
 
 
 class ModelsResponse(ResponsePaginationItems):
-    data: List[ModelDetailPayload]
+    data: List[ModelPayload]

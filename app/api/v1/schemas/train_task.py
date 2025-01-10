@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
+from app.api.v1.schemas.base import ResponseItem
 
 
 class AugmentationSchema(BaseModel):
@@ -83,3 +84,7 @@ class TrainTaskSchema(BaseModel):
     performance: Optional[PerformanceSchema]
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+
+
+class TrainTaskDetailResponse(ResponseItem):
+    data: TrainTaskSchema
