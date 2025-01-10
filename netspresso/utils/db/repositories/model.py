@@ -8,8 +8,11 @@ from netspresso.utils.db.repositories.base import BaseRepository, Order
 
 
 class TrainedModelRepository(BaseRepository[TrainedModel]):
-    def get_by_model_id(self, db: Session, model_id: str) -> Optional[TrainedModel]:
-        model = db.query(self.model).filter(self.model.model_id == model_id).first()
+    def get_by_model_id(self, db: Session, model_id: str, user_id: str) -> Optional[TrainedModel]:
+        model = db.query(self.model).filter(
+            self.model.model_id == model_id,
+            self.model.user_id == user_id,
+        ).first()
 
         return model
 
@@ -45,6 +48,22 @@ class TrainedModelRepository(BaseRepository[TrainedModel]):
         return self._get_models(
             db=db,
             condition=self.model.user_id == user_id,
+            start=start,
+            size=size,
+            order=order,
+        )
+    
+    def get_all_by_project_id(
+        self,
+        db: Session,
+        project_id: str,
+        start: Optional[int] = None,
+        size: Optional[int] = None,
+        order: Optional[Order] = Order.DESC,
+    ) -> Optional[List[TrainedModel]]:
+        return self._get_models(
+            db=db,
+            condition=self.model.project_id == project_id,
             start=start,
             size=size,
             order=order,

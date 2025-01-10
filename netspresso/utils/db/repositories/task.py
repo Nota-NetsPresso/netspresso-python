@@ -9,7 +9,7 @@ from netspresso.utils.db.repositories.base import BaseRepository, Order
 
 class TrainTaskRepository(BaseRepository[TrainTask]):
     def get_by_task_id(self, db: Session, task_id: str) -> Optional[TrainTask]:
-        task = db.query(self.model).filter(self.model.task_id == task_id)
+        task = db.query(self.model).filter(self.model.task_id == task_id).first()
 
         return task
 
