@@ -14,7 +14,7 @@ class TrainedModel(Base, TimestampMixin):
     name = Column(String(100), nullable=False)
     type = Column(String(30), nullable=False)
     is_retrainable = Column(Boolean, nullable=False, default=False)
-    project_id = Column(String(36), nullable=False)
+    project_id = Column(String(36), ForeignKey("project.project_id", ondelete="CASCADE"), nullable=False)
     user_id = Column(String(36), nullable=False)
 
     # Foreign key for 1:1 relationship
@@ -30,3 +30,6 @@ class TrainedModel(Base, TimestampMixin):
         cascade="all",
         uselist=False,
     )
+
+    # Back-reference to Project
+    project = relationship("Project", back_populates="models")
