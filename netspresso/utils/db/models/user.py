@@ -11,3 +11,4 @@ class User(Base, TimestampMixin):
     email = Column(String(36), nullable=False)
     password = Column(String(36), nullable=False)
     api_key = Column(String(36), nullable=False)
+    user_id = Column(String(36), nullable=False)

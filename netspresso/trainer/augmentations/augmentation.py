@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
@@ -10,6 +10,12 @@ DEFAULT_IMG_SIZE = 256
 @dataclass
 class Transform:
     name: str = MISSING
+
+    def to_parameters(self) -> Dict:
+        """
+        Extract all fields except 'name' as parameters.
+        """
+        return {k: v for k, v in asdict(self).items() if k != 'name'}
 
 
 @dataclass

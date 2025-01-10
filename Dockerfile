@@ -22,9 +22,18 @@ RUN apt-get update && \
 RUN python -m pip install --upgrade pip
 RUN python -m pip install --no-cache-dir tensorflow-gpu==${TENSORFLOW_VERSION} protobuf==${PROTOBUF_VERSION} && rm -rf /root/.cache/pip
 
-RUN mkdir -p /home/appuser/netspresso
-WORKDIR /home/appuser/netspresso
+# set environment variables
+ENV HOME=/app
+ENV APP_PATH=$HOME/pynetspresso
 
-COPY . /home/appuser/netspresso
+# locale settings are needed for python uvicorn compatibility
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
+ENV PYTHONPATH $APP_PATH
+ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR $APP_PATH
+
+# copy files to docker internal
+COPY . $APP_PATH/
 
 RUN pip install -r requirements.txt && rm -rf /root/.cache/pip

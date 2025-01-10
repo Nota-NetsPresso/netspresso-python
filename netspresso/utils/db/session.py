@@ -31,6 +31,20 @@ def get_db() -> Generator:
         db.close()
 
 
+@contextmanager
+def get_db_session():
+    db = None
+    try:
+        db = SessionLocal()
+        yield db
+    except Exception as e:
+        logger.error(f"Database session error: {e}")
+        raise
+    finally:
+        if db:
+            db.close()
+
+
 def check_database(engine):
     if not database_exists(engine.url):
         logger.info("The database did not exist, so it has been created.")

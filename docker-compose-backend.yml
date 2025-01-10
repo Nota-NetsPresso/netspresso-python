@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  maria :
+    image: mariadb:10.6
+    container_name: netspresso-mariadb
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mariadb/sql-scripts:/docker-entrypoint-initdb.d
+      - ./mariadb/data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: netspresso1234!
+    networks:
+      - backend
+    restart: always
+
+  backend:
+    image: netspresso-backend:latest
+    container_name: netspresso-backend
+    ports:
+      - 80:80
+    env_file:
+      - .env-dev
+    networks:
+      - backend
+    stdin_open: true
+    tty: true
+    #command: bash
+
+networks:
+  backend:
+    driver: bridge
