@@ -12,3 +12,4 @@ class User(Base, TimestampMixin):
     password = Column(String(36), nullable=False)
     api_key = Column(String(36), nullable=False)
     user_id = Column(String(36), nullable=False)
+    is_deleted = Column(Boolean, nullable=False, default=False)
