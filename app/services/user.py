@@ -8,11 +8,12 @@ from netspresso.utils.db.repositories.user import user_repository
 
 
 class UserService:
-    def create_user(self, db: Session, email: str, password: str, api_key: str) -> User:
+    def create_user(self, db: Session, email: str, password: str, api_key: str, user_id: str) -> User:
         user = User(
             email=email,
             password=password,
             api_key=api_key,
+            user_id=user_id,
         )
         user = user_repository.save(db=db, model=user)
 
@@ -29,11 +30,13 @@ class UserService:
                 user.api_key = generated_id
                 user = user_repository.save(db=db, model=user)
         else:
+            netspresso = NetsPresso(email=email, password=password)
             user = self.create_user(
                 db=db,
                 email=email,
                 password=password,
                 api_key=generated_id,
+                user_id=netspresso.user_info.user_id,
             )
 
         api_key = ApiKeyPayload(api_key=user.api_key)

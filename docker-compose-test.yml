@@ -1,0 +1,22 @@
+version: "3.9"
+
+# docker compose run --service-ports --name netspresso-dev netspresso bash
+
+services:
+  netspresso:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: netspresso-backend:latest
+    container_name: netspresso
+    ipc: host
+    ports:
+      - 50001:80 # backend
+      - 50002:3306 # db
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["0", "1"] # your GPU id(s)
+              capabilities: [gpu]
