@@ -46,7 +46,7 @@ class ProjectService:
 
     def get_project(self, *, db: Session, project_id: str, api_key: str) -> Project:
         netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
-        project = project_repository.get_by_project_id(db=db, project_id=project_id, user_id=netspresso.user_info.user_id)
+        project = project_repository.get_by_project_id(db=db, project_id=project_id)
         project = ProjectPayload.model_validate(project)
 
         return project
