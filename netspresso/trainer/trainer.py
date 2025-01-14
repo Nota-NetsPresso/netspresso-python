@@ -34,6 +34,7 @@ from netspresso.trainer.models import (
     CheckpointConfig,
     ModelConfig,
 )
+from netspresso.trainer.optimizers.optimizers import get_supported_optimizers
 from netspresso.trainer.trainer_configs import TrainerConfigs
 from netspresso.trainer.training import TRAINING_CONFIG_TYPE, EnvironmentConfig, LoggingConfig, ScheduleConfig
 from netspresso.utils import FileHandler
@@ -770,3 +771,6 @@ class Trainer(NetsPressoBase):
             ],
         }
         return all_models
+
+    def get_all_available_optimizers(self) -> Dict[str, Dict]:
+        return get_supported_optimizers()
