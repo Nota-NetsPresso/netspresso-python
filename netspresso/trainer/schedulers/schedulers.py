@@ -1,5 +1,5 @@
 from dataclasses import asdict, dataclass
-from typing import Dict
+from typing import Any, Dict, List
 
 
 @dataclass
@@ -45,3 +45,14 @@ class CosineAnnealingWarmRestartsWithCustomWarmUp(BaseScheduler):
     warmup_bias_lr: float = 1e-5
     min_lr: float = 1e-6
     iters_per_phase: int = 10
+
+
+def get_supported_schedulers() -> List[Dict[str, Any]]:
+    """Return a list of supported schedulers with their parameters and default values."""
+    schedulers = [
+        StepLR(),
+        PolynomialLRWithWarmUp(),
+        CosineAnnealingLRWithCustomWarmUp(),
+        CosineAnnealingWarmRestartsWithCustomWarmUp()
+    ]
+    return [{"name": scheduler.name, "parameters": scheduler.to_parameters()} for scheduler in schedulers]

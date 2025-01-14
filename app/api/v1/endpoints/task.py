@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
@@ -21,14 +21,24 @@ def get_supported_models(
     return supported_models
 
 
-@router.get("/train/configuration/optimizers", response_model=Dict[str, Dict], description="Get supported optimizers for training tasks.")
+@router.get("/train/configuration/optimizers", response_model=List[Dict[str, Any]], description="Get supported optimizers for training tasks.")
 def get_supported_optimizers(
     db: Session = Depends(get_db),
     api_key: str = Depends(api_key_header),
-) -> Dict[str, Dict]:
+) -> List[Dict[str, Any]]:
     supported_optimizers = task_service.get_supported_optimizers(db=db, api_key=api_key)
 
     return supported_optimizers
+
+
+@router.get("/train/configuration/schedulers", response_model=List[Dict[str, Any]], description="Get supported schedulers for training tasks.")
+def get_supported_schedulers(
+    db: Session = Depends(get_db),
+    api_key: str = Depends(api_key_header),
+) -> List[Dict[str, Any]]:
+    supported_schedulers = task_service.get_supported_schedulers(db=db, api_key=api_key)
+
+    return supported_schedulers
 
 
 @router.get("/tasks/train/{task_id}", response_model=TrainTaskDetailResponse)

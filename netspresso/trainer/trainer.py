@@ -35,6 +35,7 @@ from netspresso.trainer.models import (
     ModelConfig,
 )
 from netspresso.trainer.optimizers.optimizers import get_supported_optimizers
+from netspresso.trainer.schedulers.schedulers import get_supported_schedulers
 from netspresso.trainer.trainer_configs import TrainerConfigs
 from netspresso.trainer.training import TRAINING_CONFIG_TYPE, EnvironmentConfig, LoggingConfig, ScheduleConfig
 from netspresso.utils import FileHandler
@@ -774,3 +775,6 @@ class Trainer(NetsPressoBase):
 
     def get_all_available_optimizers(self) -> Dict[str, Dict]:
         return get_supported_optimizers()
+
+    def get_all_available_schedulers(self) -> Dict[str, Dict]:
+        return get_supported_schedulers()
