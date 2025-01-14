@@ -2,6 +2,6 @@ from enum import Enum
 
 
 class SubFolder(str, Enum):
-    TRAINED_MODELS = "Trained models"
-    COMPRESSED_MODELS = "Compressed models"
-    PRETRAINED_MODELS = "Pretrained models"
+    TRAINED_MODELS = "trained_models"
+    COMPRESSED_MODELS = "compressed_models"
+    PRETRAINED_MODELS = "pretrained_models"

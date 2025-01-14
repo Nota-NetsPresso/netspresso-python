@@ -22,16 +22,7 @@ class ProjectDuplicationStatus(BaseModel):
     is_duplicated: bool = Field(..., description="Indicates if the project name is duplicated.")
 
 
-class ProjectSummaryPayload(ProjectCreate):
-    model_config = ConfigDict(from_attributes=True)
-
-    project_id: str = Field(..., description="The unique identifier for the project.")
-    user_id: str = Field(..., description="The unique identifier for the user associated with the project.")
-    created_at: datetime = Field(..., description="The timestamp when the project was created.")
-    updated_at: datetime = Field(..., description="The timestamp when the project was last updated.")
-
-
-class ProjectPayload(BaseModel):
+class ProjectPayload(ProjectCreate):
     model_config = ConfigDict(from_attributes=True)
 
     project_id: str = Field(..., description="The unique identifier for the project.")

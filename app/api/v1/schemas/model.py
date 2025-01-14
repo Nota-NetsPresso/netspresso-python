@@ -8,6 +8,11 @@ from app.api.v1.schemas.train_task import TrainTaskSchema
 from netspresso.enums import Status
 
 
+class ExperimentStatus(BaseModel):
+    convert: Status = Field(default=Status.NOT_STARTED, description="The status of the conversion experiment.")
+    benchmark: Status = Field(default=Status.NOT_STARTED, description="The status of the benchmark experiment.")
+
+
 class ModelPayload(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -19,23 +24,19 @@ class ModelPayload(BaseModel):
     train_task_id: str
     project_id: str
     user_id: str
-    compress_tasks: Optional[List] = []
-    convert_tasks: Optional[List] = []
-    benchmark_tasks: Optional[List] = []
+    compress_task_ids: Optional[List] = []
+    convert_task_ids: Optional[List] = []
+    benchmark_task_ids: Optional[List] = []
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     train_task: TrainTaskSchema = Field(exclude=True)
+    latest_experiments: ExperimentStatus = Field(default_factory=ExperimentStatus)
 
     @model_validator(mode="after")
     def set_status(cls, values):
         values.status = values.train_task.status
 
         return values
-
-
-class ExperimentStatus(BaseModel):
-    convert: Status = Field(default=Status.NOT_STARTED, description="The status of the conversion experiment.")
-    benchmark: Status = Field(default=Status.NOT_STARTED, description="The status of the benchmark experiment.")
 
 
 class ExperimentStatusResponse(ResponseItem):
