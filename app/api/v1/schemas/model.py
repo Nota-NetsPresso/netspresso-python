@@ -4,7 +4,7 @@ from typing import List, Optional
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.api.v1.schemas.base import ResponseItem, ResponsePaginationItems
-from app.api.v1.schemas.train_task import TrainTaskSchema
+from app.api.v1.schemas.task.train.train_task import TrainTaskSchema
 from netspresso.enums import Status
 
 

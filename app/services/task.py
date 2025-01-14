@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from sqlalchemy.orm import Session
 
@@ -14,6 +14,20 @@ class TaskService:
         trainer = netspresso.trainer()
 
         return trainer.get_all_available_models()
+
+    def get_supported_optimizers(self, db: Session, api_key: str) -> List[Dict[str, Any]]:
+        netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
+
+        trainer = netspresso.trainer()
+
+        return trainer.get_all_available_optimizers()
+
+    def get_supported_schedulers(self, db: Session, api_key: str) -> List[Dict[str, Any]]:
+        netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
+
+        trainer = netspresso.trainer()
+
+        return trainer.get_all_available_schedulers()
 
     def get_task(self, db: Session, task_id: str, api_key: str) -> TrainTaskSchema:
         netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)

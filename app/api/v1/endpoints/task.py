@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.api.deps import api_key_header
+from app.api.v1.schemas.task.train.hyperparameter import OptimizerResponse, SchedulerResponse
 from app.api.v1.schemas.task.train.train_task import TrainTaskDetailResponse
 from app.services.task import task_service
 from netspresso.utils.db.session import get_db
@@ -21,24 +22,34 @@ def get_supported_models(
     return supported_models
 
 
-@router.get("/train/configuration/optimizers", response_model=List[Dict[str, Any]], description="Get supported optimizers for training tasks.")
+@router.get("/train/configuration/optimizers", response_model=List[OptimizerResponse], description="Get supported optimizers for training tasks.")
 def get_supported_optimizers(
     db: Session = Depends(get_db),
     api_key: str = Depends(api_key_header),
-) -> List[Dict[str, Any]]:
+) -> List[OptimizerResponse]:
     supported_optimizers = task_service.get_supported_optimizers(db=db, api_key=api_key)
 
-    return supported_optimizers
+    optimizers = [
+        OptimizerResponse.model_validate(optimizer)
+        for optimizer in supported_optimizers
+    ]
+
+    return optimizers
 
 
-@router.get("/train/configuration/schedulers", response_model=List[Dict[str, Any]], description="Get supported schedulers for training tasks.")
+@router.get("/train/configuration/schedulers", response_model=List[SchedulerResponse], description="Get supported schedulers for training tasks.")
 def get_supported_schedulers(
     db: Session = Depends(get_db),
     api_key: str = Depends(api_key_header),
-) -> List[Dict[str, Any]]:
+) -> List[SchedulerResponse]:
     supported_schedulers = task_service.get_supported_schedulers(db=db, api_key=api_key)
 
-    return supported_schedulers
+    schedulers = [
+        SchedulerResponse.model_validate(scheduler)
+        for scheduler in supported_schedulers
+    ]
+
+    return schedulers
 
 
 @router.get("/tasks/train/{task_id}", response_model=TrainTaskDetailResponse)
