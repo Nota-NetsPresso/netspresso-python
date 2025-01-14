@@ -751,3 +751,22 @@ class Trainer(NetsPressoBase):
         trained_model.train_task = train_task
 
         return trained_model
+
+    def get_all_available_models(self) -> Dict[str, List[str]]:
+        """Get all available models for each task, excluding deprecated names.
+
+        Returns:
+            Dict[str, List[str]]: A dictionary mapping each task to its available models.
+        """
+        all_models = {
+            "classification": [
+                model for model in CLASSIFICATION_MODELS if model not in self.deprecated_names
+            ],
+            "detection": [
+                model for model in DETECTION_MODELS if model not in self.deprecated_names
+            ],
+            "segmentation": [
+                model for model in SEGMENTATION_MODELS if model not in self.deprecated_names
+            ],
+        }
+        return all_models

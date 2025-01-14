@@ -1,13 +1,20 @@
-from typing import List
+from typing import Dict, List
 
 from sqlalchemy.orm import Session
 
-from app.api.v1.schemas.train_task import TrainTaskSchema
+from app.api.v1.schemas.task.train.train_task import TrainTaskSchema
 from app.services.user import user_service
 from netspresso.utils.db.repositories.task import train_task_repository
 
 
 class TaskService:
+    def get_supported_models(self, db: Session, api_key: str) -> Dict[str, List[str]]:
+        netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
+
+        trainer = netspresso.trainer()
+
+        return trainer.get_all_available_models()
+
     def get_task(self, db: Session, task_id: str, api_key: str) -> TrainTaskSchema:
         netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
 
