@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 
 
-class AugmentationSchema(BaseModel):
+class AugmentationPayload(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     name: str

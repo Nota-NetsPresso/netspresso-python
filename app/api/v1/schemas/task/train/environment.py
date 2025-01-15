@@ -7,7 +7,7 @@ class EnvironmentCreate(BaseModel):
     gpus: str = Field(default="0", description="GPUs to use")
 
 
-class EnvironmentSchema(BaseModel):
+class EnvironmentPayload(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     seed: int

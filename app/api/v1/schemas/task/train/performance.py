@@ -3,7 +3,7 @@ from typing import List
 from pydantic import BaseModel, ConfigDict
 
 
-class PerformanceSchema(BaseModel):
+class PerformancePayload(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     train_losses: dict

@@ -26,7 +26,7 @@ class DatasetCreate(BaseModel):
         return values
 
 
-class DatasetSchema(BaseModel):
+class DatasetPayload(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     name: str
