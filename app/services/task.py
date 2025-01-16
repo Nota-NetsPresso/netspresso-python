@@ -2,6 +2,7 @@ from typing import Any, Dict, List
 
 from sqlalchemy.orm import Session
 
+from app.api.v1.schemas.model import ModelPayload
 from app.api.v1.schemas.task.train.train_task import TrainingCreate, TrainTaskSchema
 from app.services.user import user_service
 from netspresso.trainer.augmentations.augmentation import Normalize, Resize, ToTensor
@@ -23,17 +24,17 @@ class TaskService:
     def get_supported_schedulers(self) -> List[Dict[str, Any]]:
         return get_supported_schedulers()
 
-    def create_train_task(self, db: Session, training_in: TrainingCreate, api_key: str) -> TrainTaskSchema:
+    def create_train_task(self, db: Session, training_in: TrainingCreate, api_key: str) -> ModelPayload:
         netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
 
         trainer = netspresso.trainer(task=training_in.task)
         trainer.set_dataset_config(
-            name="traffic_sign_config_example",
+            name="test",
             root_path=training_in.dataset.root_path,
-            train_image=f"{training_in.dataset.train_path}/images",
-            train_label=f"{training_in.dataset.train_path}/labels",
-            valid_image=f"{training_in.dataset.valid_path}/images",
-            valid_label=f"{training_in.dataset.valid_path}/labels",
+            train_image="train/images",
+            train_label="train/labels",
+            valid_image="valid/images",
+            valid_label="valid/labels",
             id_mapping=training_in.dataset.id_mapping,
         )
         img_size = training_in.input_shapes[0].dimension[0]
@@ -56,7 +57,11 @@ class TaskService:
             optimizer=optimizer,
             scheduler=scheduler,
         )
-        trained_model = trainer.train(gpus="0, 1", model_name=training_in.name, project_id=training_in.project_id)
+        trained_model = trainer.train(
+            gpus=training_in.environment.gpus,
+            model_name=training_in.name,
+            project_id=training_in.project_id,
+        )
 
         return trained_model
 

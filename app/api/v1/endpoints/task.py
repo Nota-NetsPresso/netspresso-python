@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.api.deps import api_key_header
+from app.api.v1.schemas.model import ModelDetailResponse
 from app.api.v1.schemas.task.train.hyperparameter import (
     OptimizerPayload,
     SchedulerPayload,
@@ -48,15 +49,15 @@ def get_supported_schedulers() -> SupportedSchedulersResponse:
     return SupportedSchedulersResponse(data=schedulers)
 
 
-@router.post("/trainings", response_model=TrainTaskDetailResponse)
+@router.post("/trainings", response_model=ModelDetailResponse)
 def create_train_task(
     request_body: TrainingCreate,
     db: Session = Depends(get_db),
     api_key: str = Depends(api_key_header),
-) -> TrainTaskDetailResponse:
-    task = task_service.create_train_task(db=db, request=request_body, api_key=api_key)
+) -> ModelDetailResponse:
+    trained_model = task_service.create_train_task(db=db, training_in=request_body, api_key=api_key)
 
-    return TrainTaskDetailResponse(data=task)
+    return ModelDetailResponse(data=trained_model)
 
 
 @router.get("/trainings/{task_id}", response_model=TrainTaskDetailResponse)

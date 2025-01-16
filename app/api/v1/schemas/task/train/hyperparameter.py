@@ -55,7 +55,7 @@ class HyperparameterCreate(BaseModel):
     learning_rate: float = Field(default=0.001, description="Learning rate to use")
     optimizer: OptimizerPayload = Field(default_factory=OptimizerPayload, description="Optimizer to use")
     scheduler: SchedulerPayload = Field(default_factory=SchedulerPayload, description="Scheduler to use")
-    augmentations: List[AugmentationPayload] = Field(default_factory=list, description="List of augmentations to apply")
+    augmentations: Optional[List[AugmentationPayload]] = Field(default=None, description="List of augmentations to apply")
 
 
 class HyperparameterPayload(BaseModel):
