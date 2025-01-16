@@ -45,11 +45,9 @@ class TaskService:
         )
         optimizer = OptimizerManager.get_optimizer(training_in.hyperparameter.optimizer.name)
         optimizer_params = training_in.hyperparameter.optimizer.parameters
-        optimizer.update(**optimizer_params)
 
         scheduler = SchedulerManager.get_scheduler(training_in.hyperparameter.scheduler.name)
         scheduler_params = training_in.hyperparameter.scheduler.parameters
-        scheduler.update(**scheduler_params)
 
         trainer.set_training_config(
             epochs=training_in.hyperparameter.epochs,
