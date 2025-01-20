@@ -610,10 +610,8 @@ class Trainer(NetsPressoBase):
             epochs=self.training.epochs,
             batch_size=self.environment.batch_size,
             learning_rate=self.training.optimizer["lr"],
-            optimizer_name=Optimizer.to_display_name(self.training.optimizer["name"]),
-            optimizer_params=self.optimizer.to_parameters(),
-            scheduler_name=Scheduler.to_display_name(self.training.scheduler["name"]),
-            scheduler_params=self.scheduler.to_parameters(),
+            optimizer=self.optimizer.asdict(),
+            scheduler=self.scheduler.asdict(),
         )
         environment = Environment(
             seed=self.environment.seed,
@@ -749,8 +747,6 @@ class Trainer(NetsPressoBase):
                 train_task.error_detail = e.args[0]
 
             train_task = self._save_train_task(train_task=train_task)
-
-        trained_model.train_task = train_task
 
         return trained_model
 

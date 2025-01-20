@@ -72,10 +72,8 @@ class Hyperparameter(Base, TimestampMixin):
     epochs = Column(Integer, nullable=False, default=0)
     batch_size = Column(Integer, nullable=False)
     learning_rate = Column(Float, nullable=False, default=0)
-    optimizer_name = Column(String(50), nullable=False)  # optimizer name
-    optimizer_params = Column(JSON, nullable=True)       # optimizer params
-    scheduler_name = Column(String(50), nullable=False)  # scheduler name
-    scheduler_params = Column(JSON, nullable=True)       # scheduler params
+    optimizer = Column(JSON, nullable=True)
+    scheduler = Column(JSON, nullable=True)
 
     augmentations = relationship("Augmentation", back_populates="hyperparameter", cascade="all, delete-orphan")
 

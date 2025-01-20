@@ -50,10 +50,10 @@ class TaskService:
             inference_transforms=[Resize(), ToTensor(), Normalize()],
         )
         optimizer = OptimizerManager.get_optimizer(
-            name=training_in.hyperparameter.optimizer.name,
+            name=training_in.hyperparameter.optimizer,
             lr=training_in.hyperparameter.learning_rate,
         )
-        scheduler = SchedulerManager.get_scheduler(name=training_in.hyperparameter.scheduler.name)
+        scheduler = SchedulerManager.get_scheduler(name=training_in.hyperparameter.scheduler)
 
         trainer.set_training_config(
             epochs=training_in.hyperparameter.epochs,

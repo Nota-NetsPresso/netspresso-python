@@ -23,6 +23,8 @@ class SupportedModelResponse(BaseModel):
 
 
 class OptimizerPayload(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     name: Optimizer = Field(Optimizer.ADAM, description="Name of the optimizer")
     display_name: Optional[str] = Field(Optimizer.to_display_name(Optimizer.ADAM), description="Display name of the optimizer")
 
@@ -32,6 +34,8 @@ class SupportedOptimizersResponse(BaseModel):
 
 
 class SchedulerPayload(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     name: Scheduler = Field(Scheduler.COSINE_ANNEALING_WARM_RESTARTS_WITH_CUSTOM_WARM_UP, description="Name of the scheduler")
     display_name: Optional[str] = Field(Scheduler.to_display_name(Scheduler.COSINE_ANNEALING_WARM_RESTARTS_WITH_CUSTOM_WARM_UP), description="Display name of the scheduler")
 
@@ -44,8 +48,8 @@ class HyperparameterCreate(BaseModel):
     epochs: int = Field(default=10, description="Number of epochs to train for")
     batch_size: int = Field(default=32, description="Batch size to use")
     learning_rate: float = Field(default=0.001, description="Learning rate to use")
-    optimizer: OptimizerPayload = Field(default_factory=OptimizerPayload, description="Optimizer to use")
-    scheduler: SchedulerPayload = Field(default_factory=SchedulerPayload, description="Scheduler to use")
+    optimizer: str = Field(..., description="Optimizer to use")
+    scheduler: str = Field(..., description="Scheduler to use")
     augmentations: Optional[List[AugmentationPayload]] = Field(default=None, description="List of augmentations to apply")
 
 
