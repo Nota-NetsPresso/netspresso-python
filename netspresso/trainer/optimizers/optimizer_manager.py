@@ -12,7 +12,7 @@ from netspresso.trainer.optimizers.optimizers import (
 
 class OptimizerManager:
     @staticmethod
-    def get_optimizer(optimizer_name: str):
+    def get_optimizer(name: str, lr: float):
         optimizer_map = {
             Optimizer.ADADELTA: Adadelta,
             Optimizer.ADAGRAD: Adagrad,
@@ -23,8 +23,8 @@ class OptimizerManager:
             Optimizer.SGD: SGD,
         }
 
-        optimizer_class = optimizer_map.get(optimizer_name.lower())
+        optimizer_class = optimizer_map.get(name.lower())
         if not optimizer_class:
-            raise ValueError(f"Optimizer '{optimizer_name}' not found.")
+            raise ValueError(f"Optimizer '{name}' not found.")
 
-        return optimizer_class()
+        return optimizer_class(lr=lr)

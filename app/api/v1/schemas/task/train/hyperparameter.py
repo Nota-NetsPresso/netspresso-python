@@ -20,13 +20,6 @@ class SupportedModelResponse(BaseModel):
 class OptimizerPayload(BaseModel):
     name: Optimizer = Field(Optimizer.ADAM, description="Name of the optimizer")
     display_name: Optional[str] = Field(Optimizer.to_display_name(Optimizer.ADAM), description="Display name of the optimizer")
-    parameters: Dict[str, Any] = Field(default_factory=dict, description="Parameters and their default values for the optimizer")
-
-    @model_validator(mode="after")
-    def set_display_name(cls, values):
-        if not values.display_name:
-            values.display_name = Optimizer.to_display_name(values.name)
-        return values
 
 
 class SupportedOptimizersResponse(BaseModel):
@@ -36,13 +29,6 @@ class SupportedOptimizersResponse(BaseModel):
 class SchedulerPayload(BaseModel):
     name: Scheduler = Field(Scheduler.COSINE_ANNEALING_WARM_RESTARTS_WITH_CUSTOM_WARM_UP, description="Name of the scheduler")
     display_name: Optional[str] = Field(Scheduler.to_display_name(Scheduler.COSINE_ANNEALING_WARM_RESTARTS_WITH_CUSTOM_WARM_UP), description="Display name of the scheduler")
-    parameters: Dict[str, Any] = Field(default_factory=dict, description="Parameters and their default values for the scheduler")
-
-    @model_validator(mode="after")
-    def set_display_name(cls, values):
-        if not values.display_name:
-            values.display_name = Scheduler.to_display_name(values.name)
-        return values
 
 
 class SupportedSchedulersResponse(BaseModel):

@@ -14,6 +14,7 @@ from app.api.v1.schemas.task.train.hyperparameter import (
 )
 from app.api.v1.schemas.task.train.train_task import TrainingCreate, TrainTaskDetailResponse
 from app.services.task import task_service
+from netspresso.enums.train import Optimizer, Scheduler
 from netspresso.utils.db.session import get_db
 
 router = APIRouter()
@@ -30,7 +31,7 @@ def get_supported_optimizers() -> SupportedOptimizersResponse:
     supported_optimizers = task_service.get_supported_optimizers()
 
     optimizers = [
-        OptimizerPayload(name=optimizer["name"], parameters=optimizer["parameters"])
+        OptimizerPayload(name=optimizer["name"], display_name=Optimizer.to_display_name(optimizer["name"]))
         for optimizer in supported_optimizers
     ]
 
@@ -42,7 +43,7 @@ def get_supported_schedulers() -> SupportedSchedulersResponse:
     supported_schedulers = task_service.get_supported_schedulers()
 
     schedulers = [
-        SchedulerPayload(name=scheduler["name"], parameters=scheduler["parameters"])
+        SchedulerPayload(name=scheduler["name"], display_name=Scheduler.to_display_name(scheduler["name"]))
         for scheduler in supported_schedulers
     ]
 
