@@ -43,6 +43,26 @@ from netspresso.trainer.models.yolox import (
     DetectionYoloXXModelConfig,
 )
 
+MODEL_NAME_DISPLAY_MAP = {
+    "EfficientFormer-L1": "efficientformer_l1",
+    "MobileNetV3-S": "mobilenet_v3_small",
+    "MobileNetV3-L": "mobilenet_v3_large",
+    "MobileViT-S": "mobilevit_s",
+    "ResNet18": "resnet18",
+    "ResNet34": "resnet34",
+    "ResNet50": "resnet50",
+    "ViT-T": "vit_tiny",
+    "MixNet-S": "mixnet_s",
+    "MixNet-M": "mixnet_m",
+    "MixNet-L": "mixnet_l",
+    "YOLOX-S": "yolox_s",
+    "YOLOX-M": "yolox_m",
+    "YOLOX-L": "yolox_l",
+    "YOLOX-X": "yolox_x",
+    "SegFormer-B0": "segformer_b0",
+    "PIDNet-S": "pidnet_s",
+}
+
 CLASSIFICATION_MODELS = {
     "EfficientFormer-L1": ClassificationEfficientFormerModelConfig,
     "MobileNetV3-S": ClassificationMobileNetV3SmallModelConfig,
@@ -87,6 +107,8 @@ __all__ = [
     "CLASSIFICATION_MODELS",
     "DETECTION_MODELS",
     "SEGMENTATION_MODELS",
+    "POSEESTIMATION_MODELS",
+    "MODEL_NAME_DISPLAY_MAP",
     "CheckpointConfig",
     "ModelConfig",
 ]

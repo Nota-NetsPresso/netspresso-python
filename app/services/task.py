@@ -3,10 +3,11 @@ from typing import Any, Dict, List
 from sqlalchemy.orm import Session
 
 from app.api.v1.schemas.model import ModelPayload
+from app.api.v1.schemas.task.train.hyperparameter import TrainerModel
 from app.api.v1.schemas.task.train.train_task import TrainingCreate, TrainTaskSchema
 from app.services.user import user_service
 from netspresso.trainer.augmentations.augmentation import Normalize, Resize, ToTensor
-from netspresso.trainer.models import get_all_available_models
+from netspresso.trainer.models import MODEL_NAME_DISPLAY_MAP, get_all_available_models
 from netspresso.trainer.optimizers.optimizer_manager import OptimizerManager
 from netspresso.trainer.optimizers.optimizers import get_supported_optimizers
 from netspresso.trainer.schedulers.scheduler_manager import SchedulerManager
@@ -16,7 +17,12 @@ from netspresso.utils.db.repositories.task import train_task_repository
 
 class TaskService:
     def get_supported_models(self) -> Dict[str, List[str]]:
-        return get_all_available_models()
+        available_models = get_all_available_models()
+
+        for task, models in available_models.items():
+            available_models[task] = [TrainerModel(name=MODEL_NAME_DISPLAY_MAP[model], display_name=model) for model in models]
+
+        return available_models
 
     def get_supported_optimizers(self) -> List[Dict[str, Any]]:
         return get_supported_optimizers()

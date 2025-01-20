@@ -7,10 +7,15 @@ from netspresso.enums.train import Optimizer, Scheduler
 from .augmentation import AugmentationPayload
 
 
+class TrainerModel(BaseModel):
+    name: str = Field(..., description="Name of the model")
+    display_name: Optional[str] = Field(..., description="Display name of the model")
+
+
 class SupportedModel(BaseModel):
-    classification: List[str] = Field(..., description="Supported models for classification tasks")
-    detection: List[str] = Field(..., description="Supported models for object detection tasks")
-    segmentation: List[str] = Field(..., description="Supported models for semantic segmentation tasks")
+    classification: List[TrainerModel] = Field(..., description="Supported models for classification tasks")
+    detection: List[TrainerModel] = Field(..., description="Supported models for object detection tasks")
+    segmentation: List[TrainerModel] = Field(..., description="Supported models for semantic segmentation tasks")
 
 
 class SupportedModelResponse(BaseModel):
