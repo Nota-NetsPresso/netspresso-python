@@ -609,7 +609,6 @@ class Trainer(NetsPressoBase):
         hyperparameter = Hyperparameter(
             epochs=self.training.epochs,
             batch_size=self.environment.batch_size,
-            learning_rate=self.training.optimizer["lr"],
             optimizer=self.optimizer.asdict(),
             scheduler=self.scheduler.asdict(),
         )

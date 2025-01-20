@@ -71,7 +71,6 @@ class Hyperparameter(Base, TimestampMixin):
     id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True, nullable=False)
     epochs = Column(Integer, nullable=False, default=0)
     batch_size = Column(Integer, nullable=False)
-    learning_rate = Column(Float, nullable=False, default=0)
     optimizer = Column(JSON, nullable=True)
     scheduler = Column(JSON, nullable=True)
 
