@@ -15,7 +15,7 @@ class Augmentation(Base):
     phase = Column(String(30), nullable=False) # train, inference
 
     hyperparameter_id = Column(Integer, ForeignKey("hyperparameter.id"), nullable=False)
-    hyperparameter = relationship("Hyperparameter", back_populates="augmentations")
+    hyperparameter = relationship("Hyperparameter", back_populates="augmentations", lazy='joined')
 
 
 class TrainTask(Base, TimestampMixin):
@@ -32,10 +32,10 @@ class TrainTask(Base, TimestampMixin):
     is_deleted = Column(Boolean, nullable=False, default=False)
 
     # Relationships (1:1 Mapping)
-    dataset = relationship("Dataset", back_populates="task", uselist=False, cascade="all, delete-orphan")
-    hyperparameter = relationship("Hyperparameter", back_populates="task", uselist=False, cascade="all, delete-orphan")
-    environment = relationship("Environment", back_populates="task", uselist=False, cascade="all, delete-orphan")
-    performance = relationship("Performance", back_populates="task", uselist=False, cascade="all, delete-orphan")
+    dataset = relationship("Dataset", back_populates="task", uselist=False, cascade="all, delete-orphan", lazy='joined')
+    hyperparameter = relationship("Hyperparameter", back_populates="task", uselist=False, cascade="all, delete-orphan", lazy='joined')
+    environment = relationship("Environment", back_populates="task", uselist=False, cascade="all, delete-orphan", lazy='joined')
+    performance = relationship("Performance", back_populates="task", uselist=False, cascade="all, delete-orphan", lazy='joined')
 
     # Relationship to TrainedModel
     model = relationship(
@@ -74,7 +74,7 @@ class Hyperparameter(Base, TimestampMixin):
     optimizer = Column(JSON, nullable=True)
     scheduler = Column(JSON, nullable=True)
 
-    augmentations = relationship("Augmentation", back_populates="hyperparameter", cascade="all, delete-orphan")
+    augmentations = relationship("Augmentation", back_populates="hyperparameter", cascade="all, delete-orphan", lazy='joined')
 
     # Relationship to TrainTask
     task_id = Column(String(36), ForeignKey("train_task.task_id", ondelete="CASCADE"), unique=True, nullable=False)
