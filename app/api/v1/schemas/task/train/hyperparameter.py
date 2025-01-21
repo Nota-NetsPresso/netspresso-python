@@ -10,6 +10,7 @@ from .augmentation import AugmentationPayload
 class TrainerModel(BaseModel):
     name: str = Field(..., description="Name of the model")
     display_name: Optional[str] = Field(..., description="Display name of the model")
+    group_name: Optional[str] = Field(..., description="Group name of the model")
 
 
 class SupportedModel(BaseModel):
@@ -48,9 +49,8 @@ class HyperparameterCreate(BaseModel):
     epochs: int = Field(default=10, description="Number of epochs to train for")
     batch_size: int = Field(default=32, description="Batch size to use")
     learning_rate: float = Field(default=0.001, description="Learning rate to use")
-    optimizer: str = Field(..., description="Optimizer to use")
-    scheduler: str = Field(..., description="Scheduler to use")
-    augmentations: Optional[List[AugmentationPayload]] = Field(default=None, description="List of augmentations to apply")
+    optimizer: Optimizer = Field(..., description="Optimizer to use")
+    scheduler: Scheduler = Field(..., description="Scheduler to use")
 
 
 class HyperparameterPayload(BaseModel):
@@ -58,6 +58,6 @@ class HyperparameterPayload(BaseModel):
 
     epochs: int
     batch_size: int
-    optimizer: OptimizerPayload
-    scheduler: SchedulerPayload
-    augmentations: List[AugmentationPayload] = []
+    learning_rate: float
+    optimizer: Optimizer = Field(..., description="Optimizer to use")
+    scheduler: Scheduler = Field(..., description="Scheduler to use")

@@ -12,7 +12,7 @@ from app.api.v1.schemas.task.train.hyperparameter import (
     SupportedOptimizersResponse,
     SupportedSchedulersResponse,
 )
-from app.api.v1.schemas.task.train.train_task import TrainingCreate, TrainTaskDetailResponse
+from app.api.v1.schemas.task.train.train_task import TrainingCreate, TrainingResponse
 from app.services.task import task_service
 from netspresso.enums.train import Optimizer, Scheduler
 from netspresso.utils.db.session import get_db
@@ -50,24 +50,24 @@ def get_supported_schedulers() -> SupportedSchedulersResponse:
     return SupportedSchedulersResponse(data=schedulers)
 
 
-@router.post("/trainings", response_model=ModelDetailResponse)
-def create_train_task(
+@router.post("/trainings", response_model=TrainingResponse)
+def create_training_task(
     request_body: TrainingCreate,
     db: Session = Depends(get_db),
     api_key: str = Depends(api_key_header),
-) -> ModelDetailResponse:
-    trained_model = task_service.create_train_task(db=db, training_in=request_body, api_key=api_key)
+) -> TrainingResponse:
+    training_task = task_service.create_training_task(db=db, training_in=request_body, api_key=api_key)
 
-    return ModelDetailResponse(data=trained_model)
+    return TrainingResponse(data=training_task)
 
 
-@router.get("/trainings/{task_id}", response_model=TrainTaskDetailResponse)
+@router.get("/trainings/{task_id}", response_model=TrainingResponse)
 def get_task(
     *,
     task_id: str,
     db: Session = Depends(get_db),
     api_key: str = Depends(api_key_header),
-) -> TrainTaskDetailResponse:
+) -> TrainingResponse:
     task = task_service.get_task(db=db, task_id=task_id, api_key=api_key)
 
-    return TrainTaskDetailResponse(data=task)
+    return TrainingResponse(data=task)

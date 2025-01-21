@@ -79,11 +79,17 @@ class TaskService:
         netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
 
         train_task = train_task_repository.get_by_task_id(db=db, task_id=task_id)
-        train_task.hyperparameter.optimizer = train_task.hyperparameter.optimizer.name
-        train_task.hyperparameter.scheduler = train_task.hyperparameter.scheduler.name
+
+        learning_rate = train_task.hyperparameter.optimizer["lr"]
+        optimizer = train_task.hyperparameter.optimizer["name"]
+        scheduler = train_task.hyperparameter.scheduler["name"]
         model_id = train_task.model.model_id
-        train_task = TrainingPayload.model_validate(train_task)
+
         train_task.model_id = model_id
+        train_task.hyperparameter.learning_rate = learning_rate
+        train_task.hyperparameter.optimizer = optimizer
+        train_task.hyperparameter.scheduler = scheduler
+        train_task = TrainingPayload.model_validate(train_task)
 
         return train_task
 

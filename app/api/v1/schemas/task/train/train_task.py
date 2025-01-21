@@ -29,7 +29,7 @@ class TrainingCreate(BaseModel):
     environment: Optional[EnvironmentCreate]
 
 
-class TrainTaskSchema(BaseModel):
+class TrainingPayload(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     task_id: str
@@ -42,11 +42,11 @@ class TrainTaskSchema(BaseModel):
     error_detail: Optional[Dict] = None
     dataset: Optional[DatasetPayload]
     hyperparameter: Optional[HyperparameterPayload]
-    environment: Optional[EnvironmentPayload]
     performance: Optional[PerformancePayload]
+    environment: Optional[EnvironmentPayload]
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
 
-class TrainTaskDetailResponse(ResponseItem):
-    data: TrainTaskSchema
+class TrainingResponse(ResponseItem):
+    data: TrainingPayload

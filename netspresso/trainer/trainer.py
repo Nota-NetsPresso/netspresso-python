@@ -556,17 +556,8 @@ class Trainer(NetsPressoBase):
             model = trained_model_repository.save(db=db, model=trained_model)
             return model
 
-    def create_train_task(self):
+    def create_training_task(self):
         with get_db_session() as db:
-            task = TrainTask(
-                pretrained_model_name=self.model_name,
-                task=self.task,
-                framework=Framework.PYTORCH,
-                input_shapes=[InputShape(batch=1, channel=3, dimension=[self.img_size, self.img_size]).__dict__],
-                status=Status.IN_PROGRESS,
-            )
-            task = train_task_repository.save(db=db, task=task)
-
             dataset = Dataset(
                 name=self.data.name,
                 format=self.data.format,
@@ -578,46 +569,45 @@ class Trainer(NetsPressoBase):
                 train_valid_split_ratio=0,
                 id_mapping=self.data.id_mapping,
                 palette=self.data.pallete,
-                task_id=task.task_id,
             )
-            db.add(dataset)
-
+            augs = [
+                Augmentation(
+                    name=train_aug.name,
+                    parameters=train_aug.to_parameters(),
+                    phase="train",
+                )
+                for train_aug in self.augmentation.train
+            ] + [
+                Augmentation(
+                    name=inference_aug.name,
+                    parameters=inference_aug.to_parameters(),
+                    phase="inference",
+                )
+                for inference_aug in self.augmentation.inference
+            ]
             hyperparameter = Hyperparameter(
                 epochs=self.training.epochs,
                 batch_size=self.environment.batch_size,
                 optimizer=self.optimizer.asdict(),
                 scheduler=self.scheduler.asdict(),
-                task_id=task.task_id,
+                augmentations=augs,
             )
-            db.add(hyperparameter)
-
             environment = Environment(
                 seed=self.environment.seed,
                 num_workers=self.environment.num_workers,
                 gpus=self.environment.gpus,
-                task_id=task.task_id,
             )
-            db.add(environment)
-
-            # train_augs = [
-            #     Augmentation(
-            #         name=train_aug.name,
-            #         parameters=train_aug.to_parameters(),
-            #         phase="train",
-            #     )
-            #     for train_aug in self.augmentation.train
-            # ]
-            # inference_augs = [
-            #     Augmentation(
-            #         name=inference_aug.name,
-            #         parameters=inference_aug.to_parameters(),
-            #         phase="inference",
-            #     )
-            #     for inference_aug in self.augmentation.inference
-            # ]
-            # db.add_all(train_augs + inference_augs)
-
-            db.commit()
+            task = TrainTask(
+                pretrained_model_name=self.model_name,
+                task=self.task,
+                framework=Framework.PYTORCH,
+                input_shapes=[InputShape(batch=1, channel=3, dimension=[self.img_size, self.img_size]).__dict__],
+                status=Status.IN_PROGRESS,
+                dataset=dataset,
+                hyperparameter=hyperparameter,
+                environment=environment,
+            )
+            task = train_task_repository.save(db=db, task=task)
 
         return task
 
@@ -667,7 +657,7 @@ class Trainer(NetsPressoBase):
         destination_folder = Path(project_abs_path) / SubFolder.TRAINED_MODELS.value / model_name
         destination_folder = FileHandler.create_unique_folder(folder_path=destination_folder)
 
-        train_task = self.create_train_task()
+        train_task = self.create_training_task()
         trained_model = self.save_trained_model(model_name=model_name, train_task=train_task, project_id=project.project_id, user_id=project.user_id)
 
         try:
