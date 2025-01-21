@@ -43,6 +43,18 @@ from netspresso.trainer.models.yolox import (
     DetectionYoloXXModelConfig,
 )
 
+MODEL_GROUPS = {
+    "ResNet": ["ResNet18", "ResNet34", "ResNet50"],
+    "MobileNet": ["MobileNetV3-S", "MobileNetV3-L"],
+    "MobileViT": ["MobileViT-S"],
+    "EfficientFormer": ["EfficientFormer-L1"],
+    "ViT": ["ViT-T"],
+    "MixNet": ["MixNet-S", "MixNet-M", "MixNet-L"],
+    "YOLOX": ["YOLOX-S", "YOLOX-M", "YOLOX-L", "YOLOX-X"],
+    "SegFormer": ["SegFormer-B0"],
+    "PIDNet": ["PIDNet-S"],
+}
+
 MODEL_NAME_DISPLAY_MAP = {
     "EfficientFormer-L1": "efficientformer_l1",
     "MobileNetV3-S": "mobilenet_v3_small",
@@ -126,3 +138,17 @@ def get_all_available_models() -> Dict[str, List[str]]:
         "segmentation": list(SEGMENTATION_MODELS),
     }
     return all_models
+
+def get_model_group(model_name: str) -> str:
+    """Get the group name for a given model name.
+
+    Args:
+        model_name (str): Name of the model
+
+    Returns:
+        str: Group name of the model. Returns None if model is not found in any group.
+    """
+    for group_name, models in MODEL_GROUPS.items():
+        if model_name in models:
+            return group_name
+    return None

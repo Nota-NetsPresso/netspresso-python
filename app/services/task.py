@@ -4,10 +4,10 @@ from sqlalchemy.orm import Session
 
 from app.api.v1.schemas.model import ModelPayload
 from app.api.v1.schemas.task.train.hyperparameter import TrainerModel
-from app.api.v1.schemas.task.train.train_task import TrainingCreate, TrainTaskSchema
+from app.api.v1.schemas.task.train.train_task import TrainingCreate, TrainingPayload
 from app.services.user import user_service
 from netspresso.trainer.augmentations.augmentation import Normalize, Resize, ToTensor
-from netspresso.trainer.models import MODEL_NAME_DISPLAY_MAP, get_all_available_models
+from netspresso.trainer.models import MODEL_NAME_DISPLAY_MAP, get_all_available_models, get_model_group
 from netspresso.trainer.optimizers.optimizer_manager import OptimizerManager
 from netspresso.trainer.optimizers.optimizers import get_supported_optimizers
 from netspresso.trainer.schedulers.scheduler_manager import SchedulerManager
@@ -20,7 +20,13 @@ class TaskService:
         available_models = get_all_available_models()
 
         for task, models in available_models.items():
-            available_models[task] = [TrainerModel(name=MODEL_NAME_DISPLAY_MAP[model], display_name=model) for model in models]
+            available_models[task] = [
+                TrainerModel(
+                    name=MODEL_NAME_DISPLAY_MAP[model],
+                    display_name=model,
+                    group_name=get_model_group(model),
+                ) for model in models
+            ]
 
         return available_models
 
@@ -30,7 +36,7 @@ class TaskService:
     def get_supported_schedulers(self) -> List[Dict[str, Any]]:
         return get_supported_schedulers()
 
-    def create_train_task(self, db: Session, training_in: TrainingCreate, api_key: str) -> ModelPayload:
+    def create_training_task(self, db: Session, training_in: TrainingCreate, api_key: str) -> TrainingPayload:
         netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
 
         trainer = netspresso.trainer(task=training_in.task)
@@ -61,20 +67,22 @@ class TaskService:
             optimizer=optimizer,
             scheduler=scheduler,
         )
-        trained_model = trainer.train(
+        training_task = trainer.train(
             gpus=training_in.environment.gpus,
             model_name=training_in.name,
             project_id=training_in.project_id,
         )
 
-        return trained_model
+        return training_task
 
-    def get_task(self, db: Session, task_id: str, api_key: str) -> TrainTaskSchema:
+    def get_task(self, db: Session, task_id: str, api_key: str) -> TrainingPayload:
         netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
 
         train_task = train_task_repository.get_by_task_id(db=db, task_id=task_id)
+        train_task.hyperparameter.optimizer = train_task.hyperparameter.optimizer.name
+        train_task.hyperparameter.scheduler = train_task.hyperparameter.scheduler.name
         model_id = train_task.model.model_id
-        train_task = TrainTaskSchema.model_validate(train_task)
+        train_task = TrainingPayload.model_validate(train_task)
         train_task.model_id = model_id
 
         return train_task
