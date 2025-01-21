@@ -33,6 +33,7 @@ class TrainTaskSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     task_id: str
+    model_id: Optional[str] = None
     pretrained_model_name: str
     task: str
     framework: str

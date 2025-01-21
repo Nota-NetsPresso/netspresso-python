@@ -58,7 +58,6 @@ class HyperparameterPayload(BaseModel):
 
     epochs: int
     batch_size: int
-    learning_rate: float
     optimizer: OptimizerPayload
     scheduler: SchedulerPayload
     augmentations: List[AugmentationPayload] = []

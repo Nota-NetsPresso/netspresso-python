@@ -1,4 +1,4 @@
-from sqlalchemy import JSON, Boolean, Column, Float, ForeignKey, Integer, String
+from sqlalchemy import JSON, Boolean, Column, Float, ForeignKey, Integer, String, BigInteger
 from sqlalchemy.orm import relationship
 
 from netspresso.utils.db.generate_uuid import generate_uuid
@@ -104,7 +104,7 @@ class Performance(Base, TimestampMixin):
     valid_metrics = Column(JSON, nullable=False)
     metrics_list = Column(JSON, nullable=False)
     primary_metric = Column(String(36), nullable=False)
-    flops = Column(Integer, nullable=False, default=0)
+    flops = Column(BigInteger, nullable=False, default=0)
     params = Column(Integer, nullable=False, default=0)
     total_train_time = Column(Float, nullable=False, default=0)
     best_epoch = Column(Integer, nullable=False, default=0)

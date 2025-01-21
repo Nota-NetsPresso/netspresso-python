@@ -72,8 +72,10 @@ class TaskService:
     def get_task(self, db: Session, task_id: str, api_key: str) -> TrainTaskSchema:
         netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
 
-        train_task = train_task_repository.get_by_task_id(db=db, task_id=task_id, user_id=netspresso.user_info.user_id)
+        train_task = train_task_repository.get_by_task_id(db=db, task_id=task_id)
+        model_id = train_task.model.model_id
         train_task = TrainTaskSchema.model_validate(train_task)
+        train_task.model_id = model_id
 
         return train_task
 
