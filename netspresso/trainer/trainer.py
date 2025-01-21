@@ -24,7 +24,6 @@ from netspresso.exceptions.trainer import (
     TaskOrYamlPathException,
 )
 from netspresso.metadata.common import InputShape
-from netspresso.metadata.trainer import TrainerMetadata
 from netspresso.trainer.augmentations import AUGMENTATION_CONFIG_TYPE, AugmentationConfig, Transform
 from netspresso.trainer.data import DATA_CONFIG_TYPE, ImageLabelPathConfig, PathConfig
 from netspresso.trainer.models import (
@@ -496,42 +495,6 @@ class Trainer(NetsPressoBase):
             "": Status.IN_PROGRESS
         }
         return status_mapping.get(status, Status.IN_PROGRESS)
-
-    def initialize_metadata(self, output_dir):
-        def create_metadata_with_status(status, error_message=None):
-            metadata = TrainerMetadata()
-            metadata.status = status
-            if error_message:
-                logger.error(error_message)
-            return metadata
-
-        try:
-            metadata = TrainerMetadata()
-        except Exception as e:
-            error_message = f"An unexpected error occurred during metadata initialization: {e}"
-            metadata = create_metadata_with_status(Status.ERROR, error_message)
-        except KeyboardInterrupt:
-            warning_message = "Training task was interrupted by the user."
-            metadata = create_metadata_with_status(Status.STOPPED, warning_message)
-        finally:
-            metadata.update_output_dir(output_dir.resolve().as_posix())
-            metadata.update_model_info(
-                task=self.task,
-                model=self.model_name,
-                dataset=self.data.name,
-                input_shapes=[InputShape(batch=1, channel=3, dimension=[self.img_size, self.img_size])],
-            )
-            metadata.update_training_info(
-                epochs=self.training.epochs,
-                batch_size=self.environment.batch_size,
-                learning_rate=self.training.optimizer["lr"],
-                optimizer=Optimizer.to_display_name(self.training.optimizer["name"]),
-                scheduler=Scheduler.to_display_name(self.training.scheduler["name"]),
-            )
-            metadata.update_hparams(hparams=(output_dir / "hparams.yaml").resolve().as_posix())
-            MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
-
-        return metadata
 
     def find_best_model_paths(self, destination_folder: Path):
         best_fx_paths_set = set()
