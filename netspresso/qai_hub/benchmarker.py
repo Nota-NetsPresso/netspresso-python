@@ -25,6 +25,43 @@ class QAIHubBenchmarker(QAIHubBase):
 
         return profile
 
+    def get_benchmark_task_status(self, benchmark_task_uuid):
+        job: ProfileJob = hub.get_job(benchmark_task_uuid)
+        status = job.get_status()
+
+        return status
+
+    def update_benchmark_task(self, metadata: BenchmarkerMetadata):
+        job: ProfileJob = hub.get_job(metadata.benchmark_task_info.benchmark_task_uuid)
+        status = job.wait()
+
+        if status.success:
+            logger.info(f"{status.symbol} {status.state.name}")
+            profile = self.download_profile(job=job)
+            metadata.benchmark_result.latency = profile["execution_summary"]["estimated_inference_time"] / 1000
+            metadata.benchmark_result.memory_footprint = profile["execution_summary"][
+                "estimated_inference_peak_memory"
+            ]
+            metadata.status = Status.COMPLETED
+        else:
+            logger.info(f"{status.symbol} {status.state}: {status.message}")
+            metadata.status = Status.ERROR
+
+        folder_path = Path(metadata.input_model_path).parent
+        file_path = folder_path / "benchmark.json"
+        metadatas = []
+        if FileHandler.check_exists(file_path):
+            metadatas = MetadataHandler.load_json(file_path)
+
+        for i, stored_metadata in enumerate(metadatas):
+            if stored_metadata.get("benchmark_task_info", {}).get("benchmark_task_uuid") == metadata.benchmark_task_info.benchmark_task_uuid:
+                metadatas[i] = metadata.asdict()
+                break
+
+        MetadataHandler.save_json(data=metadatas, folder_path=folder_path, file_name="benchmark")
+
+        return metadata
+
     def benchmark_model(
         self,
         input_model_path: Union[str, Path],
@@ -32,7 +69,6 @@ class QAIHubBenchmarker(QAIHubBase):
         options: Union[ProfileOptions, str] = ProfileOptions(),
         job_name: Optional[str] = None,
         retry: bool = True,
-        wait_until_done: bool = True,
     ) -> Union[ProfileJob, List[ProfileJob]]:
         FileHandler.check_input_model_path(input_model_path)
 
@@ -69,33 +105,14 @@ class QAIHubBenchmarker(QAIHubBase):
             )
 
             metadata.benchmark_task_info.benchmark_task_uuid = job.job_id
-            metadatas[-1] = metadata.asdict()
-            MetadataHandler.save_json(data=metadatas, folder_path=folder_path, file_name=file_name)
-
-            if wait_until_done:
-                job = hub.get_job(job.job_id)
-                status = job.wait()
-
-                if status.success:
-                    logger.info(f"{status.symbol} {status.state.name}")
-                    profile = self.download_profile(job=job)
-                    metadata.benchmark_result.latency = profile["execution_summary"]["estimated_inference_time"] / 1000
-                    metadata.benchmark_result.memory_footprint = profile["execution_summary"][
-                        "estimated_inference_peak_memory"
-                    ]
-                    metadata.status = Status.COMPLETED
-                else:
-                    logger.info(f"{status.symbol} {status.state}: {status.message}")
-                    metadata.status = Status.ERROR
-
-            metadatas[-1] = metadata.asdict()
-            MetadataHandler.save_json(data=metadatas, folder_path=folder_path, file_name=file_name)
-
-            return metadata
 
         except KeyboardInterrupt:
             metadata.status = Status.STOPPED
-            MetadataHandler.save_json(data=metadata.asdict(), folder_path=folder_path, file_name=file_name)
+
+        metadatas[-1] = metadata.asdict()
+        MetadataHandler.save_json(data=metadatas, folder_path=folder_path, file_name=file_name)
+
+        return metadata
 
     def inference_model(
         self,

@@ -108,11 +108,11 @@ class QAIHubConverter(QAIHubBase):
 
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
 
-            return metadata
-
         except KeyboardInterrupt:
             metadata.status = Status.STOPPED
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
+
+        return metadata
 
     def download_model(self, job: CompileJob, filename: str):
         job.download_target_model(filename=filename)
