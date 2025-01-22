@@ -15,11 +15,6 @@ from netspresso.utils.metadata import MetadataHandler
 
 
 class QAIHubConverter(QAIHubBase):
-    def transform_shape(self, data):
-        for value in data.values():
-            shape, _ = value
-            return {"batch": shape[0], "channel": shape[1], "dimension": list(shape[2:])}
-
     def convert_image_dict_to_list(self, image_dict):
         result = []
         for key, value in image_dict.items():
@@ -31,16 +26,33 @@ class QAIHubConverter(QAIHubBase):
                 "dimension": dimension
             })
         return result
+    
+    def get_convert_task_status(self, convert_task_uuid):
+        job: CompileJob = hub.get_job(convert_task_uuid)
+        status = job.get_status()
 
-    def dict_to_tuple(self, data):
-        batch = data.get("batch")
-        channel = data.get("channel")
-        dimension = data.get("dimension", [])
+        return status
+    
+    def update_convert_task(self, metadata: ConverterMetadata):
+        job: CompileJob = hub.get_job(metadata.convert_task_info.convert_task_uuid)
+        status = job.wait()
 
-        if batch is not None and channel is not None and isinstance(dimension, list):
-            return (batch, channel, *dimension)
+        if status.success:
+            logger.info(f"{status.symbol} {status.state.name}")
+            self.download_model(job=job, filename=metadata.converted_model_path)
+            target_model = job.get_target_model()
+            metadata.convert_task_info.output_model_uuid = target_model.model_id
+            metadata.convert_task_info.data_type = job.target_shapes["image"][1]
+            metadata.available_options = job.compatible_devices
+            metadata.status = Status.COMPLETED
         else:
-            raise ValueError("Invalid input data format")
+            logger.info(f"{status.symbol} {status.state}: {status.message}")
+            metadata.status = Status.ERROR
+            metadata.update_message(exception_detail=status.message)
+
+        MetadataHandler.save_json(data=metadata.asdict(), folder_path=Path(metadata.converted_model_path).parent.as_posix())
+
+        return metadata
 
     def convert_model(
         self,
@@ -53,7 +65,6 @@ class QAIHubConverter(QAIHubBase):
         single_compile: bool = True,
         calibration_data: Union[Dataset, DatasetEntries, str, None] = None,
         retry: bool = True,
-        wait_until_done: bool = True,
     ) -> Union[ConverterMetadata, List[ConverterMetadata]]:
 
         output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
@@ -85,35 +96,15 @@ class QAIHubConverter(QAIHubBase):
             framework = self.get_framework_by_runtime(options.target_runtime)
             display_framework = self.get_display_framework(framework)
 
-            # metadata.model_info.input_shapes = [input_shape]
             metadata.model_info.input_shapes = self.convert_image_dict_to_list(input_shapes)
             metadata.model_info.data_type = job.shapes["image"][1]
             metadata.convert_task_info.convert_task_uuid = job.job_id
+            metadata.converted_model_path = converted_model_path
             metadata.convert_task_info.input_model_uuid = job.model.model_id
             metadata.convert_task_info.device_name = target_device_name.name
             metadata.convert_task_info.display_device_name = target_device_name.name
             metadata.convert_task_info.framework = framework
             metadata.convert_task_info.display_framework = display_framework
-
-            MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
-
-            if wait_until_done:
-                job: CompileJob = hub.get_job(job.job_id)
-                status = job.wait()
-
-                if status.success:
-                    logger.info(f"{status.symbol} {status.state.name}")
-                    self.download_model(job=job, filename=converted_model_path)
-                    target_model = job.get_target_model()
-                    metadata.convert_task_info.output_model_uuid = target_model.model_id
-                    metadata.converted_model_path = converted_model_path
-                    metadata.convert_task_info.data_type = job.target_shapes["image"][1]
-                    metadata.available_options = job.compatible_devices
-                    metadata.status = Status.COMPLETED
-                else:
-                    logger.info(f"{status.symbol} {status.state}: {status.message}")
-                    metadata.status = Status.ERROR
-                    metadata.update_message(exception_detail=status.message)
 
             MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
 
