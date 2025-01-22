@@ -21,8 +21,7 @@ class TrainingCreate(BaseModel):
     project_id: str
     name: str
     pretrained_model_name: str
-    task: str
-    framework: str
+    task: str = Field(default="detection", description="Task")
     input_shapes: List[InputShape] = Field(default_factory=list, description="List of input shapes")
     dataset: Optional[DatasetCreate]
     hyperparameter: Optional[HyperparameterCreate]

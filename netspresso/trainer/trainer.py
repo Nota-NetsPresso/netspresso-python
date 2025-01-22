@@ -565,7 +565,7 @@ class Trainer(NetsPressoBase):
                 train_path="train",
                 valid_path="valid",
                 test_path="test",
-                storage_location=StorageLocation.LOCAL,
+                storage_location=StorageLocation.STORAGE,
                 train_valid_split_ratio=0,
                 id_mapping=self.data.id_mapping,
                 palette=self.data.pallete,

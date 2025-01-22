@@ -29,14 +29,7 @@ class ModelPayload(BaseModel):
     benchmark_task_ids: Optional[List] = []
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
-    train_task: TrainingPayload = Field(exclude=True)
     latest_experiments: ExperimentStatus = Field(default_factory=ExperimentStatus)
-
-    @model_validator(mode="after")
-    def set_status(cls, values):
-        values.status = values.train_task.status
-
-        return values
 
 
 class ExperimentStatusResponse(ResponseItem):
