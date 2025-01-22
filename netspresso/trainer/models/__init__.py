@@ -51,6 +51,7 @@ MODEL_GROUPS = {
     "ViT": ["ViT-T"],
     "MixNet": ["MixNet-S", "MixNet-M", "MixNet-L"],
     "YOLOX": ["YOLOX-S", "YOLOX-M", "YOLOX-L", "YOLOX-X"],
+    "YOLO": ["YOLO-Fastest"],
     "SegFormer": ["SegFormer-B0"],
     "PIDNet": ["PIDNet-S"],
 }
@@ -71,6 +72,7 @@ MODEL_NAME_DISPLAY_MAP = {
     "YOLOX-M": "yolox_m",
     "YOLOX-L": "yolox_l",
     "YOLOX-X": "yolox_x",
+    "YOLO-Fastest": "yolo_fastest",
     "SegFormer-B0": "segformer_b0",
     "PIDNet-S": "pidnet_s",
 }
@@ -94,7 +96,7 @@ DETECTION_MODELS = {
     "YOLOX-M": DetectionYoloXMModelConfig,
     "YOLOX-L": DetectionYoloXLModelConfig,
     "YOLOX-X": DetectionYoloXXModelConfig,
-    # "YOLO-Fastest": DetectionYoloFastestModelConfig,
+    "YOLO-Fastest": DetectionYoloFastestModelConfig,
 }
 
 SEGMENTATION_MODELS = {
