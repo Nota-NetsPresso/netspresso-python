@@ -114,6 +114,17 @@ class QAIHubBenchmarker(QAIHubBase):
 
         return metadata
 
+    def get_inference_task_status(self, inference_task_uuid):
+        job: InferenceJob = hub.get_job(inference_task_uuid)
+        status = job.get_status()
+
+        if status.success:
+            logger.info(f"{status.symbol} {status.state.name}")
+        else:
+            logger.info(f"{status.symbol} {status.state}: {status.message}")
+
+        return status
+
     def inference_model(
         self,
         input_model_path: Union[str, Path],
@@ -122,7 +133,6 @@ class QAIHubBenchmarker(QAIHubBase):
         job_name: Optional[str] = None,
         options: Union[InferenceOptions, str] = InferenceOptions(),
         retry: bool = True,
-        wait_until_done: bool = True,
     ) -> Union[InferenceJob, List[InferenceJob]]:
 
         cli_string = options.to_cli_string() if isinstance(options, InferenceOptions) else options
@@ -135,14 +145,5 @@ class QAIHubBenchmarker(QAIHubBase):
             options=cli_string,
             retry=retry,
         )
-
-        if wait_until_done:
-            job = hub.get_job(job.job_id)
-            status = job.wait()
-
-            if status.success:
-                logger.info(f"{status.symbol} {status.state.name}")
-            else:
-                logger.info(f"{status.symbol} {status.state}: {status.message}")
 
         return job
