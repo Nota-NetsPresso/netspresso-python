@@ -40,6 +40,10 @@ class QuantizeFullType(str, Enum):
     W4A16 = "w4a16"
 
 
+class QuantizeWeightType(str, Enum):
+    FP16 = "float16"
+
+
 @dataclass
 class CompileOptions(CommonOptions):
     target_runtime: Optional[Runtime] = Runtime.TFLITE
@@ -49,8 +53,10 @@ class CompileOptions(CommonOptions):
     force_channel_last_input: Optional[str] = None
     force_channel_last_output: Optional[str] = None
     quantize_full_type: Optional[QuantizeFullType] = None
+    quantize_weight_type: Optional[QuantizeWeightType] = None
     quantize_io: Optional[bool] = False
     quantize_io_type: Optional[str] = None
+    qnn_graph_name: Optional[str] = None
     qnn_context_binary_vtcm: Optional[str] = None
     qnn_context_binary_optimization_level: Optional[int] = None
 
@@ -74,10 +80,14 @@ class CompileOptions(CommonOptions):
             args.append(f'--force_channel_last_output "{self.force_channel_last_output}"')
         if self.quantize_full_type is not None:
             args.append(f"--quantize_full_type {self.quantize_full_type}")
+        if self.quantize_weight_type is not None:
+            args.append(f"--quantize_weight_type {self.quantize_weight_type}")
         if self.quantize_io:
             args.append("--quantize_io")
         if self.quantize_io_type is not None:
             args.append(f'--quantize_io_type {self.quantize_io_type}')
+        if self.qnn_graph_name is not None:
+            args.append(f'--qnn_graph_name {self.qnn_graph_name}')
         if self.qnn_context_binary_vtcm is not None:
             args.append(f'--qnn_context_binary_vtcm {self.qnn_context_binary_vtcm}')
         if self.qnn_context_binary_optimization_level is not None:
