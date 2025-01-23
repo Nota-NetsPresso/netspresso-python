@@ -10,4 +10,4 @@ matplotlib>=3.7.4
 aenum==3.1.15
 requests-toolbelt>=1.0.0
 python-dotenv>=1.0.0
-qai-hub==0.15.0
+qai-hub==0.21.0
