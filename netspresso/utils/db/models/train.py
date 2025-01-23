@@ -23,7 +23,7 @@ class TrainTask(Base, TimestampMixin):
 
     id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True, nullable=False)
     task_id = Column(String(36), index=True, unique=True, nullable=False, default=lambda: generate_uuid(entity="task"))
-    pretrained_model_name = Column(String(100), nullable=False)
+    pretrained_model = Column(String(100), nullable=False)
     task = Column(String(30), nullable=False)
     framework = Column(String(30), nullable=False)
     input_shapes = Column(JSON, nullable=False)

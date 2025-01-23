@@ -50,7 +50,7 @@ class TaskService:
             id_mapping=["prohibitory", "danger", "mandatory", "other"],
         )
         img_size = training_in.input_shapes[0].dimension[0]
-        trainer.set_model_config(model_name=training_in.pretrained_model_name, img_size=img_size)
+        trainer.set_model_config(model_name=training_in.pretrained_model, img_size=img_size)
         trainer.set_augmentation_config(
             train_transforms=[Resize(), ToTensor(), Normalize()],
             inference_transforms=[Resize(), ToTensor(), Normalize()],

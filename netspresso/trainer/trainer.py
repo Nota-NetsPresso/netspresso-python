@@ -595,7 +595,7 @@ class Trainer(NetsPressoBase):
                 gpus=self.environment.gpus,
             )
             task = TrainTask(
-                pretrained_model_name=self.model_name,
+                pretrained_model=self.model_name,
                 task=self.task,
                 framework=Framework.PYTORCH,
                 input_shapes=[InputShape(batch=1, channel=3, dimension=[self.img_size, self.img_size]).__dict__],

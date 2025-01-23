@@ -20,7 +20,7 @@ class InputShape(BaseModel):
 class TrainingCreate(BaseModel):
     project_id: str
     name: str
-    pretrained_model_name: str
+    pretrained_model: str
     task: str = Field(default="detection", description="Task")
     input_shapes: List[InputShape] = Field(default_factory=list, description="List of input shapes")
     dataset: Optional[DatasetCreate]
@@ -33,7 +33,7 @@ class TrainingPayload(BaseModel):
 
     task_id: str
     model_id: Optional[str] = None
-    pretrained_model_name: str
+    pretrained_model: str
     task: str
     framework: str
     input_shapes: List[Dict]
