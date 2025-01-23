@@ -59,5 +59,5 @@ class HyperparameterPayload(BaseModel):
     epochs: int
     batch_size: int
     learning_rate: float
-    optimizer: Optimizer = Field(..., description="Optimizer to use")
-    scheduler: Scheduler = Field(..., description="Scheduler to use")
+    optimizer: OptimizerPayload = Field(..., description="Optimizer to use")
+    scheduler: SchedulerPayload = Field(..., description="Scheduler to use")

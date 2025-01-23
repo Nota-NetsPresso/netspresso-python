@@ -44,74 +44,84 @@ from netspresso.trainer.models.yolox import (
 )
 
 MODEL_GROUPS = {
-    "ResNet": ["ResNet18", "ResNet34", "ResNet50"],
-    "MobileNet": ["MobileNetV3-S", "MobileNetV3-L"],
-    "MobileViT": ["MobileViT-S"],
-    "EfficientFormer": ["EfficientFormer-L1"],
-    "ViT": ["ViT-T"],
-    "MixNet": ["MixNet-S", "MixNet-M", "MixNet-L"],
-    "YOLOX": ["YOLOX-S", "YOLOX-M", "YOLOX-L", "YOLOX-X"],
-    "YOLO": ["YOLO-Fastest"],
-    "SegFormer": ["SegFormer-B0"],
-    "PIDNet": ["PIDNet-S"],
+    "ResNet": ["resnet18", "resnet34", "resnet50"],
+    "MobileNet": ["mobilenet_v3_small", "mobilenet_v3_large"],
+    "MobileViT": ["mobilevit_s"],
+    "EfficientFormer": ["efficientformer_l1"],
+    "ViT": ["vit_tiny"],
+    "MixNet": ["mixnet_s", "mixnet_m", "mixnet_l"],
+    "YOLOX": ["yolox_s", "yolox_m", "yolox_l", "yolox_x"],
+    "YOLO": ["yolo_fastest"],
+    "SegFormer": ["segformer_b0"],
+    "PIDNet": ["pidnet_s"],
 }
 
 MODEL_NAME_DISPLAY_MAP = {
-    "EfficientFormer-L1": "efficientformer_l1",
-    "MobileNetV3-S": "mobilenet_v3_small",
-    "MobileNetV3-L": "mobilenet_v3_large",
-    "MobileViT-S": "mobilevit_s",
-    "ResNet18": "resnet18",
-    "ResNet34": "resnet34",
-    "ResNet50": "resnet50",
-    "ViT-T": "vit_tiny",
-    "MixNet-S": "mixnet_s",
-    "MixNet-M": "mixnet_m",
-    "MixNet-L": "mixnet_l",
-    "YOLOX-S": "yolox_s",
-    "YOLOX-M": "yolox_m",
-    "YOLOX-L": "yolox_l",
-    "YOLOX-X": "yolox_x",
-    "YOLO-Fastest": "yolo_fastest",
-    "SegFormer-B0": "segformer_b0",
-    "PIDNet-S": "pidnet_s",
+    "efficientformer_l1": "EfficientFormer-L1",
+    "mobilenet_v3_small": "MobileNetV3-S",
+    "mobilenet_v3_large": "MobileNetV3-L",
+    "mobilevit_s": "MobileViT-S",
+    "resnet18": "ResNet18",
+    "resnet34": "ResNet34",
+    "resnet50": "ResNet50",
+    "vit_tiny": "ViT-T",
+    "mixnet_s": "MixNet-S",
+    "mixnet_m": "MixNet-M",
+    "mixnet_l": "MixNet-L",
+    "yolox_s": "YOLOX-S",
+    "yolox_m": "YOLOX-M",
+    "yolox_l": "YOLOX-L",
+    "yolox_x": "YOLOX-X",
+    "yolo_fastest": "YOLO-Fastest",
+    "segformer_b0": "SegFormer-B0",
+    "pidnet_s": "PIDNet-S",
+}
+
+TASK_NAME_DISPLAY_MAP = {
+    "classification": "Classification",
+    "detection": "Object Detection",
+    "segmentation": "Semantic Segmentation",
+}
+
+FRAMEWORK_NAME_DISPLAY_MAP = {
+    "pytorch": "PyTorch",
 }
 
 CLASSIFICATION_MODELS = {
-    "EfficientFormer-L1": ClassificationEfficientFormerModelConfig,
-    "MobileNetV3-S": ClassificationMobileNetV3SmallModelConfig,
-    "MobileNetV3-L": ClassificationMobileNetV3LargeModelConfig,
-    "MobileViT-S": ClassificationMobileViTModelConfig,
-    "ResNet18": ClassificationResNet18ModelConfig,
-    "ResNet34": ClassificationResNet34ModelConfig,
-    "ResNet50": ClassificationResNet50ModelConfig,
-    "ViT-T": ClassificationViTTinyModelConfig,
-    "MixNet-S": ClassificationMixNetSmallModelConfig,
-    "MixNet-M": ClassificationMixNetMediumModelConfig,
-    "MixNet-L": ClassificationMixNetLargeModelConfig,
+    "efficientformer_l1": ClassificationEfficientFormerModelConfig,
+    "mobilenet_v3_small": ClassificationMobileNetV3SmallModelConfig,
+    "mobilenet_v3_large": ClassificationMobileNetV3LargeModelConfig,
+    "mobilevit_s": ClassificationMobileViTModelConfig,
+    "resnet18": ClassificationResNet18ModelConfig,
+    "resnet34": ClassificationResNet34ModelConfig,
+    "resnet50": ClassificationResNet50ModelConfig,
+    "vit_tiny": ClassificationViTTinyModelConfig,
+    "mixnet_s": ClassificationMixNetSmallModelConfig,
+    "mixnet_m": ClassificationMixNetMediumModelConfig,
+    "mixnet_l": ClassificationMixNetLargeModelConfig,
 }
 
 DETECTION_MODELS = {
-    "YOLOX-S": DetectionYoloXSModelConfig,
-    "YOLOX-M": DetectionYoloXMModelConfig,
-    "YOLOX-L": DetectionYoloXLModelConfig,
-    "YOLOX-X": DetectionYoloXXModelConfig,
-    "YOLO-Fastest": DetectionYoloFastestModelConfig,
+    "yolox_s": DetectionYoloXSModelConfig,
+    "yolox_m": DetectionYoloXMModelConfig,
+    "yolox_l": DetectionYoloXLModelConfig,
+    "yolox_x": DetectionYoloXXModelConfig,
+    "yolo_fastest": DetectionYoloFastestModelConfig,
 }
 
 SEGMENTATION_MODELS = {
-    "EfficientFormer-L1": SegmentationEfficientFormerModelConfig,
-    "MobileNetV3-S": SegmentationMobileNetV3SmallModelConfig,
-    "ResNet50": SegmentationResNet50ModelConfig,
-    "SegFormer-B0": SegmentationSegFormerB0ModelConfig,
-    "MixNet-S": SegmentationMixNetSmallModelConfig,
-    "MixNet-M": SegmentationMixNetMediumModelConfig,
-    "MixNet-L": SegmentationMixNetLargeModelConfig,
-    "PIDNet-S": PIDNetModelConfig,
+    "efficientformer_l1": SegmentationEfficientFormerModelConfig,
+    "mobilenet_v3_small": SegmentationMobileNetV3SmallModelConfig,
+    "resnet50": SegmentationResNet50ModelConfig,
+    "segformer_b0": SegmentationSegFormerB0ModelConfig,
+    "mixnet_s": SegmentationMixNetSmallModelConfig,
+    "mixnet_m": SegmentationMixNetMediumModelConfig,
+    "mixnet_l": SegmentationMixNetLargeModelConfig,
+    "pidnet_s": PIDNetModelConfig,
 }
 
 POSEESTIMATION_MODELS = {
-    "MobileNetV3-S": PoseEstimationMobileNetV3SmallModelConfig,
+    "mobilenet_v3_small": PoseEstimationMobileNetV3SmallModelConfig,
 }
 
 # NOT_SUPPORTED_PRETRAINED_MODELS = ["YOLO-Fastest"]
@@ -154,3 +164,14 @@ def get_model_group(model_name: str) -> str:
         if model_name in models:
             return group_name
     return None
+
+def get_model_display_name(model_name: str) -> str:
+    """Get the display name for a given model name.
+
+    Args:
+        model_name (str): Name of the model
+
+    Returns:
+        str: Display name of the model. Returns None if model is not found.
+    """
+    return MODEL_NAME_DISPLAY_MAP.get(model_name, None)

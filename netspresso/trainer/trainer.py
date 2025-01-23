@@ -59,14 +59,14 @@ class Trainer(NetsPressoBase):
 
         self.token_handler = token_handler
         self.deprecated_names = {
-            "EfficientFormer": "EfficientFormer-L1",
-            "MobileNetV3_Small": "MobileNetV3-S",
-            "MobileNetV3_Large": "MobileNetV3-L",
-            "ViT-Tiny": "ViT-T",
-            "MixNet-Small": "MixNet-S",
-            "MixNet-Medium": "MixNet-M",
-            "MixNet-Large": "MixNet-L",
-            "PIDNet": "PIDNet-S",
+            "efficientformer": "efficientformer_l1",
+            "mobilenetv3_small": "mobilenet_v3_small",
+            "mobilenetv3_large": "mobilenet_v3_large",
+            "vit_tiny": "vit_tiny",
+            "mixnet_small": "mixnet_s",
+            "mixnet_medium": "mixnet_m",
+            "mixnet_large": "mixnet_l",
+            "pidnet": "pidnet_s",
         }
 
         if (task is not None) == (yaml_path is not None):
@@ -631,7 +631,7 @@ class Trainer(NetsPressoBase):
 
         return task
 
-    def train(self, gpus: str, model_name: str, project_id: str, output_dir: Optional[str] = "./outputs"):
+    def train(self, gpus: str, model_name: str, project_id: str, output_dir: Optional[str] = "./outputs") -> TrainTask:
         """Train the model with the specified configuration.
 
         Args:

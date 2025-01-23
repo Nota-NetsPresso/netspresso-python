@@ -28,14 +28,30 @@ class TrainingCreate(BaseModel):
     environment: Optional[EnvironmentCreate]
 
 
+class PretrainedModelPayload(BaseModel):
+    name: str = Field(description="Pretrained model name")
+    display_name: str = Field(description="Pretrained model display name")
+    group_name: str = Field(description="Pretrained model group name")
+
+
+class TaskPayload(BaseModel):
+    name: str = Field(description="Task name")
+    display_name: str = Field(description="Task display name")
+
+
+class FrameworkPayload(BaseModel):
+    name: str = Field(description="Framework name")
+    display_name: str = Field(description="Framework display name")
+
+
 class TrainingPayload(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     task_id: str
     model_id: Optional[str] = None
-    pretrained_model: str
-    task: str
-    framework: str
+    pretrained_model: PretrainedModelPayload
+    task: TaskPayload
+    framework: FrameworkPayload
     input_shapes: List[Dict]
     status: str
     error_detail: Optional[Dict] = None

@@ -3,11 +3,12 @@ from typing import Any, Dict, List
 from sqlalchemy.orm import Session
 
 from app.api.v1.schemas.model import ModelPayload
-from app.api.v1.schemas.task.train.hyperparameter import TrainerModel
-from app.api.v1.schemas.task.train.train_task import TrainingCreate, TrainingPayload
+from app.api.v1.schemas.task.train.hyperparameter import TrainerModel, OptimizerPayload, SchedulerPayload
+from app.api.v1.schemas.task.train.train_task import TrainingCreate, TrainingPayload, PretrainedModelPayload, TaskPayload, FrameworkPayload
 from app.services.user import user_service
+from netspresso.enums.train import Optimizer, Scheduler
 from netspresso.trainer.augmentations.augmentation import Normalize, Resize, ToTensor
-from netspresso.trainer.models import MODEL_NAME_DISPLAY_MAP, get_all_available_models, get_model_group
+from netspresso.trainer.models import get_all_available_models, get_model_display_name, get_model_group, TASK_NAME_DISPLAY_MAP, FRAMEWORK_NAME_DISPLAY_MAP
 from netspresso.trainer.optimizers.optimizer_manager import OptimizerManager
 from netspresso.trainer.optimizers.optimizers import get_supported_optimizers
 from netspresso.trainer.schedulers.scheduler_manager import SchedulerManager
@@ -22,8 +23,8 @@ class TaskService:
         for task, models in available_models.items():
             available_models[task] = [
                 TrainerModel(
-                    name=MODEL_NAME_DISPLAY_MAP[model],
-                    display_name=model,
+                    name=model,
+                    display_name=get_model_display_name(model),
                     group_name=get_model_group(model),
                 ) for model in models
             ]
@@ -74,14 +75,36 @@ class TaskService:
         )
 
         learning_rate = training_task.hyperparameter.optimizer["lr"]
-        optimizer = training_task.hyperparameter.optimizer["name"]
-        scheduler = training_task.hyperparameter.scheduler["name"]
+        training_task.hyperparameter.learning_rate = learning_rate
+
+        training_task.task = TaskPayload(
+            name=training_task.task,
+            display_name=TASK_NAME_DISPLAY_MAP[training_task.task],
+        )
+
+        training_task.framework = FrameworkPayload(
+            name=training_task.framework,
+            display_name=FRAMEWORK_NAME_DISPLAY_MAP[training_task.framework],
+        )
+
+        training_task.pretrained_model = PretrainedModelPayload(
+            name=training_task.pretrained_model,
+            display_name=get_model_display_name(training_task.pretrained_model),
+            group_name=get_model_group(training_task.pretrained_model)
+        )
+
+        training_task.hyperparameter.optimizer = OptimizerPayload(
+            name=training_task.hyperparameter.optimizer["name"],
+            display_name=Optimizer.to_display_name(training_task.hyperparameter.optimizer["name"]),
+        )
+        training_task.hyperparameter.scheduler = SchedulerPayload(
+            name=training_task.hyperparameter.scheduler["name"],
+            display_name=Scheduler.to_display_name(training_task.hyperparameter.scheduler["name"]),
+        )
+
         model_id = training_task.model.model_id
 
         training_task.model_id = model_id
-        training_task.hyperparameter.learning_rate = learning_rate
-        training_task.hyperparameter.optimizer = optimizer
-        training_task.hyperparameter.scheduler = scheduler
         training_task = TrainingPayload.model_validate(training_task)
 
         return training_task
@@ -89,20 +112,43 @@ class TaskService:
     def get_task(self, db: Session, task_id: str, api_key: str) -> TrainingPayload:
         netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
 
-        train_task = train_task_repository.get_by_task_id(db=db, task_id=task_id)
+        training_task = train_task_repository.get_by_task_id(db=db, task_id=task_id)
 
-        learning_rate = train_task.hyperparameter.optimizer["lr"]
-        optimizer = train_task.hyperparameter.optimizer["name"]
-        scheduler = train_task.hyperparameter.scheduler["name"]
-        model_id = train_task.model.model_id
+        learning_rate = training_task.hyperparameter.optimizer["lr"]
+        model_id = training_task.model.model_id
 
-        train_task.model_id = model_id
-        train_task.hyperparameter.learning_rate = learning_rate
-        train_task.hyperparameter.optimizer = optimizer
-        train_task.hyperparameter.scheduler = scheduler
-        train_task = TrainingPayload.model_validate(train_task)
+        training_task.task = TaskPayload(
+            name=training_task.task,
+            display_name=TASK_NAME_DISPLAY_MAP[training_task.task],
+        )
 
-        return train_task
+        training_task.framework = FrameworkPayload(
+            name=training_task.framework,
+            display_name=FRAMEWORK_NAME_DISPLAY_MAP[training_task.framework],
+        )
+
+        # Convert pretrained_model string to TrainerModel object
+        training_task.pretrained_model = PretrainedModelPayload(
+            name=training_task.pretrained_model,
+            display_name=get_model_display_name(training_task.pretrained_model),
+            group_name=get_model_group(training_task.pretrained_model)
+        )
+
+        training_task.hyperparameter.optimizer = OptimizerPayload(
+            name=training_task.hyperparameter.optimizer["name"],
+            display_name=Optimizer.to_display_name(training_task.hyperparameter.optimizer["name"]),
+        )
+        training_task.hyperparameter.scheduler = SchedulerPayload(
+            name=training_task.hyperparameter.scheduler["name"],
+            display_name=Scheduler.to_display_name(training_task.hyperparameter.scheduler["name"]),
+        )
+
+        training_task.model_id = model_id
+        training_task.hyperparameter.learning_rate = learning_rate
+
+        training_task = TrainingPayload.model_validate(training_task)
+
+        return training_task
 
 
 task_service = TaskService()
