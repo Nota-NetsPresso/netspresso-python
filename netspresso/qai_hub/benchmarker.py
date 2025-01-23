@@ -43,7 +43,7 @@ class QAIHubBenchmarker(QAIHubBase):
                 "estimated_inference_peak_memory"
             ]
             metadata.status = Status.COMPLETED
-        else:
+        elif status.failure:
             logger.info(f"{status.symbol} {status.state}: {status.message}")
             metadata.status = Status.ERROR
 

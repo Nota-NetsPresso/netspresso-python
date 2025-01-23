@@ -32,7 +32,7 @@ class QAIHubQuantizer(QAIHubBase):
             target_model = job.get_target_model()
             metadata.quantize_info.output_model_uuid = target_model.model_id
             metadata.status = Status.COMPLETED
-        else:
+        elif status.failure:
             logger.info(f"{status.symbol} {status.state}: {status.message}")
             metadata.status = Status.ERROR
             metadata.update_message(exception_detail=status.message)

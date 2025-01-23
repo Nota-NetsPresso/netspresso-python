@@ -45,7 +45,7 @@ class QAIHubConverter(QAIHubBase):
             metadata.convert_task_info.data_type = job.target_shapes["image"][1]
             metadata.available_options = job.compatible_devices
             metadata.status = Status.COMPLETED
-        else:
+        elif status.failure:
             logger.info(f"{status.symbol} {status.state}: {status.message}")
             metadata.status = Status.ERROR
             metadata.update_message(exception_detail=status.message)
