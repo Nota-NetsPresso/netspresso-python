@@ -1,10 +1,11 @@
 from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict
+from netspresso.enums.train import StorageLocation
 
 
 class DatasetCreate(BaseModel):
-    train_path: Optional[str] = None
+    train_path: str
     valid_path: Optional[str] = None
     test_path: Optional[str] = None
 
@@ -12,13 +13,10 @@ class DatasetCreate(BaseModel):
 class DatasetPayload(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    name: str
-    format: str
-    root_path: str
     train_path: str
     valid_path: Optional[str]
     test_path: Optional[str]
-    storage_location: str
+    storage_location: StorageLocation
     train_valid_split_ratio: float
     id_mapping: Optional[List] = []
     palette: Optional[dict] = {}

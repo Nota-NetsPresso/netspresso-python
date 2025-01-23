@@ -42,6 +42,7 @@ class TrainTask(Base, TimestampMixin):
         "TrainedModel",
         back_populates="train_task",
         uselist=False,
+        lazy='joined',
     )
 
 
@@ -49,9 +50,6 @@ class Dataset(Base, TimestampMixin):
     __tablename__ = "dataset"
 
     id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True, nullable=False)
-    name = Column(String(100), nullable=False)
-    format = Column(String(100), nullable=False)
-    root_path = Column(String(255), nullable=False)
     train_path = Column(String(255), nullable=False)
     valid_path = Column(String(255), nullable=True)
     test_path = Column(String(255), nullable=True)

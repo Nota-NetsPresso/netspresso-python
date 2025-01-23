@@ -559,9 +559,6 @@ class Trainer(NetsPressoBase):
     def create_training_task(self):
         with get_db_session() as db:
             dataset = Dataset(
-                name=self.data.name,
-                format=self.data.format,
-                root_path=self.data.path.root,
                 train_path="train",
                 valid_path="valid",
                 test_path="test",

@@ -25,10 +25,10 @@ class Optimizer(str, Enum):
 
 
 class Scheduler(str, Enum):
+    COSINE_ANNEALING_WARM_RESTARTS_WITH_CUSTOM_WARM_UP = "cosine"
     STEPLR = "step"
     POLYNOMIAL_LR_WITH_WARM_UP = "poly"
     COSINE_ANNEALING_LR_WITH_CUSTOM_WARM_UP = "cosine_no_sgdr"
-    COSINE_ANNEALING_WARM_RESTARTS_WITH_CUSTOM_WARM_UP = "cosine"
 
     @classmethod
     def to_display_name(cls, name: str) -> str:

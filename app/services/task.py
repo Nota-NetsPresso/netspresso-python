@@ -41,13 +41,13 @@ class TaskService:
 
         trainer = netspresso.trainer(task=training_in.task)
         trainer.set_dataset_config(
-            name="test",
-            root_path=training_in.dataset.root_path,
+            name="traffic_sign_config_example",
+            root_path="/root/projects/traffic-sign",
             train_image="train/images",
             train_label="train/labels",
             valid_image="valid/images",
             valid_label="valid/labels",
-            id_mapping=training_in.dataset.id_mapping,
+            id_mapping=["prohibitory", "danger", "mandatory", "other"],
         )
         img_size = training_in.input_shapes[0].dimension[0]
         trainer.set_model_config(model_name=training_in.pretrained_model_name, img_size=img_size)
@@ -72,6 +72,17 @@ class TaskService:
             model_name=training_in.name,
             project_id=training_in.project_id,
         )
+
+        learning_rate = training_task.hyperparameter.optimizer["lr"]
+        optimizer = training_task.hyperparameter.optimizer["name"]
+        scheduler = training_task.hyperparameter.scheduler["name"]
+        model_id = training_task.model.model_id
+
+        training_task.model_id = model_id
+        training_task.hyperparameter.learning_rate = learning_rate
+        training_task.hyperparameter.optimizer = optimizer
+        training_task.hyperparameter.scheduler = scheduler
+        training_task = TrainingPayload.model_validate(training_task)
 
         return training_task
 
