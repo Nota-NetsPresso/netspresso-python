@@ -12,6 +12,7 @@ from netspresso.converter import ConverterV2
 from netspresso.enums import Task
 from netspresso.qai_hub.benchmarker import QAIHubBenchmarker
 from netspresso.qai_hub.converter import QAIHubConverter
+from netspresso.qai_hub.quantizer import QAIHubQuantizer
 from netspresso.tao import TAOTrainer
 from netspresso.trainer import Trainer
 
@@ -124,3 +125,11 @@ class QAIHub:
             QAIHubBenchmarker: Initialized Benchmarker instance.
         """
         return QAIHubBenchmarker()
+
+    def quantizer(self) -> QAIHubQuantizer:
+        """Initialize and return a Quantizer instance.
+
+        Returns:
+            QAIHubQuantizer: Initialized Quantizer instance.
+        """
+        return QAIHubQuantizer()
