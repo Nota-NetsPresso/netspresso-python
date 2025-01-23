@@ -2,12 +2,15 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 import qai_hub as hub
-from qai_hub.client import Device, Job, SourceModelType, Dataset
+from qai_hub.client import Device, Job, SourceModelType, Dataset, Model, SourceModel, JobStatus, JobType, JobSummary
 
 from netspresso.qai_hub.options import Extension, Framework, Runtime
 
 
 class QAIHubBase:
+    def set_verbose(self, verbose: bool) -> None:
+        hub.set_verbose(verbose)
+
     def upload_dataset(self, data, name=None) -> Dataset:
         dataset = hub.upload_dataset(data=data, name=name)
 
@@ -23,6 +26,21 @@ class QAIHubBase:
 
         return datasets
 
+    def upload_model(self, model: Union[SourceModel, str], name: Optional[str] = None) -> Model:
+        model = hub.upload_model(model=model, name=name)
+
+        return model
+
+    def get_models(self, offset: int = 0, limit: int = 50) -> List[Model]:
+        models = hub.get_models(offset=offset, limit=limit)
+
+        return models
+
+    def get_model(self, model_id: str) -> Model:
+        model = hub.get_model(model_id=model_id)
+
+        return model
+
     def get_devices(self, name: str = "", os: str = "", attributes: Union[str, List[str]] = None) -> List[Device]:
         if attributes is None:
             attributes = []
@@ -34,6 +52,18 @@ class QAIHubBase:
         device_attributes = hub.get_device_attributes()
 
         return device_attributes
+
+    def get_job_summaries(
+        self,
+        offset: int = 0,
+        limit: int = 50,
+        creator: Optional[str] = None,
+        state: Union[Optional[JobStatus.State], List[JobStatus.State]] = None,
+        type: Optional[JobType] = None,
+    ) -> List[JobSummary]:
+        job_summaries = hub.get_job_summaries(offset=offset, limit=limit, creator=creator, state=state, type=type)
+
+        return job_summaries
 
     def get_jobs(self, offset: int = 0, limit: int = 50, creator: Optional[str] = None) -> List[Job]:
         jobs = hub.get_jobs(offset=offset, limit=limit, creator=creator)
