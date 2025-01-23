@@ -1,6 +1,6 @@
 from typing import List
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class PerformancePayload(BaseModel):
@@ -19,3 +19,10 @@ class PerformancePayload(BaseModel):
     last_epoch: int
     total_epoch: int
     status: str
+
+    @field_validator('flops', 'params', mode='before')
+    @classmethod
+    def convert_string_to_int(cls, v: str) -> int:
+        if isinstance(v, str):
+            return int(v)
+        return v
