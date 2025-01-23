@@ -19,6 +19,7 @@ class StepLR(BaseScheduler):
     name: str = "step"
     iters_per_phase: int = 1
     gamma: float = 0.1
+    end_epoch: int = 80
 
 
 @dataclass
@@ -28,6 +29,7 @@ class PolynomialLRWithWarmUp(BaseScheduler):
     warmup_bias_lr: float = 1e-5
     min_lr: float = 1e-6
     power: float = 1.0
+    end_epoch: int = 80
 
 
 @dataclass
@@ -36,6 +38,7 @@ class CosineAnnealingLRWithCustomWarmUp(BaseScheduler):
     warmup_epochs: int = 5
     warmup_bias_lr: float = 1e-5
     min_lr: float = 1e-6
+    end_epoch: int = 80
 
 
 @dataclass
