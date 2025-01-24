@@ -118,11 +118,6 @@ class QAIHubBenchmarker(QAIHubBase):
         job: InferenceJob = hub.get_job(inference_task_uuid)
         status = job.get_status()
 
-        if status.success:
-            logger.info(f"{status.symbol} {status.state.name}")
-        else:
-            logger.info(f"{status.symbol} {status.state}: {status.message}")
-
         return status
 
     def inference_model(
