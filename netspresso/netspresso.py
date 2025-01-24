@@ -1,3 +1,4 @@
+import subprocess
 from pathlib import Path
 from typing import Optional, Union
 
@@ -12,6 +13,9 @@ from netspresso.converter import ConverterV2
 from netspresso.enums import Task
 from netspresso.inferencer.inferencer import CustomInferencer, NPInferencer
 from netspresso.quantizer import Quantizer
+from netspresso.qai_hub.benchmarker import QAIHubBenchmarker
+from netspresso.qai_hub.converter import QAIHubConverter
+from netspresso.qai_hub.quantizer import QAIHubQuantizer
 from netspresso.tao import TAOTrainer
 from netspresso.trainer import Trainer
 from netspresso.utils.file import FileHandler
@@ -149,3 +153,38 @@ class TAO:
             TAO: Initialized Trainer instance.
         """
         return TAOTrainer(token_handler=self.token_handler)
+
+
+class QAIHub:
+    def __init__(self, api_token: str) -> None:
+        # Define the command and arguments
+        command = 'qai-hub'
+        args = ['configure', '--api_token', f'{api_token}']
+
+        # Execute the command
+        result = subprocess.run([command] + args, capture_output=True, text=True)
+        logger.info(result)
+
+    def converter(self) -> QAIHubConverter:
+        """Initialize and return a Converter instance.
+
+        Returns:
+            QAIHubConverter: Initialized Converter instance.
+        """
+        return QAIHubConverter()
+
+    def benchmarker(self) -> QAIHubBenchmarker:
+        """Initialize and return a Benchmarker instance.
+
+        Returns:
+            QAIHubBenchmarker: Initialized Benchmarker instance.
+        """
+        return QAIHubBenchmarker()
+
+    def quantizer(self) -> QAIHubQuantizer:
+        """Initialize and return a Quantizer instance.
+
+        Returns:
+            QAIHubQuantizer: Initialized Quantizer instance.
+        """
+        return QAIHubQuantizer()
