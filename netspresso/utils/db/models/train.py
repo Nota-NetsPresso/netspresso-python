@@ -54,7 +54,6 @@ class Dataset(Base, TimestampMixin):
     valid_path = Column(String(255), nullable=True)
     test_path = Column(String(255), nullable=True)
     storage_location = Column(String(50), nullable=False)
-    train_valid_split_ratio = Column(Float, nullable=False, default=0)
     id_mapping = Column(JSON, nullable=True)
     palette = Column(JSON, nullable=True)
 

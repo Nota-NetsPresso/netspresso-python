@@ -17,6 +17,5 @@ class DatasetPayload(BaseModel):
     valid_path: Optional[str]
     test_path: Optional[str]
     storage_location: StorageLocation
-    train_valid_split_ratio: float
     id_mapping: Optional[List] = []
     palette: Optional[dict] = {}
