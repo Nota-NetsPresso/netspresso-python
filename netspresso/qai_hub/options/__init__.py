@@ -35,6 +35,7 @@ from .profile import (
     TfliteQnnHtpPerformanceMode,
     TfliteQnnOptions,
 )
+from .quantize import QuantizeOptions, QuantizePrecision, RangeScheme
 
 __all__ = [
     "CompileOptions",
@@ -76,4 +77,7 @@ __all__ = [
     "TfliteOptions",
     "TfliteQnnHtpPerformanceMode",
     "TfliteQnnOptions",
+    "QuantizeOptions",
+    "QuantizePrecision",
+    "RangeScheme",
 ]

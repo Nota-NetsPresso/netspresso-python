@@ -135,7 +135,6 @@ class QAIHubBase:
             SourceModelType.QNN_LIB_X86_64_LINUX: Framework.QNN,
             SourceModelType.QNN_CONTEXT_BINARY: Framework.QNN,
             SourceModelType.AIMET_ONNX: Framework.AIMET,
-            SourceModelType.AIMET_PT: Framework.AIMET,
         }
         return FRAMEWORK_MODEL_TYPE_MAP.get(model_type, "Unknown framework")
 

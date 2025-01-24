@@ -31,7 +31,7 @@ while len(completed_convert_tasks) < 3:
     for i in range(3):
         if i not in completed_convert_tasks:
             status = converter.get_convert_task_status(convert_tasks[i].convert_task_info.convert_task_uuid)
-            if status.success:
+            if status.finished:
                 convert_tasks[i] = converter.update_convert_task(convert_tasks[i])
                 completed_convert_tasks.add(i)
                 print(f"Task {i} completed")
@@ -62,7 +62,7 @@ while len(completed_benchmark_tasks) < 3:
     for i in range(3):
         if i not in completed_benchmark_tasks:
             status = benchmarker.get_benchmark_task_status(benchmark_tasks[i].benchmark_task_info.benchmark_task_uuid)
-            if status.success:
+            if status.finished:
                 benchmark_tasks[i] = benchmarker.update_benchmark_task(benchmark_tasks[i])
                 completed_benchmark_tasks.add(i)
                 print(f"Task {i} completed")

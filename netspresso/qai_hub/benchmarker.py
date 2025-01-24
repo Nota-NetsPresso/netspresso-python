@@ -69,7 +69,7 @@ class QAIHubBenchmarker(QAIHubBase):
         options: Union[ProfileOptions, str] = ProfileOptions(),
         job_name: Optional[str] = None,
         retry: bool = True,
-    ) -> Union[ProfileJob, List[ProfileJob]]:
+    ) -> Union[BenchmarkerMetadata, List[BenchmarkerMetadata]]:
         FileHandler.check_input_model_path(input_model_path)
 
         folder_path = Path(input_model_path).parent

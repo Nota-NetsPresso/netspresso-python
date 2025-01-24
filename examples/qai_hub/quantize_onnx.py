@@ -32,12 +32,9 @@ while len(completed_quantize_tasks) < 1:
         if i not in completed_quantize_tasks:
             status = quantizer.get_quantize_task_status(quantize_tasks[i].quantize_info.quantize_task_uuid)
             if status.finished:
-                if status.success:
-                    quantize_tasks[i] = quantizer.update_quantize_task(quantize_tasks[i])
-                    completed_quantize_tasks.add(i)
-                    print(f"Task {i} completed")
-                else:
-                    print(f"Task {i} failed")
+                quantize_tasks[i] = quantizer.update_quantize_task(quantize_tasks[i])
+                completed_quantize_tasks.add(i)
+                print(f"Task {i} completed")
             else:
                 print(f"Task {i} is still running")
 
