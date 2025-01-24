@@ -48,7 +48,7 @@ class SupportedSchedulersResponse(BaseModel):
 class HyperparameterCreate(BaseModel):
     epochs: int = Field(default=10, description="Number of epochs to train for")
     batch_size: int = Field(default=32, description="Batch size to use")
-    learning_rate: float = Field(default=0.001, description="Learning rate to use")
+    learning_rate: Optional[float] = Field(default=0.001, description="Learning rate to use")
     optimizer: Optimizer = Field(..., description="Optimizer to use")
     scheduler: Scheduler = Field(..., description="Scheduler to use")
 
