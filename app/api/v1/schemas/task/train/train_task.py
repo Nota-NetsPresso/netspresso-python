@@ -1,9 +1,24 @@
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.api.v1.schemas.base import ResponseItem
+from netspresso.enums.train import (
+    Framework, 
+    FrameworkDisplay, 
+    Task, 
+    TaskDisplay,
+    PretrainedModel,
+    PretrainedModelDisplay,
+    PretrainedModelGroup,
+    TASK_DISPLAY_MAP,
+    FRAMEWORK_DISPLAY_MAP,
+    MODEL_DISPLAY_MAP,
+    MODEL_GROUP_MAP,
+    TASK_DISPLAY_MAP,
+    FRAMEWORK_DISPLAY_MAP,
+)
 
 from .dataset import DatasetCreate, DatasetPayload
 from .environment import EnvironmentCreate, EnvironmentPayload
@@ -21,7 +36,7 @@ class TrainingCreate(BaseModel):
     project_id: str
     name: str
     pretrained_model: str
-    task: str = Field(default="detection", description="Task")
+    task: Task = Field(default=Task.OBJECT_DETECTION, description="Task")
     input_shapes: List[InputShape] = Field(default_factory=list, description="List of input shapes")
     dataset: Optional[DatasetCreate]
     hyperparameter: Optional[HyperparameterCreate]
@@ -29,19 +44,35 @@ class TrainingCreate(BaseModel):
 
 
 class PretrainedModelPayload(BaseModel):
-    name: str = Field(description="Pretrained model name")
-    display_name: str = Field(description="Pretrained model display name")
-    group_name: str = Field(description="Pretrained model group name")
+    name: PretrainedModel = Field(description="Pretrained model name")
+    display_name: PretrainedModelDisplay = Field(description="Pretrained model display name")
+    group_name: PretrainedModelGroup = Field(description="Pretrained model group name")
+
+    @model_validator(mode='before')
+    def set_display_and_group_name(cls, values) -> str:
+        values.display_name = MODEL_DISPLAY_MAP.get(values.name)
+        values.group_name = MODEL_GROUP_MAP.get(values.name)
+        return values
 
 
 class TaskPayload(BaseModel):
-    name: str = Field(description="Task name")
-    display_name: str = Field(description="Task display name")
+    name: Task = Field(description="Task name")
+    display_name: TaskDisplay = Field(description="Task display name")
+
+    @model_validator(mode='before')
+    def set_display_name(cls, values) -> str:
+        values.display_name = TASK_DISPLAY_MAP.get(values.name)
+        return values
 
 
 class FrameworkPayload(BaseModel):
-    name: str = Field(description="Framework name")
-    display_name: str = Field(description="Framework display name")
+    name: Framework = Field(description="Framework name")
+    display_name: FrameworkDisplay = Field(description="Framework display name")
+
+    @model_validator(mode='before')
+    def set_display_name(cls, values) -> str:
+        values.display_name = FRAMEWORK_DISPLAY_MAP.get(values.name)
+        return values
 
 
 class TrainingPayload(BaseModel):

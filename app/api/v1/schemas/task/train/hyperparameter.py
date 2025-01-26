@@ -1,10 +1,8 @@
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, Field, model_validator
 
-from netspresso.enums.train import Optimizer, Scheduler
-
-from .augmentation import AugmentationPayload
+from netspresso.enums.train import OPTIMIZER_DISPLAY_MAP, SCHEDULER_DISPLAY_MAP, Optimizer, OptimizerDisplay, Scheduler, SchedulerDisplay
 
 
 class TrainerModel(BaseModel):
@@ -24,10 +22,13 @@ class SupportedModelResponse(BaseModel):
 
 
 class OptimizerPayload(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    name: Optimizer = Field(description="Optimizer name")
+    display_name: OptimizerDisplay = Field(description="Optimizer display name")
 
-    name: Optimizer = Field(Optimizer.ADAM, description="Name of the optimizer")
-    display_name: Optional[str] = Field(Optimizer.to_display_name(Optimizer.ADAM), description="Display name of the optimizer")
+    @model_validator(mode='before')
+    def set_display_name(cls, values) -> str:
+        values.display_name = OPTIMIZER_DISPLAY_MAP.get(values.name)
+        return values
 
 
 class SupportedOptimizersResponse(BaseModel):
@@ -35,12 +36,15 @@ class SupportedOptimizersResponse(BaseModel):
 
 
 class SchedulerPayload(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    name: Scheduler = Field(description="Scheduler name")
+    display_name: SchedulerDisplay = Field(description="Scheduler display name")
 
-    name: Scheduler = Field(Scheduler.COSINE_ANNEALING_WARM_RESTARTS_WITH_CUSTOM_WARM_UP, description="Name of the scheduler")
-    display_name: Optional[str] = Field(Scheduler.to_display_name(Scheduler.COSINE_ANNEALING_WARM_RESTARTS_WITH_CUSTOM_WARM_UP), description="Display name of the scheduler")
+    @model_validator(mode='before')
+    def set_display_name(cls, values) -> str:
+        values.display_name = SCHEDULER_DISPLAY_MAP.get(values.name)
+        return values
 
-
+    
 class SupportedSchedulersResponse(BaseModel):
     data: List[SchedulerPayload] = Field(..., description="Supported schedulers for training tasks")
 
