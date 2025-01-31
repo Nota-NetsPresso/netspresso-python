@@ -1,10 +1,9 @@
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.api.v1.schemas.base import ResponseItem, ResponsePaginationItems
-from app.api.v1.schemas.task.train.train_task import TrainingPayload
 from netspresso.enums import Status
 
 

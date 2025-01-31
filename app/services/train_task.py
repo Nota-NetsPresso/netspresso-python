@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Dict, List
 from pathlib import Path
 
 from sqlalchemy.orm import Session
@@ -16,21 +16,9 @@ from app.api.v1.schemas.task.train.train_task import (
     FrameworkPayload
 )
 from app.services.user import user_service
-from netspresso.enums.train import Optimizer, Scheduler
 from netspresso.trainer.augmentations.augmentation import Normalize, Resize, ToTensor
 from netspresso.trainer.models import get_all_available_models
-from netspresso.enums.train import (
-    MODEL_DISPLAY_MAP,
-    MODEL_GROUP_MAP,
-    Optimizer,
-    OptimizerDisplay,
-    Scheduler,
-    SchedulerDisplay,
-    OPTIMIZER_DISPLAY_MAP,
-    SCHEDULER_DISPLAY_MAP,
-    TASK_DISPLAY_MAP,
-    FRAMEWORK_DISPLAY_MAP,
-)
+from netspresso.enums.train import MODEL_DISPLAY_MAP, MODEL_GROUP_MAP
 from netspresso.trainer.optimizers.optimizer_manager import OptimizerManager
 from netspresso.trainer.optimizers.optimizers import get_supported_optimizers
 from netspresso.trainer.schedulers.scheduler_manager import SchedulerManager
