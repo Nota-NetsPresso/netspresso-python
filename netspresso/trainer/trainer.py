@@ -24,7 +24,6 @@ from netspresso.exceptions.trainer import (
     TaskOrYamlPathException,
 )
 from netspresso.metadata.common import InputShape
-from netspresso.metadata.trainer import TrainerMetadata
 from netspresso.trainer.augmentations import AUGMENTATION_CONFIG_TYPE, AugmentationConfig, Transform
 from netspresso.trainer.data import DATA_CONFIG_TYPE, ImageLabelPathConfig, PathConfig
 from netspresso.trainer.models import (
@@ -34,6 +33,8 @@ from netspresso.trainer.models import (
     CheckpointConfig,
     ModelConfig,
 )
+from netspresso.trainer.optimizers.optimizers import get_supported_optimizers
+from netspresso.trainer.schedulers.schedulers import get_supported_schedulers
 from netspresso.trainer.trainer_configs import TrainerConfigs
 from netspresso.trainer.training import TRAINING_CONFIG_TYPE, EnvironmentConfig, LoggingConfig, ScheduleConfig
 from netspresso.utils import FileHandler
@@ -58,14 +59,14 @@ class Trainer(NetsPressoBase):
 
         self.token_handler = token_handler
         self.deprecated_names = {
-            "EfficientFormer": "EfficientFormer-L1",
-            "MobileNetV3_Small": "MobileNetV3-S",
-            "MobileNetV3_Large": "MobileNetV3-L",
-            "ViT-Tiny": "ViT-T",
-            "MixNet-Small": "MixNet-S",
-            "MixNet-Medium": "MixNet-M",
-            "MixNet-Large": "MixNet-L",
-            "PIDNet": "PIDNet-S",
+            "efficientformer": "efficientformer_l1",
+            "mobilenetv3_small": "mobilenet_v3_small",
+            "mobilenetv3_large": "mobilenet_v3_large",
+            "vit_tiny": "vit_tiny",
+            "mixnet_small": "mixnet_s",
+            "mixnet_medium": "mixnet_m",
+            "mixnet_large": "mixnet_l",
+            "pidnet": "pidnet_s",
         }
 
         if (task is not None) == (yaml_path is not None):
@@ -495,42 +496,6 @@ class Trainer(NetsPressoBase):
         }
         return status_mapping.get(status, Status.IN_PROGRESS)
 
-    def initialize_metadata(self, output_dir):
-        def create_metadata_with_status(status, error_message=None):
-            metadata = TrainerMetadata()
-            metadata.status = status
-            if error_message:
-                logger.error(error_message)
-            return metadata
-
-        try:
-            metadata = TrainerMetadata()
-        except Exception as e:
-            error_message = f"An unexpected error occurred during metadata initialization: {e}"
-            metadata = create_metadata_with_status(Status.ERROR, error_message)
-        except KeyboardInterrupt:
-            warning_message = "Training task was interrupted by the user."
-            metadata = create_metadata_with_status(Status.STOPPED, warning_message)
-        finally:
-            metadata.update_output_dir(output_dir.resolve().as_posix())
-            metadata.update_model_info(
-                task=self.task,
-                model=self.model_name,
-                dataset=self.data.name,
-                input_shapes=[InputShape(batch=1, channel=3, dimension=[self.img_size, self.img_size])],
-            )
-            metadata.update_training_info(
-                epochs=self.training.epochs,
-                batch_size=self.environment.batch_size,
-                learning_rate=self.training.optimizer["lr"],
-                optimizer=Optimizer.to_display_name(self.training.optimizer["name"]),
-                scheduler=Scheduler.to_display_name(self.training.scheduler["name"]),
-            )
-            metadata.update_hparams(hparams=(output_dir / "hparams.yaml").resolve().as_posix())
-            MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
-
-        return metadata
-
     def find_best_model_paths(self, destination_folder: Path):
         best_fx_paths_set = set()
 
@@ -591,64 +556,54 @@ class Trainer(NetsPressoBase):
             model = trained_model_repository.save(db=db, model=trained_model)
             return model
 
-    def create_train_task(self):
-        dataset = Dataset(
-            name=self.data.name,
-            format=self.data.format,
-            root_path=self.data.path.root,
-            train_path="train",
-            valid_path="valid",
-            test_path="test",
-            storage_location=StorageLocation.LOCAL,
-            train_valid_split_ratio=0,
-            id_mapping=self.data.id_mapping,
-            palette=self.data.pallete,
-        )
-        hyperparameter = Hyperparameter(
-            epochs=self.training.epochs,
-            batch_size=self.environment.batch_size,
-            learning_rate=self.training.optimizer["lr"],
-            optimizer_name=Optimizer.to_display_name(self.training.optimizer["name"]),
-            optimizer_params=self.optimizer.to_parameters(),
-            scheduler_name=Scheduler.to_display_name(self.training.scheduler["name"]),
-            scheduler_params=self.scheduler.to_parameters(),
-        )
-        environment = Environment(
-            seed=self.environment.seed,
-            num_workers=self.environment.num_workers,
-            gpus=self.environment.gpus,
-        )
-
-        train_augs = [
-            Augmentation(
-                name=train_aug.name,
-                parameters=train_aug.to_parameters(),
-                phase="train",
+    def create_training_task(self):
+        with get_db_session() as db:
+            dataset = Dataset(
+                train_path="train",
+                valid_path="valid",
+                test_path="test",
+                storage_location=StorageLocation.STORAGE,
+                id_mapping=self.data.id_mapping,
+                palette=self.data.pallete,
             )
-            for train_aug in self.augmentation.train
-        ]
-        inference_augs = [
-            Augmentation(
-                name=inference_aug.name,
-                parameters=inference_aug.to_parameters(),
-                phase="inference",
+            augs = [
+                Augmentation(
+                    name=train_aug.name,
+                    parameters=train_aug.to_parameters(),
+                    phase="train",
+                )
+                for train_aug in self.augmentation.train
+            ] + [
+                Augmentation(
+                    name=inference_aug.name,
+                    parameters=inference_aug.to_parameters(),
+                    phase="inference",
+                )
+                for inference_aug in self.augmentation.inference
+            ]
+            hyperparameter = Hyperparameter(
+                epochs=self.training.epochs,
+                batch_size=self.environment.batch_size,
+                optimizer=self.optimizer.asdict(),
+                scheduler=self.scheduler.asdict(),
+                augmentations=augs,
             )
-            for inference_aug in self.augmentation.inference
-        ]
-        hyperparameter.augmentations.extend(train_augs + inference_augs)
-
-        task = TrainTask(
-            pretrained_model_name=self.model_name,
-            task=self.task,
-            framework=Framework.PYTORCH,
-            input_shapes=[InputShape(batch=1, channel=3, dimension=[self.img_size, self.img_size]).__dict__],
-            status=Status.IN_PROGRESS,
-            dataset=dataset,
-            hyperparameter=hyperparameter,
-            environment=environment,
-        )
-
-        task = self._save_train_task(train_task=task)
+            environment = Environment(
+                seed=self.environment.seed,
+                num_workers=self.environment.num_workers,
+                gpus=self.environment.gpus,
+            )
+            task = TrainTask(
+                pretrained_model=self.model_name,
+                task=self.task,
+                framework=Framework.PYTORCH,
+                input_shapes=[InputShape(batch=1, channel=3, dimension=[self.img_size, self.img_size]).__dict__],
+                status=Status.IN_PROGRESS,
+                dataset=dataset,
+                hyperparameter=hyperparameter,
+                environment=environment,
+            )
+            task = train_task_repository.save(db=db, task=task)
 
         return task
 
@@ -660,8 +615,8 @@ class Trainer(NetsPressoBase):
             valid_metrics=training_summary["valid_metrics"],
             metrics_list=training_summary["metrics_list"],
             primary_metric=training_summary["primary_metric"],
-            flops=training_summary["flops"],
-            params=training_summary["params"],
+            flops=str(training_summary["flops"]),
+            params=str(training_summary["params"]),
             total_train_time=training_summary["total_train_time"],
             best_epoch=training_summary["best_epoch"],
             last_epoch=training_summary["last_epoch"],
@@ -675,7 +630,7 @@ class Trainer(NetsPressoBase):
 
         return task
 
-    def train(self, gpus: str, model_name: str, project_id: str, output_dir: Optional[str] = "./outputs") -> TrainedModel:
+    def train(self, gpus: str, model_name: str, project_id: str, output_dir: Optional[str] = "./outputs") -> TrainTask:
         """Train the model with the specified configuration.
 
         Args:
@@ -698,7 +653,7 @@ class Trainer(NetsPressoBase):
         destination_folder = Path(project_abs_path) / SubFolder.TRAINED_MODELS.value / model_name
         destination_folder = FileHandler.create_unique_folder(folder_path=destination_folder)
 
-        train_task = self.create_train_task()
+        train_task = self.create_training_task()
         trained_model = self.save_trained_model(model_name=model_name, train_task=train_task, project_id=project.project_id, user_id=project.user_id)
 
         try:
@@ -748,6 +703,29 @@ class Trainer(NetsPressoBase):
 
             train_task = self._save_train_task(train_task=train_task)
 
-        trained_model.train_task = train_task
+        return train_task
 
-        return trained_model
+    def get_all_available_models(self) -> Dict[str, List[str]]:
+        """Get all available models for each task, excluding deprecated names.
+
+        Returns:
+            Dict[str, List[str]]: A dictionary mapping each task to its available models.
+        """
+        all_models = {
+            "classification": [
+                model for model in CLASSIFICATION_MODELS if model not in self.deprecated_names
+            ],
+            "detection": [
+                model for model in DETECTION_MODELS if model not in self.deprecated_names
+            ],
+            "segmentation": [
+                model for model in SEGMENTATION_MODELS if model not in self.deprecated_names
+            ],
+        }
+        return all_models
+
+    def get_all_available_optimizers(self) -> Dict[str, Dict]:
+        return get_supported_optimizers()
+
+    def get_all_available_schedulers(self) -> Dict[str, Dict]:
+        return get_supported_schedulers()

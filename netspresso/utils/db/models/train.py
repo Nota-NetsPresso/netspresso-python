@@ -1,4 +1,4 @@
-from sqlalchemy import JSON, Boolean, Column, Float, ForeignKey, Integer, String
+from sqlalchemy import JSON, Boolean, Column, Float, ForeignKey, Integer, String, BigInteger
 from sqlalchemy.orm import relationship
 
 from netspresso.utils.db.generate_uuid import generate_uuid
@@ -15,7 +15,7 @@ class Augmentation(Base):
     phase = Column(String(30), nullable=False) # train, inference
 
     hyperparameter_id = Column(Integer, ForeignKey("hyperparameter.id"), nullable=False)
-    hyperparameter = relationship("Hyperparameter", back_populates="augmentations")
+    hyperparameter = relationship("Hyperparameter", back_populates="augmentations", lazy='joined')
 
 
 class TrainTask(Base, TimestampMixin):
@@ -23,7 +23,7 @@ class TrainTask(Base, TimestampMixin):
 
     id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True, nullable=False)
     task_id = Column(String(36), index=True, unique=True, nullable=False, default=lambda: generate_uuid(entity="task"))
-    pretrained_model_name = Column(String(100), nullable=False)
+    pretrained_model = Column(String(100), nullable=False)
     task = Column(String(30), nullable=False)
     framework = Column(String(30), nullable=False)
     input_shapes = Column(JSON, nullable=False)
@@ -32,16 +32,17 @@ class TrainTask(Base, TimestampMixin):
     is_deleted = Column(Boolean, nullable=False, default=False)
 
     # Relationships (1:1 Mapping)
-    dataset = relationship("Dataset", back_populates="task", uselist=False, cascade="all, delete-orphan")
-    hyperparameter = relationship("Hyperparameter", back_populates="task", uselist=False, cascade="all, delete-orphan")
-    environment = relationship("Environment", back_populates="task", uselist=False, cascade="all, delete-orphan")
-    performance = relationship("Performance", back_populates="task", uselist=False, cascade="all, delete-orphan")
+    dataset = relationship("Dataset", back_populates="task", uselist=False, cascade="all, delete-orphan", lazy='joined')
+    hyperparameter = relationship("Hyperparameter", back_populates="task", uselist=False, cascade="all, delete-orphan", lazy='joined')
+    environment = relationship("Environment", back_populates="task", uselist=False, cascade="all, delete-orphan", lazy='joined')
+    performance = relationship("Performance", back_populates="task", uselist=False, cascade="all, delete-orphan", lazy='joined')
 
     # Relationship to TrainedModel
     model = relationship(
         "TrainedModel",
         back_populates="train_task",
         uselist=False,
+        lazy='joined',
     )
 
 
@@ -49,14 +50,10 @@ class Dataset(Base, TimestampMixin):
     __tablename__ = "dataset"
 
     id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True, nullable=False)
-    name = Column(String(100), nullable=False)
-    format = Column(String(100), nullable=False)
-    root_path = Column(String(255), nullable=False)
     train_path = Column(String(255), nullable=False)
     valid_path = Column(String(255), nullable=True)
     test_path = Column(String(255), nullable=True)
     storage_location = Column(String(50), nullable=False)
-    train_valid_split_ratio = Column(Float, nullable=False, default=0)
     id_mapping = Column(JSON, nullable=True)
     palette = Column(JSON, nullable=True)
 
@@ -71,13 +68,10 @@ class Hyperparameter(Base, TimestampMixin):
     id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True, nullable=False)
     epochs = Column(Integer, nullable=False, default=0)
     batch_size = Column(Integer, nullable=False)
-    learning_rate = Column(Float, nullable=False, default=0)
-    optimizer_name = Column(String(50), nullable=False)  # optimizer name
-    optimizer_params = Column(JSON, nullable=True)       # optimizer params
-    scheduler_name = Column(String(50), nullable=False)  # scheduler name
-    scheduler_params = Column(JSON, nullable=True)       # scheduler params
+    optimizer = Column(JSON, nullable=True)
+    scheduler = Column(JSON, nullable=True)
 
-    augmentations = relationship("Augmentation", back_populates="hyperparameter", cascade="all, delete-orphan")
+    augmentations = relationship("Augmentation", back_populates="hyperparameter", cascade="all, delete-orphan", lazy='joined')
 
     # Relationship to TrainTask
     task_id = Column(String(36), ForeignKey("train_task.task_id", ondelete="CASCADE"), unique=True, nullable=False)
@@ -107,8 +101,8 @@ class Performance(Base, TimestampMixin):
     valid_metrics = Column(JSON, nullable=False)
     metrics_list = Column(JSON, nullable=False)
     primary_metric = Column(String(36), nullable=False)
-    flops = Column(Integer, nullable=False, default=0)
-    params = Column(Integer, nullable=False, default=0)
+    flops = Column(String(50), nullable=False, default=0)
+    params = Column(String(50), nullable=False, default=0)
     total_train_time = Column(Float, nullable=False, default=0)
     best_epoch = Column(Integer, nullable=False, default=0)
     last_epoch = Column(Integer, nullable=False, default=0)

@@ -1,10 +1,9 @@
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.api.v1.schemas.base import ResponseItem, ResponsePaginationItems
-from app.api.v1.schemas.train_task import TrainTaskSchema
 from netspresso.enums import Status
 
 
@@ -29,14 +28,7 @@ class ModelPayload(BaseModel):
     benchmark_task_ids: Optional[List] = []
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
-    train_task: TrainTaskSchema = Field(exclude=True)
     latest_experiments: ExperimentStatus = Field(default_factory=ExperimentStatus)
-
-    @model_validator(mode="after")
-    def set_status(cls, values):
-        values.status = values.train_task.status
-
-        return values
 
 
 class ExperimentStatusResponse(ResponseItem):

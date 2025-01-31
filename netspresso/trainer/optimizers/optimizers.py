@@ -75,3 +75,9 @@ class SGD(BaseOptimizer):
     momentum: float = 0.0
     weight_decay: float = 0.0
     nesterov: bool = False
+
+
+def get_supported_optimizers() -> List[Dict[str, Any]]:
+    """Return a list of supported optimizers with their parameters and default values."""
+    optimizers = [Adadelta(), Adagrad(), Adam(), Adamax(), AdamW(), RMSprop(), SGD()]
+    return [{"name": optimizer.name, "parameters": optimizer.to_parameters()} for optimizer in optimizers]

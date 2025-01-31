@@ -1,3 +1,5 @@
+from typing import Dict, List
+
 from netspresso.trainer.models.base import CheckpointConfig, ModelConfig
 from netspresso.trainer.models.efficientformer import (
     ClassificationEfficientFormerModelConfig,
@@ -42,49 +44,40 @@ from netspresso.trainer.models.yolox import (
 )
 
 CLASSIFICATION_MODELS = {
-    "EfficientFormer": ClassificationEfficientFormerModelConfig,
-    "EfficientFormer-L1": ClassificationEfficientFormerModelConfig,
-    "MobileNetV3_Small": ClassificationMobileNetV3SmallModelConfig,
-    "MobileNetV3-S": ClassificationMobileNetV3SmallModelConfig,
-    "MobileNetV3_Large": ClassificationMobileNetV3LargeModelConfig,
-    "MobileNetV3-L": ClassificationMobileNetV3LargeModelConfig,
-    "MobileViT": ClassificationMobileViTModelConfig,
-    "MobileViT-S": ClassificationMobileViTModelConfig,
-    "ResNet18": ClassificationResNet18ModelConfig,
-    "ResNet34": ClassificationResNet34ModelConfig,
-    "ResNet50": ClassificationResNet50ModelConfig,
-    "ViT-Tiny": ClassificationViTTinyModelConfig,
-    "ViT-T": ClassificationViTTinyModelConfig,
-    "MixNet-S": ClassificationMixNetSmallModelConfig,
-    "MixNet-M": ClassificationMixNetMediumModelConfig,
-    "MixNet-L": ClassificationMixNetLargeModelConfig,
+    "efficientformer_l1": ClassificationEfficientFormerModelConfig,
+    "mobilenet_v3_small": ClassificationMobileNetV3SmallModelConfig,
+    "mobilenet_v3_large": ClassificationMobileNetV3LargeModelConfig,
+    "mobilevit_s": ClassificationMobileViTModelConfig,
+    "resnet18": ClassificationResNet18ModelConfig,
+    "resnet34": ClassificationResNet34ModelConfig,
+    "resnet50": ClassificationResNet50ModelConfig,
+    "vit_tiny": ClassificationViTTinyModelConfig,
+    "mixnet_s": ClassificationMixNetSmallModelConfig,
+    "mixnet_m": ClassificationMixNetMediumModelConfig,
+    "mixnet_l": ClassificationMixNetLargeModelConfig,
 }
 
 DETECTION_MODELS = {
-    "YOLOX-S": DetectionYoloXSModelConfig,
-    "YOLOX-M": DetectionYoloXMModelConfig,
-    "YOLOX-L": DetectionYoloXLModelConfig,
-    "YOLOX-X": DetectionYoloXXModelConfig,
-    # "YOLO-Fastest": DetectionYoloFastestModelConfig,
+    "yolox_s": DetectionYoloXSModelConfig,
+    "yolox_m": DetectionYoloXMModelConfig,
+    "yolox_l": DetectionYoloXLModelConfig,
+    "yolox_x": DetectionYoloXXModelConfig,
+    "yolo_fastest": DetectionYoloFastestModelConfig,
 }
 
 SEGMENTATION_MODELS = {
-    "EfficientFormer": SegmentationEfficientFormerModelConfig,
-    "EfficientFormer-L1": SegmentationEfficientFormerModelConfig,
-    "MobileNetV3_Small": SegmentationMobileNetV3SmallModelConfig,
-    "MobileNetV3-S": SegmentationMobileNetV3SmallModelConfig,
-    "ResNet50": SegmentationResNet50ModelConfig,
-    "SegFormer-B0": SegmentationSegFormerB0ModelConfig,
-    "MixNet-S": SegmentationMixNetSmallModelConfig,
-    "MixNet-M": SegmentationMixNetMediumModelConfig,
-    "MixNet-L": SegmentationMixNetLargeModelConfig,
-    "PIDNet": PIDNetModelConfig,
-    "PIDNet-S": PIDNetModelConfig,
+    "efficientformer_l1": SegmentationEfficientFormerModelConfig,
+    "mobilenet_v3_small": SegmentationMobileNetV3SmallModelConfig,
+    "resnet50": SegmentationResNet50ModelConfig,
+    "segformer_b0": SegmentationSegFormerB0ModelConfig,
+    "mixnet_s": SegmentationMixNetSmallModelConfig,
+    "mixnet_m": SegmentationMixNetMediumModelConfig,
+    "mixnet_l": SegmentationMixNetLargeModelConfig,
+    "pidnet_s": PIDNetModelConfig,
 }
 
 POSEESTIMATION_MODELS = {
-    "MobileNetV3_Small": PoseEstimationMobileNetV3SmallModelConfig,
-    "MobileNetV3-S": PoseEstimationMobileNetV3SmallModelConfig,
+    "mobilenet_v3_small": PoseEstimationMobileNetV3SmallModelConfig,
 }
 
 # NOT_SUPPORTED_PRETRAINED_MODELS = ["YOLO-Fastest"]
@@ -94,6 +87,22 @@ __all__ = [
     "CLASSIFICATION_MODELS",
     "DETECTION_MODELS",
     "SEGMENTATION_MODELS",
+    "POSEESTIMATION_MODELS",
+    "MODEL_NAME_DISPLAY_MAP",
     "CheckpointConfig",
     "ModelConfig",
 ]
+
+
+def get_all_available_models() -> Dict[str, List[str]]:
+    """Get all available models for each task, excluding deprecated names.
+
+    Returns:
+        Dict[str, List[str]]: A dictionary mapping each task to its available models.
+    """
+    all_models = {
+        "classification": list(CLASSIFICATION_MODELS),
+        "detection": list(DETECTION_MODELS),
+        "segmentation": list(SEGMENTATION_MODELS),
+    }
+    return all_models
