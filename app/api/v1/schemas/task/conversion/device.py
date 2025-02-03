@@ -1,0 +1,68 @@
+from typing import List, Optional
+
+from pydantic import BaseModel, Field, model_validator
+
+from netspresso.enums.device import (
+    DEVICE_BRAND_MAP,
+    DEVICE_DISPLAY_MAP,
+    HARDWARE_TYPE_DISPLAY_MAP,
+    SOFTWARE_VERSION_DISPLAY_MAP,
+    DeviceBrand,
+    DeviceDisplay,
+    DeviceName,
+    HardwareType,
+    HardwareTypeDisplay,
+    SoftwareVersion,
+    SoftwareVersionDisplay,
+)
+from netspresso.enums.model import DATA_TYPE_DISPLAY_MAP, DataType, DataTypeDisplay
+
+
+class SoftwareVersionPayload(BaseModel):
+    name: SoftwareVersion
+    display_name: Optional[SoftwareVersionDisplay] = Field(default=None, description="Software version display name")
+
+    @model_validator(mode="after")
+    def set_display_name(self) -> str:
+        self.display_name = SOFTWARE_VERSION_DISPLAY_MAP.get(self.name)
+
+        return self
+
+
+class PrecisionPayload(BaseModel):
+    name: DataType
+    display_name: Optional[DataTypeDisplay] = Field(default=None, description="Precision display name")
+
+    @model_validator(mode="after")
+    def set_display_name(self) -> str:
+        self.display_name = DATA_TYPE_DISPLAY_MAP.get(self.name)
+
+        return self
+
+
+class HardwareTypePayload(BaseModel):
+    name: HardwareType
+    display_name: Optional[HardwareTypeDisplay] = Field(default=None, description="Hardware type display name")
+
+    @model_validator(mode="after")
+    def set_display_name(self) -> str:
+        self.display_name = HARDWARE_TYPE_DISPLAY_MAP.get(self.name)
+
+        return self
+
+
+class DevicePayload(BaseModel):
+    name: DeviceName
+    display_name: Optional[DeviceDisplay] = Field(default=None, description="Device display name")
+    brand_name: Optional[DeviceBrand] = Field(default=None, description="Device brand name")
+    software_versions: List[SoftwareVersionPayload]
+    precisions: List[PrecisionPayload]
+    hardware_types: List[HardwareTypePayload]
+
+    @model_validator(mode="after")
+    def set_display_name(self) -> str:
+        self.display_name = DEVICE_DISPLAY_MAP.get(self.name)
+        self.brand_name = DEVICE_BRAND_MAP.get(self.name)
+
+        return self
+
