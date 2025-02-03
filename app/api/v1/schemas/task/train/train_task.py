@@ -45,8 +45,8 @@ class TrainingCreate(BaseModel):
 
 class PretrainedModelPayload(BaseModel):
     name: PretrainedModel = Field(description="Pretrained model name")
-    display_name: Optional[PretrainedModelDisplay] = Field(description="Pretrained model display name")
-    group_name: Optional[PretrainedModelGroup] = Field(description="Pretrained model group name")
+    display_name: Optional[PretrainedModelDisplay] = Field(default=None, description="Pretrained model display name")
+    group_name: Optional[PretrainedModelGroup] = Field(default=None, description="Pretrained model group name")
 
     @model_validator(mode="after")
     def set_display_and_group_name(self) -> str:
@@ -60,7 +60,7 @@ class TaskPayload(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     name: Task = Field(description="Task name")
-    display_name: Optional[TaskDisplay] = Field(description="Task display name")
+    display_name: Optional[TaskDisplay] = Field(default=None, description="Task display name")
 
     @model_validator(mode="after")
     def set_display_name(self) -> str:
@@ -73,7 +73,7 @@ class FrameworkPayload(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     name: Framework = Field(description="Framework name")
-    display_name: Optional[FrameworkDisplay] = Field(description="Framework display name")
+    display_name: Optional[FrameworkDisplay] = Field(default=None, description="Framework display name")
 
     @model_validator(mode="after")
     def set_display_name(self) -> str:

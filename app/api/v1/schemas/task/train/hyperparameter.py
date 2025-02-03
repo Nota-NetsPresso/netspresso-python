@@ -23,7 +23,7 @@ class SupportedModelResponse(BaseModel):
 
 class OptimizerPayload(BaseModel):
     name: Optimizer = Field(description="Optimizer name")
-    display_name: Optional[OptimizerDisplay] = Field(description="Optimizer display name")
+    display_name: Optional[OptimizerDisplay] = Field(default=None, description="Optimizer display name")
 
     @model_validator(mode="after")
     def set_display_name(self) -> str:
@@ -37,14 +37,14 @@ class SupportedOptimizersResponse(BaseModel):
 
 class SchedulerPayload(BaseModel):
     name: Scheduler = Field(description="Scheduler name")
-    display_name: SchedulerDisplay = Field(description="Scheduler display name")
+    display_name: Optional[SchedulerDisplay] = Field(default=None, description="Scheduler display name")
 
     @model_validator(mode="after")
     def set_display_name(self) -> str:
         self.display_name = SCHEDULER_DISPLAY_MAP.get(self.name)
         return self
 
-    
+
 class SupportedSchedulersResponse(BaseModel):
     data: List[SchedulerPayload] = Field(..., description="Supported schedulers for training tasks")
 
