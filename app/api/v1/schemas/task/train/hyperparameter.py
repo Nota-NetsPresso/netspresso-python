@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field, field_serializer
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from netspresso.enums.train import OPTIMIZER_DISPLAY_MAP, SCHEDULER_DISPLAY_MAP, Optimizer, OptimizerDisplay, Scheduler, SchedulerDisplay
 
@@ -25,9 +25,10 @@ class OptimizerPayload(BaseModel):
     name: Optimizer = Field(description="Optimizer name")
     display_name: Optional[OptimizerDisplay] = Field(description="Optimizer display name")
 
-    @field_serializer('display_name')
-    def serialize_display_name(self, value: Optional[OptimizerDisplay]) -> OptimizerDisplay:
-        return OPTIMIZER_DISPLAY_MAP.get(self.name)
+    @model_validator(mode="after")
+    def set_display_name(self) -> str:
+        self.display_name = OPTIMIZER_DISPLAY_MAP.get(self.name)
+        return self
 
 
 class SupportedOptimizersResponse(BaseModel):
@@ -36,11 +37,12 @@ class SupportedOptimizersResponse(BaseModel):
 
 class SchedulerPayload(BaseModel):
     name: Scheduler = Field(description="Scheduler name")
-    display_name: Optional[SchedulerDisplay] = Field(description="Scheduler display name")
+    display_name: SchedulerDisplay = Field(description="Scheduler display name")
 
-    @field_serializer('display_name')
-    def serialize_display_name(self, value: Optional[SchedulerDisplay]) -> SchedulerDisplay:
-        return SCHEDULER_DISPLAY_MAP.get(self.name)
+    @model_validator(mode="after")
+    def set_display_name(self) -> str:
+        self.display_name = SCHEDULER_DISPLAY_MAP.get(self.name)
+        return self
 
     
 class SupportedSchedulersResponse(BaseModel):

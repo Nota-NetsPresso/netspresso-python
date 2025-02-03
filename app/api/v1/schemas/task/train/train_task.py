@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field, field_serializer
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.api.v1.schemas.base import ResponseItem
 from netspresso.enums.train import (
@@ -48,13 +48,12 @@ class PretrainedModelPayload(BaseModel):
     display_name: Optional[PretrainedModelDisplay] = Field(description="Pretrained model display name")
     group_name: Optional[PretrainedModelGroup] = Field(description="Pretrained model group name")
 
-    @field_serializer('display_name')
-    def serialize_display_name(self, value: Optional[PretrainedModelDisplay]) -> PretrainedModelDisplay:
-        return MODEL_DISPLAY_MAP.get(self.name)
+    @model_validator(mode="after")
+    def set_display_and_group_name(self) -> str:
+        self.display_name = MODEL_DISPLAY_MAP.get(self.name)
+        self.group_name = MODEL_GROUP_MAP.get(self.name)
 
-    @field_serializer('group_name')
-    def serialize_group_name(self, value: Optional[PretrainedModelGroup]) -> PretrainedModelGroup:
-        return MODEL_GROUP_MAP.get(self.name)
+        return self
 
 
 class TaskPayload(BaseModel):
@@ -63,9 +62,11 @@ class TaskPayload(BaseModel):
     name: Task = Field(description="Task name")
     display_name: Optional[TaskDisplay] = Field(description="Task display name")
 
-    @field_serializer('display_name')
-    def serialize_display_name(self, value: Optional[TaskDisplay]) -> TaskDisplay:
-        return TASK_DISPLAY_MAP.get(self.name)
+    @model_validator(mode="after")
+    def set_display_name(self) -> str:
+        self.display_name = TASK_DISPLAY_MAP.get(self.name)
+
+        return self
 
 
 class FrameworkPayload(BaseModel):
@@ -74,9 +75,11 @@ class FrameworkPayload(BaseModel):
     name: Framework = Field(description="Framework name")
     display_name: Optional[FrameworkDisplay] = Field(description="Framework display name")
 
-    @field_serializer('display_name')
-    def serialize_display_name(self, value: Optional[FrameworkDisplay]) -> FrameworkDisplay:
-        return FRAMEWORK_DISPLAY_MAP.get(self.name)
+    @model_validator(mode="after")
+    def set_display_name(self) -> str:
+        self.display_name = FRAMEWORK_DISPLAY_MAP.get(self.name)
+
+        return self
 
 
 class TrainingPayload(BaseModel):
