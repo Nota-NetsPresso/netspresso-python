@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
 from app.api.v1.schemas.base import ResponseItem
 from netspresso.enums.train import (
@@ -45,34 +45,38 @@ class TrainingCreate(BaseModel):
 
 class PretrainedModelPayload(BaseModel):
     name: PretrainedModel = Field(description="Pretrained model name")
-    display_name: PretrainedModelDisplay = Field(description="Pretrained model display name")
-    group_name: PretrainedModelGroup = Field(description="Pretrained model group name")
+    display_name: Optional[PretrainedModelDisplay] = Field(description="Pretrained model display name")
+    group_name: Optional[PretrainedModelGroup] = Field(description="Pretrained model group name")
 
-    @model_validator(mode='before')
-    def set_display_and_group_name(cls, values) -> str:
-        values.display_name = MODEL_DISPLAY_MAP.get(values.name)
-        values.group_name = MODEL_GROUP_MAP.get(values.name)
-        return values
+    @field_serializer('display_name')
+    def serialize_display_name(self, value: Optional[PretrainedModelDisplay]) -> PretrainedModelDisplay:
+        return MODEL_DISPLAY_MAP.get(self.name)
+
+    @field_serializer('group_name')
+    def serialize_group_name(self, value: Optional[PretrainedModelGroup]) -> PretrainedModelGroup:
+        return MODEL_GROUP_MAP.get(self.name)
 
 
 class TaskPayload(BaseModel):
-    name: Task = Field(description="Task name")
-    display_name: TaskDisplay = Field(description="Task display name")
+    model_config = ConfigDict(from_attributes=True)
 
-    @model_validator(mode='before')
-    def set_display_name(cls, values) -> str:
-        values.display_name = TASK_DISPLAY_MAP.get(values.name)
-        return values
+    name: Task = Field(description="Task name")
+    display_name: Optional[TaskDisplay] = Field(description="Task display name")
+
+    @field_serializer('display_name')
+    def serialize_display_name(self, value: Optional[TaskDisplay]) -> TaskDisplay:
+        return TASK_DISPLAY_MAP.get(self.name)
 
 
 class FrameworkPayload(BaseModel):
-    name: Framework = Field(description="Framework name")
-    display_name: FrameworkDisplay = Field(description="Framework display name")
+    model_config = ConfigDict(from_attributes=True)
 
-    @model_validator(mode='before')
-    def set_display_name(cls, values) -> str:
-        values.display_name = FRAMEWORK_DISPLAY_MAP.get(values.name)
-        return values
+    name: Framework = Field(description="Framework name")
+    display_name: Optional[FrameworkDisplay] = Field(description="Framework display name")
+
+    @field_serializer('display_name')
+    def serialize_display_name(self, value: Optional[FrameworkDisplay]) -> FrameworkDisplay:
+        return FRAMEWORK_DISPLAY_MAP.get(self.name)
 
 
 class TrainingPayload(BaseModel):
