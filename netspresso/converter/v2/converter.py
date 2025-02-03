@@ -1,6 +1,6 @@
 import time
 from pathlib import Path
-from typing import Optional, Union
+from typing import List, Optional, Union
 from urllib import request
 
 from loguru import logger
@@ -10,7 +10,7 @@ from netspresso.clients.auth import TokenHandler
 from netspresso.clients.auth.response_body import UserResponse
 from netspresso.clients.launcher import launcher_client_v2
 from netspresso.clients.launcher.v2.schemas import InputLayer
-from netspresso.clients.launcher.v2.schemas.common import DeviceInfo
+from netspresso.clients.launcher.v2.schemas.common import DeviceInfo, ModelOption
 from netspresso.clients.launcher.v2.schemas.task.convert.response_body import ConvertTask
 from netspresso.enums import (
     DataType,
@@ -32,6 +32,22 @@ class ConverterV2(NetsPressoBase):
 
         super().__init__(token_handler)
         self.user_info = user_info
+
+    def get_supported_options(self, framework: Framework) -> List[ModelOption]:
+        options_response = launcher_client_v2.converter.read_framework_options(
+            access_token=self.token_handler.tokens.access_token, framework=framework,
+        )
+
+        supported_options = options_response.data
+
+        # TODO: Will be removed when we support DLC in the future
+        supported_options = [
+            supported_option
+            for supported_option in supported_options
+            if supported_option.framework != "dlc"
+        ]
+
+        return supported_options
 
     def create_available_options(self, target_framework, target_device, target_software_version):
         def filter_device(device: DeviceInfo, target_software_version: SoftwareVersion):
