@@ -8,13 +8,13 @@ from qai_hub.public_rest_api import DatasetEntries
 
 from netspresso.enums import Status
 from netspresso.metadata.converter import ConverterMetadata
-from netspresso.np_qai.base import QAIHubBase
+from netspresso.np_qai.base import NPQAIBase
 from netspresso.np_qai.options import CompileOptions
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
 
 
-class QAIHubConverter(QAIHubBase):
+class NPQAIConverter(NPQAIBase):
     def convert_image_dict_to_list(self, image_dict):
         result = []
         for key, value in image_dict.items():

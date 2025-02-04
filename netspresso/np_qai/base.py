@@ -7,7 +7,7 @@ from qai_hub.client import Dataset, Device, Job, JobStatus, JobSummary, JobType,
 from netspresso.np_qai.options import Extension, Framework, Runtime
 
 
-class QAIHubBase:
+class NPQAIBase:
     def set_verbose(self, verbose: bool) -> None:
         hub.set_verbose(verbose)
 

@@ -1,9 +1,7 @@
 from dataclasses import dataclass, field
-from typing import Dict, Union
 
 from netspresso.enums import TaskType
 from netspresso.metadata.common import BaseMetadata, ModelInfo
-from qai_hub import QuantizeDtype
 
 
 @dataclass

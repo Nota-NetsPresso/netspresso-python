@@ -9,13 +9,13 @@ from qai_hub.public_rest_api import DatasetEntries
 
 from netspresso.enums import Status
 from netspresso.metadata.quantizer import QuantizerMetadata
-from netspresso.np_qai.base import QAIHubBase
+from netspresso.np_qai.base import NPQAIBase
 from netspresso.np_qai.options.quantize import QuantizeOptions
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
 
 
-class QAIHubQuantizer(QAIHubBase):
+class NPQAIQuantizer(NPQAIBase):
     def get_quantize_task_status(self, quantize_task_uuid):
         job: QuantizeJob = hub.get_job(quantize_task_uuid)
         status = job.get_status()

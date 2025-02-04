@@ -1,11 +1,11 @@
-from netspresso import QAIHub
+from netspresso import NPQAI
 from netspresso.np_qai import Device
 from netspresso.np_qai.options import CompileOptions, ComputeUnit, ProfileOptions, Runtime, TfliteOptions
 
 API_TOKEN = "YOUR API TOKEN"
-qai_hub = QAIHub(api_token=API_TOKEN)
+np_qai = NPQAI(api_token=API_TOKEN)
 
-converter = qai_hub.converter()
+converter = np_qai.converter()
 
 convert_options = CompileOptions(
     target_runtime=Runtime.TFLITE,
@@ -18,7 +18,7 @@ completed_convert_tasks = set()
 for i in range(3):
     conversion_task = converter.convert_model(
         input_model_path="./examples/sample_models/pytorch_model_automatic_0.9.onnx",
-        output_dir="./outputs/qai_hub/qnn_context_binary",
+        output_dir="./outputs/np_qai/qnn_context_binary",
         target_device_name=Device(name="QCS6490 (Proxy)"),
         options=convert_options,
         input_shapes=dict(image=(1, 3, 64, 64)),
@@ -38,7 +38,7 @@ while len(completed_convert_tasks) < 3:
 print("All tasks completed!")
 
 
-benchmarker = qai_hub.benchmarker()
+benchmarker = np_qai.benchmarker()
 
 benchmark_option = ProfileOptions(
     compute_unit=[ComputeUnit.GPU],

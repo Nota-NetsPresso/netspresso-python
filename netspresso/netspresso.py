@@ -10,9 +10,9 @@ from netspresso.clients.tao import TAOTokenHandler
 from netspresso.compressor import CompressorV2
 from netspresso.converter import ConverterV2
 from netspresso.enums import Task
-from netspresso.np_qai.benchmarker import QAIHubBenchmarker
-from netspresso.np_qai.converter import QAIHubConverter
-from netspresso.np_qai.quantizer import QAIHubQuantizer
+from netspresso.np_qai.benchmarker import NPQAIBenchmarker
+from netspresso.np_qai.converter import NPQAIConverter
+from netspresso.np_qai.quantizer import NPQAIQuantizer
 from netspresso.tao import TAOTrainer
 from netspresso.trainer import Trainer
 
@@ -100,7 +100,7 @@ class TAO:
         return TAOTrainer(token_handler=self.token_handler)
 
 
-class QAIHub:
+class NPQAI:
     def __init__(self, api_token: str) -> None:
         # Define the command and arguments
         command = 'qai-hub'
@@ -110,26 +110,26 @@ class QAIHub:
         result = subprocess.run([command] + args, capture_output=True, text=True)
         logger.info(result)
 
-    def converter(self) -> QAIHubConverter:
+    def converter(self) -> NPQAIConverter:
         """Initialize and return a Converter instance.
 
         Returns:
-            QAIHubConverter: Initialized Converter instance.
+            NPQAIConverter: Initialized Converter instance.
         """
-        return QAIHubConverter()
+        return NPQAIConverter()
 
-    def benchmarker(self) -> QAIHubBenchmarker:
+    def benchmarker(self) -> NPQAIBenchmarker:
         """Initialize and return a Benchmarker instance.
 
         Returns:
-            QAIHubBenchmarker: Initialized Benchmarker instance.
+            NPQAIBenchmarker: Initialized Benchmarker instance.
         """
-        return QAIHubBenchmarker()
+        return NPQAIBenchmarker()
 
-    def quantizer(self) -> QAIHubQuantizer:
+    def quantizer(self) -> NPQAIQuantizer:
         """Initialize and return a Quantizer instance.
 
         Returns:
-            QAIHubQuantizer: Initialized Quantizer instance.
+            NPQAIQuantizer: Initialized Quantizer instance.
         """
-        return QAIHubQuantizer()
+        return NPQAIQuantizer()

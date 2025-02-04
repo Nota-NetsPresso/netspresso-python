@@ -8,13 +8,13 @@ from qai_hub.public_rest_api import DatasetEntries
 
 from netspresso.enums import Status
 from netspresso.metadata.benchmarker import BenchmarkerMetadata
-from netspresso.np_qai.base import QAIHubBase
+from netspresso.np_qai.base import NPQAIBase
 from netspresso.np_qai.options import InferenceOptions, ProfileOptions
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
 
 
-class QAIHubBenchmarker(QAIHubBase):
+class NPQAIBenchmarker(NPQAIBase):
     def download_benchmark_results(self, job: ProfileJob, artifacts_dir: str):
         results = job.download_results(artifacts_dir=artifacts_dir)
 
