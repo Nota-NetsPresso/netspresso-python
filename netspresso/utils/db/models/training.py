@@ -1,4 +1,4 @@
-from sqlalchemy import JSON, Boolean, Column, Float, ForeignKey, Integer, String, BigInteger
+from sqlalchemy import JSON, Boolean, Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from netspresso.utils.db.generate_uuid import generate_uuid
