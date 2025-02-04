@@ -143,6 +143,32 @@ class NetsPresso:
         finally:
             db and db.close()
 
+    def get_project(self, project_id: str) -> Project:
+        """
+        Retrieve all projects associated with the current user.
+
+        This method fetches project information from the database for
+        the user identified by `self.user_info.user_id`.
+
+        Returns:
+            List[Project]: A list of projects associated with the current user.
+
+        Raises:
+            Exception: If an error occurs while querying the database.
+        """
+        db = None
+        try:
+            db = SessionLocal()
+            project = project_repository.get_by_project_id(db=db, project_id=project_id)
+
+            return project
+
+        except Exception as e:
+            logger.error(f"Failed to get project list from the database: {e}")
+            raise
+        finally:
+            db and db.close()
+
     def trainer(
         self, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None
     ) -> Trainer:
