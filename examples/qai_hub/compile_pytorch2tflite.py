@@ -1,7 +1,6 @@
 from netspresso import QAIHub
-from netspresso.qai_hub import Device
-from netspresso.qai_hub.options import CompileOptions, Runtime, ComputeUnit, ProfileOptions, TfliteOptions
-
+from netspresso.np_qai import Device
+from netspresso.np_qai.options import CompileOptions, ComputeUnit, ProfileOptions, Runtime, TfliteOptions
 
 API_TOKEN = "YOUR API TOKEN"
 qai_hub = QAIHub(api_token=API_TOKEN)

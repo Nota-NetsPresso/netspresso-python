@@ -3,14 +3,14 @@ from typing import List, Optional, Union
 
 import qai_hub as hub
 from loguru import logger
+from qai_hub import QuantizeDtype
 from qai_hub.client import Dataset, QuantizeJob
 from qai_hub.public_rest_api import DatasetEntries
 
 from netspresso.enums import Status
 from netspresso.metadata.quantizer import QuantizerMetadata
-from netspresso.qai_hub.base import QAIHubBase
-from netspresso.qai_hub.options.quantize import QuantizeOptions
-from qai_hub import QuantizeDtype
+from netspresso.np_qai.base import QAIHubBase
+from netspresso.np_qai.options.quantize import QuantizeOptions
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
 
@@ -21,7 +21,7 @@ class QAIHubQuantizer(QAIHubBase):
         status = job.get_status()
 
         return status
-    
+
     def update_quantize_task(self, metadata: QuantizerMetadata):
         job: QuantizeJob = hub.get_job(metadata.quantize_info.quantize_task_uuid)
         status = job.wait()

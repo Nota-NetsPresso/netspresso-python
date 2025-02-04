@@ -8,8 +8,8 @@ from qai_hub.public_rest_api import DatasetEntries
 
 from netspresso.enums import Status
 from netspresso.metadata.converter import ConverterMetadata
-from netspresso.qai_hub.base import QAIHubBase
-from netspresso.qai_hub.options import CompileOptions
+from netspresso.np_qai.base import QAIHubBase
+from netspresso.np_qai.options import CompileOptions
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
 
@@ -26,13 +26,13 @@ class QAIHubConverter(QAIHubBase):
                 "dimension": dimension
             })
         return result
-    
+
     def get_convert_task_status(self, convert_task_uuid):
         job: CompileJob = hub.get_job(convert_task_uuid)
         status = job.get_status()
 
         return status
-    
+
     def update_convert_task(self, metadata: ConverterMetadata):
         job: CompileJob = hub.get_job(metadata.convert_task_info.convert_task_uuid)
         status = job.wait()

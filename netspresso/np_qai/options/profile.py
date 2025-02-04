@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import List, Optional, Union
 
-from netspresso.qai_hub.options.common import CommonOptions
+from netspresso.np_qai.options.common import CommonOptions
 
 
 class TfliteDelegates(str, Enum):

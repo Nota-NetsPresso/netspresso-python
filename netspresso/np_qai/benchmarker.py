@@ -8,8 +8,8 @@ from qai_hub.public_rest_api import DatasetEntries
 
 from netspresso.enums import Status
 from netspresso.metadata.benchmarker import BenchmarkerMetadata
-from netspresso.qai_hub.base import QAIHubBase
-from netspresso.qai_hub.options import InferenceOptions, ProfileOptions
+from netspresso.np_qai.base import QAIHubBase
+from netspresso.np_qai.options import InferenceOptions, ProfileOptions
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
 

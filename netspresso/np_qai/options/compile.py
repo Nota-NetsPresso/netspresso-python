@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Optional
 
-from netspresso.qai_hub.options.common import CommonOptions
+from netspresso.np_qai.options.common import CommonOptions
 
 
 class Framework(str, Enum):

@@ -10,9 +10,9 @@ from netspresso.clients.tao import TAOTokenHandler
 from netspresso.compressor import CompressorV2
 from netspresso.converter import ConverterV2
 from netspresso.enums import Task
-from netspresso.qai_hub.benchmarker import QAIHubBenchmarker
-from netspresso.qai_hub.converter import QAIHubConverter
-from netspresso.qai_hub.quantizer import QAIHubQuantizer
+from netspresso.np_qai.benchmarker import QAIHubBenchmarker
+from netspresso.np_qai.converter import QAIHubConverter
+from netspresso.np_qai.quantizer import QAIHubQuantizer
 from netspresso.tao import TAOTrainer
 from netspresso.trainer import Trainer
 

@@ -1,7 +1,7 @@
 import numpy as np
-from netspresso import QAIHub
-from netspresso.qai_hub.options.quantize import QuantizeOptions, RangeScheme, QuantizePrecision
 
+from netspresso import QAIHub
+from netspresso.np_qai.options.quantize import QuantizeOptions, QuantizePrecision, RangeScheme
 
 API_TOKEN = "YOUR API TOKEN"
 qai_hub = QAIHub(api_token=API_TOKEN)

@@ -2,9 +2,9 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 import qai_hub as hub
-from qai_hub.client import Device, Job, SourceModelType, Dataset, Model, SourceModel, JobStatus, JobType, JobSummary
+from qai_hub.client import Dataset, Device, Job, JobStatus, JobSummary, JobType, Model, SourceModel, SourceModelType
 
-from netspresso.qai_hub.options import Extension, Framework, Runtime
+from netspresso.np_qai.options import Extension, Framework, Runtime
 
 
 class QAIHubBase:
