@@ -17,9 +17,9 @@ class Project(Base, TimestampMixin):
     project_abs_path = Column(String(500), nullable=False)
     is_deleted = Column(Boolean, nullable=False, default=False)
 
-    # Relationship to TrainedModel
+    # Relationship to Model
     models = relationship(
-        "TrainedModel",
+        "Model",
         back_populates="project",
         cascade="all, delete-orphan",  # Cascade options for deletion
         lazy="joined",  # Eager loading to fetch models with the project
