@@ -15,6 +15,13 @@ class TrainingTaskRepository(BaseRepository[TrainingTask]):
 
         return task
 
+    def get_by_model_id(self, db: Session, model_id: str) -> Optional[TrainingTask]:
+        task = db.query(self.model).filter(
+            self.model.model_id == model_id,
+        ).first()
+
+        return task
+
     def save(self, db, task):
         db.add(task)
         db.commit()
