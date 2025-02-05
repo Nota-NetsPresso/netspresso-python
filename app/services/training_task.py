@@ -21,6 +21,7 @@ from netspresso.trainer.schedulers.scheduler_manager import SchedulerManager
 from netspresso.trainer.schedulers.schedulers import get_supported_schedulers
 from netspresso.trainer.trainer import Trainer
 from netspresso.utils.db.models.training import TrainingTask
+from netspresso.utils.db.repositories.model import model_repository
 from netspresso.utils.db.repositories.training import training_task_repository
 
 
@@ -119,29 +120,32 @@ class TrainTaskService:
         """Generate a unique model name by adding numbering if necessary.
 
         Args:
+            db (Session): Database session
             project_id (str): Project ID to check existing models
-            base_name (str): Original model name
+            name (str): Original model name
+            api_key (str): API key for authentication
 
         Returns:
             str: Unique model name with numbering if needed
         """
-        netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
-        project = netspresso.get_project(project_id=project_id)
-        models_dir = Path(project.project_abs_path) / "trained_models"
+        # Get existing model names from the database for the same project
+        models = model_repository.get_all_by_project_id(
+            db=db,
+            project_id=project_id,
+        )
 
-        if not models_dir.exists():
+        # Extract existing names from models and count occurrences of base name
+        base_name_count = sum(
+            1 for model in models
+            if model.type == 'trained_models' and model.name.startswith(name)
+        )
+
+        # If no models with this name exist, return original name
+        if base_name_count == 0:
             return name
 
-        existing_names = [d.name for d in models_dir.iterdir() if d.is_dir()]
-
-        if name not in existing_names:
-            return name
-
-        counter = 1
-        while f"{name} ({counter})" in existing_names:
-            counter += 1
-
-        return f"{name} ({counter})"
+        # If models exist, return name with count
+        return f"{name} ({base_name_count})"
 
     def create_training_task(self, db: Session, training_in: TrainingCreate, api_key: str) -> TrainingPayload:
         """Create and execute a new training task."""

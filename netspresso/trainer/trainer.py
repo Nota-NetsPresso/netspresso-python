@@ -663,12 +663,13 @@ class Trainer(NetsPressoBase):
 
         destination_folder = Path(project_abs_path) / SubFolder.TRAINED_MODELS.value / model_name
         destination_folder = FileHandler.create_unique_folder(folder_path=destination_folder)
+        object_path = Path(SubFolder.TRAINED_MODELS.value) / model_name
 
         model = self.save_trained_model(
             model_name=model_name,
             project_id=project.project_id,
             user_id=project.user_id,
-            object_path=destination_folder,
+            object_path=object_path,
         )
         train_task = self.create_training_task(model_id=model.model_id)
 
