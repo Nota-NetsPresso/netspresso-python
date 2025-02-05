@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import api_key_header
 from app.api.v1.schemas.task.conversion.conversion_task import (
     ConversionCreate,
+    ConversionCreateResponse,
     ConversionResponse,
     SupportedDevicesResponse,
 )
@@ -29,15 +30,15 @@ def get_supported_conversion_devices(
     return SupportedDevicesResponse(data=supported_devices)
 
 
-@router.post("/conversions", response_model=ConversionResponse)
+@router.post("/conversions", response_model=ConversionCreateResponse, status_code=201)
 def create_conversions_task(
     request_body: ConversionCreate,
     db: Session = Depends(get_db),
     api_key: str = Depends(api_key_header),
-) -> ConversionResponse:
+) -> ConversionCreateResponse:
     conversion_task = conversion_task_service.create_conversion_task(db=db, conversion_in=request_body, api_key=api_key)
 
-    return ConversionResponse(data=conversion_task)
+    return ConversionCreateResponse(data=conversion_task)
 
 
 @router.get("/conversions/{task_id}", response_model=ConversionResponse)

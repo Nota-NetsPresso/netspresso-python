@@ -61,5 +61,13 @@ class ConversionPayload(BaseModel):
     updated_at: Optional[datetime] = None
 
 
+class ConversionCreatePayload(BaseModel):
+    task_id: str
+
+
+class ConversionCreateResponse(ResponseItem):
+    data: ConversionCreatePayload
+
+
 class ConversionResponse(ResponseItem):
     data: ConversionPayload

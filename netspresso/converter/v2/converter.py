@@ -196,7 +196,7 @@ class ConverterV2(NetsPressoBase):
         wait_until_done: bool = True,
         sleep_interval: int = 30,
         input_model_id: Optional[str] = None,
-    ) -> ConversionTask:
+    ) -> str:
         """Convert a model to the specified framework.
 
         Args:
@@ -279,6 +279,9 @@ class ConverterV2(NetsPressoBase):
                 dataset_path=dataset_path,
             )
 
+            conversion_task.convert_task_uuid = convert_response.data.convert_task_id
+            conversion_task = self._save_conversion_task(conversion_task)
+
             if wait_until_done:
                 while True:
                     self.token_handler.validate_token()
@@ -290,6 +293,7 @@ class ConverterV2(NetsPressoBase):
                         TaskStatusForDisplay.FINISHED,
                         TaskStatusForDisplay.ERROR,
                         TaskStatusForDisplay.TIMEOUT,
+                        TaskStatusForDisplay.USER_CANCEL,
                     ]:
                         break
 
@@ -305,10 +309,14 @@ class ConverterV2(NetsPressoBase):
                 self.print_remaining_credit(service_task=ServiceTask.MODEL_CONVERT)
                 conversion_task.status = Status.COMPLETED
                 logger.info("Conversion task was completed successfully.")
-            else:
+            elif convert_response.data.status in [TaskStatusForDisplay.ERROR, TaskStatusForDisplay.USER_CANCEL, TaskStatusForDisplay.TIMEOUT]:
                 conversion_task.status = Status.ERROR
                 conversion_task.error_detail = convert_response.data.error_log
                 conversion_task = self._save_conversion_task(conversion_task)
+                logger.error(f"Conversion task was failed. Error: {convert_response.data.error_log}")
+            else:  # TaskStatusForDisplay.IN_PROGRESS, TaskStatusForDisplay.IN_QUEUE
+                conversion_task.status = Status.IN_PROGRESS
+                logger.info(f"Conversion task was running. Status: {convert_response.data.status}")
 
         except Exception as e:
             conversion_task.status = Status.ERROR
@@ -318,7 +326,7 @@ class ConverterV2(NetsPressoBase):
         finally:
             conversion_task = self._save_conversion_task(conversion_task)
 
-        return conversion_task
+        return conversion_task.task_id
 
     def get_conversion_task(self, conversion_task_id: str) -> ConvertTask:
         """Get the conversion task information with given conversion task uuid.

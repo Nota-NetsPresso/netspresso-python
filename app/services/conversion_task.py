@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.api.v1.schemas.task.conversion.conversion_task import (
     ConversionCreate,
+    ConversionCreatePayload,
     ConversionPayload,
     SupportedDeviceResponse,
     TargetFrameworkPayload,
@@ -18,7 +19,9 @@ from app.api.v1.schemas.task.conversion.device import (
 )
 from app.services.project import project_service
 from app.services.user import user_service
+from app.worker.celery_app import convert_model_task
 from netspresso.clients.launcher.v2.schemas.common import DeviceInfo
+from netspresso.enums import Status, TaskStatusForDisplay
 from netspresso.enums.conversion import SourceFramework
 from netspresso.utils.db.repositories.conversion import conversion_task_repository
 from netspresso.utils.db.repositories.model import model_repository
@@ -87,17 +90,7 @@ class ConversionTaskService:
             ],
         )
 
-    def create_conversion_task(self, db: Session, conversion_in: ConversionCreate, api_key: str) -> ConversionPayload:
-        """Create a conversion task.
-
-        Args:
-            db (Session): Database session
-            conversion_in (ConversionCreate): Conversion input containing model_id and conversion settings
-            api_key (str): API key for authentication
-
-        Returns:
-            ConversionResponse: Response containing conversion task
-        """
+    def create_conversion_task(self, db: Session, conversion_in: ConversionCreate, api_key: str) -> ConversionCreatePayload:
         netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
 
         # Get model from trained models repository
@@ -119,19 +112,38 @@ class ConversionTaskService:
         output_dir = input_model_dir / 'converted'
         output_dir.mkdir(exist_ok=True)
 
-        print(f"Input model path: {model.object_path}")
-        print(f"Output directory: {output_dir}")
-
-        # Create conversion task
-        converter = netspresso.converter_v2()
-        conversion_task = converter.convert_model(
-            input_model_path=str(input_model_path),
-            output_dir=str(output_dir),  # Changed to use the new output_dir
+        task = convert_model_task.delay(
+            api_key=api_key,
+            input_model_path=input_model_path.as_posix(),
+            output_dir=output_dir.as_posix(),
             target_framework=conversion_in.framework,
             target_device_name=conversion_in.device_name,
+            target_data_type=conversion_in.precision,
             target_software_version=conversion_in.software_version,
-            input_model_id=model.model_id,
+            input_model_id=conversion_in.input_model_id
         )
+        task_id = task.get()
+        return ConversionCreatePayload(task_id=task_id)
+
+    def get_conversion_task(self, db: Session, task_id: str, api_key: str):
+        conversion_task = conversion_task_repository.get_by_task_id(db, task_id)
+
+        netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
+        converter = netspresso.converter_v2()
+
+        if conversion_task.status == Status.NOT_STARTED or conversion_task.status == Status.IN_PROGRESS:
+            # Check launcher server status
+            launcher_status = converter.get_conversion_task(conversion_task.convert_task_uuid)
+
+            if launcher_status.status in [TaskStatusForDisplay.FINISHED]:
+                conversion_task.status = Status.COMPLETED
+            elif launcher_status.status in [TaskStatusForDisplay.ERROR, TaskStatusForDisplay.TIMEOUT]:
+                conversion_task.status = Status.ERROR
+                conversion_task.error_detail = launcher_status.error_log
+            elif launcher_status.status in [TaskStatusForDisplay.USER_CANCEL]:
+                conversion_task.status = Status.STOPPED
+
+            conversion_task = conversion_task_repository.save(db, conversion_task)
 
         framework = TargetFrameworkPayload(name=conversion_task.framework)
         device_name = TargetDevicePayload(name=conversion_task.device_name)
@@ -146,30 +158,7 @@ class ConversionTaskService:
             software_version=software_version,
             precision=precision,
             status=conversion_task.status,
-            error_detail=conversion_task.error_detail,
-            input_model_id=conversion_task.input_model_id,
-            created_at=conversion_task.created_at,
-            updated_at=conversion_task.updated_at,
-        )
-
-        return conversion_payload
-
-    def get_conversion_task(self, db: Session, task_id: str, api_key: str) -> ConversionPayload:
-        conversion_task = conversion_task_repository.get_by_task_id(db=db, task_id=task_id)
-
-        framework = TargetFrameworkPayload(name=conversion_task.framework)
-        device_name = TargetDevicePayload(name=conversion_task.device_name)
-        software_version = SoftwareVersionPayload(name=conversion_task.software_version) if conversion_task.software_version else None
-        precision = PrecisionPayload(name=conversion_task.precision)
-
-        conversion_payload = ConversionPayload(
-            task_id=conversion_task.task_id,
-            model_id=conversion_task.model_id,
-            framework=framework,
-            device_name=device_name,
-            software_version=software_version,
-            precision=precision,
-            status=conversion_task.status,
+            is_deleted=conversion_task.is_deleted,
             error_detail=conversion_task.error_detail,
             input_model_id=conversion_task.input_model_id,
             created_at=conversion_task.created_at,
