@@ -167,5 +167,39 @@ class ConversionTaskService:
 
         return conversion_payload
 
+    def cancel_conversion_task(self, db: Session, task_id: str, api_key: str):
+        netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
+        converter = netspresso.converter_v2()
+        conversion_task = conversion_task_repository.get_by_task_id(db, task_id)
+        convert_task = converter.cancel_conversion_task(conversion_task.convert_task_uuid)
+
+        if convert_task.status == TaskStatusForDisplay.USER_CANCEL:
+            conversion_task.status = Status.STOPPED
+            conversion_task = conversion_task_repository.save(db, conversion_task)
+        else:
+            raise ValueError(f"Failed to cancel conversion task: {convert_task.status}")
+
+        framework = TargetFrameworkPayload(name=conversion_task.framework)
+        device_name = TargetDevicePayload(name=conversion_task.device_name)
+        software_version = SoftwareVersionPayload(name=conversion_task.software_version) if conversion_task.software_version else None
+        precision = PrecisionPayload(name=conversion_task.precision)
+
+        conversion_payload = ConversionPayload(
+            task_id=conversion_task.task_id,
+            model_id=conversion_task.model_id,
+            framework=framework,
+            device_name=device_name,
+            software_version=software_version,
+            precision=precision,
+            status=conversion_task.status,
+            is_deleted=conversion_task.is_deleted,
+            error_detail=conversion_task.error_detail,
+            input_model_id=conversion_task.input_model_id,
+            created_at=conversion_task.created_at,
+            updated_at=conversion_task.updated_at,
+        )
+
+        return conversion_payload
+
 
 conversion_task_service = ConversionTaskService()

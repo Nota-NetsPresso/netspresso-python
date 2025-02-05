@@ -50,3 +50,14 @@ def get_conversions_task(
     conversion_task = conversion_task_service.get_conversion_task(db=db, task_id=task_id, api_key=api_key)
 
     return ConversionResponse(data=conversion_task)
+
+
+@router.post("/conversions/{task_id}/cancel", response_model=ConversionResponse)
+def cancel_conversion_task(
+    task_id: str,
+    db: Session = Depends(get_db),
+    api_key: str = Depends(api_key_header),
+) -> ConversionResponse:
+    conversion_task = conversion_task_service.cancel_conversion_task(db=db, task_id=task_id, api_key=api_key)
+
+    return ConversionResponse(data=conversion_task)
