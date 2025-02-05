@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field, model_validator
 
+from netspresso.enums.conversion import PRECISION_DISPLAY_MAP, Precision, PrecisionDisplay
 from netspresso.enums.device import (
     DEVICE_BRAND_MAP,
     DEVICE_DISPLAY_MAP,
@@ -15,7 +16,6 @@ from netspresso.enums.device import (
     SoftwareVersion,
     SoftwareVersionDisplay,
 )
-from netspresso.enums.model import DATA_TYPE_DISPLAY_MAP, DataType, DataTypeDisplay
 
 
 class SoftwareVersionPayload(BaseModel):
@@ -30,12 +30,12 @@ class SoftwareVersionPayload(BaseModel):
 
 
 class PrecisionPayload(BaseModel):
-    name: DataType
-    display_name: Optional[DataTypeDisplay] = Field(default=None, description="Precision display name")
+    name: Precision
+    display_name: Optional[PrecisionDisplay] = Field(default=None, description="Precision display name")
 
     @model_validator(mode="after")
     def set_display_name(self) -> str:
-        self.display_name = DATA_TYPE_DISPLAY_MAP.get(self.name)
+        self.display_name = PRECISION_DISPLAY_MAP.get(self.name)
 
         return self
 
@@ -51,7 +51,7 @@ class HardwareTypePayload(BaseModel):
         return self
 
 
-class DevicePayload(BaseModel):
+class SupportedDevicePayload(BaseModel):
     name: DeviceName
     display_name: Optional[DeviceDisplay] = Field(default=None, description="Device display name")
     brand_name: Optional[DeviceBrand] = Field(default=None, description="Device brand name")
@@ -66,3 +66,16 @@ class DevicePayload(BaseModel):
 
         return self
 
+
+
+class TargetDevicePayload(BaseModel):
+    name: DeviceName
+    display_name: Optional[DeviceDisplay] = Field(default=None, description="Device display name")
+    brand_name: Optional[DeviceBrand] = Field(default=None, description="Device brand name")
+
+    @model_validator(mode="after")
+    def set_display_name(self) -> str:
+        self.display_name = DEVICE_DISPLAY_MAP.get(self.name)
+        self.brand_name = DEVICE_BRAND_MAP.get(self.name)
+
+        return self
