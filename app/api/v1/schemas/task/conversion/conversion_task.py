@@ -50,7 +50,7 @@ class ConversionPayload(BaseModel):
     task_id: str
     model_id: Optional[str] = None
     framework: TargetFrameworkPayload
-    device_name: TargetDevicePayload
+    device: TargetDevicePayload
     software_version: Optional[SoftwareVersionPayload] = None
     precision: PrecisionPayload
     status: str
