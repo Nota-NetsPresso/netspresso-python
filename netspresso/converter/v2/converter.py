@@ -163,11 +163,11 @@ class ConverterV2(NetsPressoBase):
 
     def create_conversion_task(
         self,
-        input_model_id: str,
         framework: Union[str, TargetFramework],
         device_name: Union[str, DeviceName],
         software_version: Union[str, SoftwareVersion],
         data_type: Union[str, DataType],
+        input_model_id: Optional[str] = None,
         model_id: Optional[str] = None,
     ) -> ConversionTask:
         with get_db_session() as db:
@@ -236,11 +236,11 @@ class ConverterV2(NetsPressoBase):
             object_path=converted_model_path,
         )
         conversion_task = self.create_conversion_task(
-            input_model_id=input_model_id,
             framework=target_framework,
             device_name=target_device_name,
             software_version=target_software_version,
             data_type=target_data_type,
+            input_model_id=input_model_id,
             model_id=model.model_id,
         )
 
@@ -299,7 +299,10 @@ class ConverterV2(NetsPressoBase):
 
                     time.sleep(sleep_interval)
 
-            if convert_response.data.status == TaskStatusForDisplay.FINISHED:
+            if convert_response.data.status in [TaskStatusForDisplay.IN_PROGRESS, TaskStatusForDisplay.IN_QUEUE]:
+                conversion_task.status = Status.IN_PROGRESS
+                logger.info(f"Conversion task was running. Status: {convert_response.data.status}")
+            elif convert_response.data.status == TaskStatusForDisplay.FINISHED:
                 default_model_path = FileHandler.get_default_model_path(folder_path=output_dir)
                 extension = FileHandler.get_extension(framework=target_framework)
                 self._download_converted_model(
@@ -314,9 +317,6 @@ class ConverterV2(NetsPressoBase):
                 conversion_task.error_detail = convert_response.data.error_log
                 conversion_task = self._save_conversion_task(conversion_task)
                 logger.error(f"Conversion task was failed. Error: {convert_response.data.error_log}")
-            else:  # TaskStatusForDisplay.IN_PROGRESS, TaskStatusForDisplay.IN_QUEUE
-                conversion_task.status = Status.IN_PROGRESS
-                logger.info(f"Conversion task was running. Status: {convert_response.data.status}")
 
         except Exception as e:
             conversion_task.status = Status.ERROR
