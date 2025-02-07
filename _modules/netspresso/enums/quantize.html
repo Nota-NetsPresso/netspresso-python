@@ -71,16 +71,16 @@
            <div itemprop="articleBody">
              
   <h1>Source code for netspresso.enums.quantize</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
 
 
-<div class="viewcode-block" id="QuantizationPrecision"><a class="viewcode-back" href="../../../description/api/enums/enum/quantization_precision.html#netspresso.enums.__init__.QuantizationPrecision">[docs]</a><span class="k">class</span> <span class="nc">QuantizationPrecision</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="QuantizationPrecision"><a class="viewcode-back" href="../../../description/api/enums/enum/quantization_precision.html#netspresso.enums.__init__.QuantizationPrecision">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">QuantizationPrecision</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
     <span class="n">INT8</span> <span class="o">=</span> <span class="s2">&quot;int8&quot;</span>
     <span class="n">FLOAT16</span> <span class="o">=</span> <span class="s2">&quot;float16&quot;</span>
     <span class="n">FLOAT32</span> <span class="o">=</span> <span class="s2">&quot;float32&quot;</span></div>
 
 
-<div class="viewcode-block" id="QuantizationMode"><a class="viewcode-back" href="../../../description/api/enums/enum/quantization_mode.html#netspresso.enums.__init__.QuantizationMode">[docs]</a><span class="k">class</span> <span class="nc">QuantizationMode</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="QuantizationMode"><a class="viewcode-back" href="../../../description/api/enums/enum/quantization_mode.html#netspresso.enums.__init__.QuantizationMode">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">QuantizationMode</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
     <span class="n">AUTOMATIC_QUANTIZATION</span> <span class="o">=</span> <span class="s2">&quot;automatic_quantization&quot;</span>
     <span class="n">UNIFORM_PRECISION_QUANTIZATION</span> <span class="o">=</span> <span class="s2">&quot;uniform_precision_quantization&quot;</span>
     <span class="n">CUSTOM_PRECISION_QUANTIZATION</span> <span class="o">=</span> <span class="s2">&quot;custom_precision_quantization&quot;</span>
@@ -88,11 +88,11 @@
     <span class="n">RECOMMEND_QUANTIZATION</span> <span class="o">=</span> <span class="s2">&quot;recommend_quantization&quot;</span></div>
 
 
-<div class="viewcode-block" id="SimilarityMetric"><a class="viewcode-back" href="../../../description/api/enums/enum/similarity_metric.html#netspresso.enums.__init__.SimilarityMetric">[docs]</a><span class="k">class</span> <span class="nc">SimilarityMetric</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="SimilarityMetric"><a class="viewcode-back" href="../../../description/api/enums/enum/similarity_metric.html#netspresso.enums.__init__.SimilarityMetric">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">SimilarityMetric</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
     <span class="n">SNR</span> <span class="o">=</span> <span class="s2">&quot;SNR&quot;</span></div>
 
 
-<div class="viewcode-block" id="OnnxOperator"><a class="viewcode-back" href="../../../description/api/enums/enum/onnx_operator.html#netspresso.enums.__init__.OnnxOperator">[docs]</a><span class="k">class</span> <span class="nc">OnnxOperator</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="OnnxOperator"><a class="viewcode-back" href="../../../description/api/enums/enum/onnx_operator.html#netspresso.enums.__init__.OnnxOperator">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">OnnxOperator</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
     <span class="n">Adagrad</span> <span class="o">=</span> <span class="s2">&quot;Adagrad&quot;</span>
     <span class="n">Momentum</span> <span class="o">=</span> <span class="s2">&quot;Momentum&quot;</span>
     <span class="n">ZipMap</span> <span class="o">=</span> <span class="s2">&quot;ZipMap&quot;</span>

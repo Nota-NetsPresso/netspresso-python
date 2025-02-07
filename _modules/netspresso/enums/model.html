@@ -71,11 +71,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for netspresso.enums.model</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
 
 
-<div class="viewcode-block" id="Framework"><a class="viewcode-back" href="../../../description/api/enums/enum/framework.html#netspresso.enums.__init__.Framework">[docs]</a><span class="k">class</span> <span class="nc">Framework</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="Framework"><a class="viewcode-back" href="../../../description/api/enums/enum/framework.html#netspresso.enums.__init__.Framework">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Framework</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
     <span class="n">TENSORFLOW_KERAS</span> <span class="o">=</span> <span class="s2">&quot;tensorflow_keras&quot;</span>
     <span class="n">TENSORFLOW</span> <span class="o">=</span> <span class="s2">&quot;saved_model&quot;</span>
     <span class="n">PYTORCH</span> <span class="o">=</span> <span class="s2">&quot;pytorch&quot;</span>
@@ -86,11 +86,11 @@
     <span class="n">DRPAI</span> <span class="o">=</span> <span class="s2">&quot;drpai&quot;</span>
 
 <div class="viewcode-block" id="Framework.create_compressor_literal"><a class="viewcode-back" href="../../../description/api/enums/enum/framework.html#netspresso.enums.__init__.Framework.create_compressor_literal">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_compressor_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_compressor_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;tensorflow_keras&quot;</span><span class="p">,</span> <span class="s2">&quot;pytorch&quot;</span><span class="p">,</span> <span class="s2">&quot;onnx&quot;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Framework.create_launcher_literal"><a class="viewcode-back" href="../../../description/api/enums/enum/framework.html#netspresso.enums.__init__.Framework.create_launcher_literal">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_launcher_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_launcher_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Literal</span><span class="p">[</span>
             <span class="s2">&quot;onnx&quot;</span><span class="p">,</span>
             <span class="s2">&quot;tensorrt&quot;</span><span class="p">,</span>
@@ -102,34 +102,34 @@
         <span class="p">]</span></div></div>
 
 
-<div class="viewcode-block" id="Extension"><a class="viewcode-back" href="../../../description/api/enums/enum/extension.html#netspresso.enums.__init__.Extension">[docs]</a><span class="k">class</span> <span class="nc">Extension</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="Extension"><a class="viewcode-back" href="../../../description/api/enums/enum/extension.html#netspresso.enums.__init__.Extension">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Extension</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
     <span class="n">H5</span> <span class="o">=</span> <span class="s2">&quot;h5&quot;</span>
     <span class="n">ZIP</span> <span class="o">=</span> <span class="s2">&quot;zip&quot;</span>
     <span class="n">PT</span> <span class="o">=</span> <span class="s2">&quot;pt&quot;</span>
     <span class="n">ONNX</span> <span class="o">=</span> <span class="s2">&quot;onnx&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;h5&quot;</span><span class="p">,</span> <span class="s2">&quot;zip&quot;</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="s2">&quot;onnx&quot;</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="OriginFrom"><a class="viewcode-back" href="../../../description/api/enums/enum/origin_from.html#netspresso.enums.__init__.OriginFrom">[docs]</a><span class="k">class</span> <span class="nc">OriginFrom</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="OriginFrom"><a class="viewcode-back" href="../../../description/api/enums/enum/origin_from.html#netspresso.enums.__init__.OriginFrom">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">OriginFrom</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
     <span class="n">CUSTOM</span> <span class="o">=</span> <span class="s2">&quot;custom&quot;</span>
     <span class="n">NPMS</span> <span class="o">=</span> <span class="s2">&quot;npms&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="s2">&quot;npms&quot;</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="DataType"><a class="viewcode-back" href="../../../description/api/enums/enum/data_type.html#netspresso.enums.__init__.DataType">[docs]</a><span class="k">class</span> <span class="nc">DataType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="DataType"><a class="viewcode-back" href="../../../description/api/enums/enum/data_type.html#netspresso.enums.__init__.DataType">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DataType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
     <span class="n">FP32</span> <span class="o">=</span> <span class="s2">&quot;FP32&quot;</span>
     <span class="n">FP16</span> <span class="o">=</span> <span class="s2">&quot;FP16&quot;</span>
     <span class="n">INT8</span> <span class="o">=</span> <span class="s2">&quot;INT8&quot;</span>
     <span class="n">NONE</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;FP32&quot;</span><span class="p">,</span> <span class="s2">&quot;FP16&quot;</span><span class="p">,</span> <span class="s2">&quot;INT8&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span></div>
 
 

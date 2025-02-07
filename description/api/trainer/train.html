@@ -95,11 +95,11 @@
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h2>
 <section id="id1">
 <h3>Train<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">netspresso</span> <span class="kn">import</span> <span class="n">NetsPresso</span>
-<span class="kn">from</span> <span class="nn">netspresso.enums</span> <span class="kn">import</span> <span class="n">Task</span>
-<span class="kn">from</span> <span class="nn">netspresso.trainer.augmentations</span> <span class="kn">import</span> <span class="n">Resize</span>
-<span class="kn">from</span> <span class="nn">netspresso.trainer.optimizers</span> <span class="kn">import</span> <span class="n">AdamW</span>
-<span class="kn">from</span> <span class="nn">netspresso.trainer.schedulers</span> <span class="kn">import</span> <span class="n">CosineAnnealingWarmRestartsWithCustomWarmUp</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">netspresso</span><span class="w"> </span><span class="kn">import</span> <span class="n">NetsPresso</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">netspresso.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">netspresso.trainer.augmentations</span><span class="w"> </span><span class="kn">import</span> <span class="n">Resize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">netspresso.trainer.optimizers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdamW</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">netspresso.trainer.schedulers</span><span class="w"> </span><span class="kn">import</span> <span class="n">CosineAnnealingWarmRestartsWithCustomWarmUp</span>
 
 
 <span class="n">netspresso</span> <span class="o">=</span> <span class="n">NetsPresso</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="s2">&quot;YOUR_EMAIL&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;YOUR_PASSWORD&quot;</span><span class="p">)</span>
@@ -146,8 +146,8 @@
 </section>
 <section id="retrain">
 <h3>Retrain<a class="headerlink" href="#retrain" title="Permalink to this heading"></a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">netspresso</span> <span class="kn">import</span> <span class="n">NetsPresso</span>
-<span class="kn">from</span> <span class="nn">netspresso.trainer.optimizers</span> <span class="kn">import</span> <span class="n">AdamW</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">netspresso</span><span class="w"> </span><span class="kn">import</span> <span class="n">NetsPresso</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">netspresso.trainer.optimizers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdamW</span>
 
 
 <span class="n">netspresso</span> <span class="o">=</span> <span class="n">NetsPresso</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="s2">&quot;YOUR_EMAIL&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;YOUR_PASSWORD&quot;</span><span class="p">)</span>

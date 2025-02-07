@@ -154,7 +154,7 @@
 </section>
 <section id="example">
 <h4>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">netspresso.enums</span> <span class="kn">import</span> <span class="n">Framework</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">netspresso.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Framework</span>
 
 <span class="n">FRAMEWORK</span> <span class="o">=</span> <span class="n">Framework</span><span class="o">.</span><span class="n">PYTORCH</span>
 </pre></div>
@@ -226,7 +226,7 @@
 </section>
 <section id="id1">
 <h2>Example<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">netspresso</span> <span class="kn">import</span> <span class="n">NetsPresso</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">netspresso</span><span class="w"> </span><span class="kn">import</span> <span class="n">NetsPresso</span>
 
 
 <span class="n">netspresso</span> <span class="o">=</span> <span class="n">NetsPresso</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="s2">&quot;YOUR_EMAIL&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;YOUR_PASSWORD&quot;</span><span class="p">)</span>
@@ -313,7 +313,7 @@
 </section>
 <section id="id3">
 <h5>Example<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h5>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">netspresso.enums</span> <span class="kn">import</span> <span class="n">CompressionMethod</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">netspresso.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">CompressionMethod</span>
 
 <span class="n">COMPRESSION_METHOD</span> <span class="o">=</span> <span class="n">CompressionMethod</span><span class="o">.</span><span class="n">PR_L2</span>
 </pre></div>
@@ -362,8 +362,8 @@
 
 <section id="id4">
 <h4>Example<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">netspresso.enums</span> <span class="kn">import</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">LayerNorm</span><span class="p">,</span> <span class="n">GroupPolicy</span>
-<span class="kn">from</span> <span class="nn">netspresso.clients.compressor.v2.schemas</span> <span class="kn">import</span> <span class="n">Options</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">netspresso.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">LayerNorm</span><span class="p">,</span> <span class="n">GroupPolicy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">netspresso.clients.compressor.v2.schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">Options</span>
 
 <span class="n">OPTIONS</span> <span class="o">=</span> <span class="n">Options</span><span class="p">(</span>
     <span class="n">policy</span><span class="o">=</span><span class="n">Policy</span><span class="o">.</span><span class="n">AVERAGE</span><span class="p">,</span>
@@ -391,9 +391,9 @@
 <h3>Details of Returns<a class="headerlink" href="#details-of-returns" title="Permalink to this heading"></a></h3>
 <section id="id5">
 <h4>Example<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">netspresso</span> <span class="kn">import</span> <span class="n">NetsPresso</span>
-<span class="kn">from</span> <span class="nn">netspresso.enums</span> <span class="kn">import</span> <span class="n">CompressionMethod</span><span class="p">,</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">LayerNorm</span><span class="p">,</span> <span class="n">GroupPolicy</span>
-<span class="kn">from</span> <span class="nn">netspresso.clients.compressor.v2.schemas</span> <span class="kn">import</span> <span class="n">Options</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">netspresso</span><span class="w"> </span><span class="kn">import</span> <span class="n">NetsPresso</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">netspresso.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">CompressionMethod</span><span class="p">,</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">LayerNorm</span><span class="p">,</span> <span class="n">GroupPolicy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">netspresso.clients.compressor.v2.schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">Options</span>
 
 
 <span class="n">netspresso</span> <span class="o">=</span> <span class="n">NetsPresso</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="s2">&quot;YOUR_EMAIL&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;YOUR_PASSWORD&quot;</span><span class="p">)</span>
@@ -580,9 +580,9 @@ CompressionInfo<span class="o">(</span>
 </section>
 <section id="full-example">
 <h3>Full Example<a class="headerlink" href="#full-example" title="Permalink to this heading"></a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">netspresso</span> <span class="kn">import</span> <span class="n">NetsPresso</span>
-<span class="kn">from</span> <span class="nn">netspresso.enums</span> <span class="kn">import</span> <span class="n">CompressionMethod</span><span class="p">,</span> <span class="n">GroupPolicy</span><span class="p">,</span> <span class="n">LayerNorm</span><span class="p">,</span> <span class="n">Policy</span>
-<span class="kn">from</span> <span class="nn">netspresso.clients.compressor.v2.schemas</span> <span class="kn">import</span> <span class="n">Options</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">netspresso</span><span class="w"> </span><span class="kn">import</span> <span class="n">NetsPresso</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">netspresso.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">CompressionMethod</span><span class="p">,</span> <span class="n">GroupPolicy</span><span class="p">,</span> <span class="n">LayerNorm</span><span class="p">,</span> <span class="n">Policy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">netspresso.clients.compressor.v2.schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">Options</span>
 
 
 <span class="n">netspresso</span> <span class="o">=</span> <span class="n">NetsPresso</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="s2">&quot;YOUR_EMAIL&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;YOUR_PASSWORD&quot;</span><span class="p">)</span>

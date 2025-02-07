@@ -71,11 +71,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for netspresso.enums.compression</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
 
 
-<div class="viewcode-block" id="CompressionMethod"><a class="viewcode-back" href="../../../description/api/enums/enum/compression_method.html#netspresso.enums.__init__.CompressionMethod">[docs]</a><span class="k">class</span> <span class="nc">CompressionMethod</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="CompressionMethod"><a class="viewcode-back" href="../../../description/api/enums/enum/compression_method.html#netspresso.enums.__init__.CompressionMethod">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">CompressionMethod</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
     <span class="n">PR_L2</span> <span class="o">=</span> <span class="s2">&quot;PR_L2&quot;</span>
     <span class="n">PR_GM</span> <span class="o">=</span> <span class="s2">&quot;PR_GM&quot;</span>
     <span class="n">PR_NN</span> <span class="o">=</span> <span class="s2">&quot;PR_NN&quot;</span>
@@ -86,40 +86,40 @@
     <span class="n">FD_SVD</span> <span class="o">=</span> <span class="s2">&quot;FD_SVD&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;PR_L2&quot;</span><span class="p">,</span> <span class="s2">&quot;PR_GM&quot;</span><span class="p">,</span> <span class="s2">&quot;PR_NN&quot;</span><span class="p">,</span> <span class="s2">&quot;PR_SNP&quot;</span><span class="p">,</span> <span class="s2">&quot;PR_ID&quot;</span><span class="p">,</span> <span class="s2">&quot;FD_TK&quot;</span><span class="p">,</span> <span class="s2">&quot;FD_CP&quot;</span><span class="p">,</span> <span class="s2">&quot;FD_SVD&quot;</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="RecommendationMethod"><a class="viewcode-back" href="../../../description/api/enums/enum/recommendation_method.html#netspresso.enums.__init__.RecommendationMethod">[docs]</a><span class="k">class</span> <span class="nc">RecommendationMethod</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="RecommendationMethod"><a class="viewcode-back" href="../../../description/api/enums/enum/recommendation_method.html#netspresso.enums.__init__.RecommendationMethod">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">RecommendationMethod</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
     <span class="n">SLAMP</span> <span class="o">=</span> <span class="s2">&quot;slamp&quot;</span>
     <span class="n">VBMF</span> <span class="o">=</span> <span class="s2">&quot;vbmf&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;slamp&quot;</span><span class="p">,</span> <span class="s2">&quot;vbmf&quot;</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="Policy"><a class="viewcode-back" href="../../../description/api/enums/enum/policy.html#netspresso.enums.__init__.Policy">[docs]</a><span class="k">class</span> <span class="nc">Policy</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="Policy"><a class="viewcode-back" href="../../../description/api/enums/enum/policy.html#netspresso.enums.__init__.Policy">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Policy</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
     <span class="n">SUM</span> <span class="o">=</span> <span class="s2">&quot;sum&quot;</span>
     <span class="n">AVERAGE</span> <span class="o">=</span> <span class="s2">&quot;average&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="s2">&quot;average&quot;</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="GroupPolicy"><a class="viewcode-back" href="../../../description/api/enums/enum/group_policy.html#netspresso.enums.__init__.GroupPolicy">[docs]</a><span class="k">class</span> <span class="nc">GroupPolicy</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="GroupPolicy"><a class="viewcode-back" href="../../../description/api/enums/enum/group_policy.html#netspresso.enums.__init__.GroupPolicy">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">GroupPolicy</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
     <span class="n">SUM</span> <span class="o">=</span> <span class="s2">&quot;sum&quot;</span>
     <span class="n">AVERAGE</span> <span class="o">=</span> <span class="s2">&quot;average&quot;</span>
     <span class="n">COUNT</span> <span class="o">=</span> <span class="s2">&quot;count&quot;</span>
     <span class="n">NONE</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="s2">&quot;average&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="LayerNorm"><a class="viewcode-back" href="../../../description/api/enums/enum/layer_norm.html#netspresso.enums.__init__.LayerNorm">[docs]</a><span class="k">class</span> <span class="nc">LayerNorm</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="LayerNorm"><a class="viewcode-back" href="../../../description/api/enums/enum/layer_norm.html#netspresso.enums.__init__.LayerNorm">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">LayerNorm</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
     <span class="n">NONE</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
     <span class="n">STANDARD_SCORE</span> <span class="o">=</span> <span class="s2">&quot;standard_score&quot;</span>
     <span class="n">TSS_NORM</span> <span class="o">=</span> <span class="s2">&quot;tss_norm&quot;</span>
@@ -127,18 +127,18 @@
     <span class="n">SOFTMAX_NORM</span> <span class="o">=</span> <span class="s2">&quot;softmax_norm&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;standard_score&quot;</span><span class="p">,</span> <span class="s2">&quot;tss_norm&quot;</span><span class="p">,</span> <span class="s2">&quot;linear_scaling&quot;</span><span class="p">,</span> <span class="s2">&quot;softmax_norm&quot;</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="StepOp"><a class="viewcode-back" href="../../../description/api/compressor/compress/advanced_compression/manual_compression.html#netspresso.enums.__init__.StepOp">[docs]</a><span class="k">class</span> <span class="nc">StepOp</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="StepOp"><a class="viewcode-back" href="../../../description/api/compressor/compress/advanced_compression/manual_compression.html#netspresso.enums.__init__.StepOp">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">StepOp</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
     <span class="n">ROUND_UP</span> <span class="o">=</span> <span class="s2">&quot;round_up&quot;</span>
     <span class="n">ROUND_DOWN</span> <span class="o">=</span> <span class="s2">&quot;round_down&quot;</span>
     <span class="n">ROUND</span> <span class="o">=</span> <span class="s2">&quot;round&quot;</span>
     <span class="n">NONE</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_literal</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;round_up&quot;</span><span class="p">,</span> <span class="s2">&quot;round_down&quot;</span><span class="p">,</span> <span class="s2">&quot;round&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">]</span></div>
 
 
