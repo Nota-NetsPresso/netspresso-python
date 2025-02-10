@@ -26,7 +26,7 @@ class ConversionTask(Base, TimestampMixin):
     is_deleted = Column(Boolean, nullable=False, default=False)
 
     # Relationship to Model (source model)
-    input_model_id = Column(String(36), ForeignKey("model.model_id"), nullable=False)
+    input_model_id = Column(String(36), ForeignKey("model.model_id"), nullable=True)
     input_model = relationship(
         "Model",
         uselist=False,
