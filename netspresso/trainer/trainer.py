@@ -170,9 +170,7 @@ class Trainer(NetsPressoBase):
 
         # Filter out deprecated names
         filtered_models = {
-            name: config
-            for name, config in available_models.items()
-            if name not in self.deprecated_names
+            name: config for name, config in available_models.items() if name not in self.deprecated_names
         }
 
         return filtered_models
@@ -222,7 +220,7 @@ class Trainer(NetsPressoBase):
                 root=root_path,
                 train=ImageLabelPathConfig(image=train_image, label=train_label),
                 valid=ImageLabelPathConfig(image=valid_image, label=valid_label),
-                test=ImageLabelPathConfig(image=test_image, label=test_label)
+                test=ImageLabelPathConfig(image=test_image, label=test_label),
             ),
             "id_mapping": id_mapping,
         }
@@ -490,9 +488,7 @@ class Trainer(NetsPressoBase):
 
         # TODO: Will be removed when we support DLC in the future
         available_options = [
-            available_option
-            for available_option in available_options
-            if available_option.framework != "dlc"
+            available_option for available_option in available_options if available_option.framework != "dlc"
         ]
 
         return available_options
@@ -502,7 +498,7 @@ class Trainer(NetsPressoBase):
             "success": Status.COMPLETED,
             "stop": Status.STOPPED,
             "error": Status.ERROR,
-            "": Status.IN_PROGRESS
+            "": Status.IN_PROGRESS,
         }
         return status_mapping.get(status, Status.IN_PROGRESS)
 
@@ -522,7 +518,7 @@ class Trainer(NetsPressoBase):
 
         preprocess = hparams.augmentation.inference
         for _preprocess in preprocess:
-            if hasattr(_preprocess, 'size') and _preprocess.size:
+            if hasattr(_preprocess, "size") and _preprocess.size:
                 _preprocess.size = _preprocess.size[0]
             if _preprocess.name == "resize":
                 _preprocess.resize_criteria = "long"
@@ -530,9 +526,18 @@ class Trainer(NetsPressoBase):
         if hparams.model.task == Task.IMAGE_CLASSIFICATION:
             visualize = {"params": {"class_map": hparams.data.id_mapping, "pallete": None}}
         elif hparams.model.task == Task.OBJECT_DETECTION:
-            visualize = {"params": {"class_map": hparams.data.id_mapping, "normalized": False, "brightness_factor": 1.5}}
+            visualize = {
+                "params": {"class_map": hparams.data.id_mapping, "normalized": False, "brightness_factor": 1.5}
+            }
         elif hparams.model.task == Task.SEMANTIC_SEGMENTATION:
-            visualize = {"params": {"class_map": hparams.data.id_mapping, "pallete": None, "normalized": False, "brightness_factor": 1.5}}
+            visualize = {
+                "params": {
+                    "class_map": hparams.data.id_mapping,
+                    "pallete": None,
+                    "normalized": False,
+                    "brightness_factor": 1.5,
+                }
+            }
 
         _config = {
             "task": hparams.model.task,
@@ -641,7 +646,9 @@ class Trainer(NetsPressoBase):
 
         return task
 
-    def train(self, gpus: str, model_name: str, project_id: str, output_dir: Optional[str] = "./outputs") -> TrainingTask:
+    def train(
+        self, gpus: str, model_name: str, project_id: str, output_dir: Optional[str] = "./outputs"
+    ) -> TrainingTask:
         """Train the model with the specified configuration.
 
         Args:
@@ -729,15 +736,9 @@ class Trainer(NetsPressoBase):
             Dict[str, List[str]]: A dictionary mapping each task to its available models.
         """
         all_models = {
-            "classification": [
-                model for model in CLASSIFICATION_MODELS if model not in self.deprecated_names
-            ],
-            "detection": [
-                model for model in DETECTION_MODELS if model not in self.deprecated_names
-            ],
-            "segmentation": [
-                model for model in SEGMENTATION_MODELS if model not in self.deprecated_names
-            ],
+            "classification": [model for model in CLASSIFICATION_MODELS if model not in self.deprecated_names],
+            "detection": [model for model in DETECTION_MODELS if model not in self.deprecated_names],
+            "segmentation": [model for model in SEGMENTATION_MODELS if model not in self.deprecated_names],
         }
         return all_models
 

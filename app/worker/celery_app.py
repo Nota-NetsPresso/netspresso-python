@@ -11,9 +11,8 @@ POLLING_INTERVAL = 10  # seconds
 
 connection_url = f"redis://:{REDIS_PASSWORD}@{REDIS_URL}" if REDIS_PASSWORD else f"redis://{REDIS_URL}"
 
-app = Celery('netspresso_converter',
-             broker=f"{connection_url}/0",
-             backend=f"{connection_url}/0")
+app = Celery("netspresso_converter", broker=f"{connection_url}/0", backend=f"{connection_url}/0")
+
 
 @app.task
 def convert_model_task(
@@ -24,7 +23,7 @@ def convert_model_task(
     target_device_name: str,
     target_data_type: str,
     target_software_version: str = None,
-    input_layer = None,
+    input_layer=None,
     dataset_path: str = None,
     input_model_id: str = None,
 ):
@@ -41,11 +40,12 @@ def convert_model_task(
         input_layer=input_layer,
         dataset_path=dataset_path,
         wait_until_done=False,
-        input_model_id=input_model_id
+        input_model_id=input_model_id,
     )
     # 폴링 태스크 체이닝
     chain(poll_conversion_status.s(api_key, task_id).set(countdown=POLLING_INTERVAL))()
     return task_id
+
 
 @app.task
 def poll_conversion_status(api_key: str, task_id: str):
@@ -74,7 +74,4 @@ def poll_conversion_status(api_key: str, task_id: str):
         print(f"Conversion task {task_id} status updated to {conversion_task.status}")
     else:
         # 아직 완료되지 않았으면 다시 폴링 예약
-        poll_conversion_status.apply_async(
-            args=[api_key, task_id],
-            countdown=POLLING_INTERVAL
-        )
+        poll_conversion_status.apply_async(args=[api_key, task_id], countdown=POLLING_INTERVAL)

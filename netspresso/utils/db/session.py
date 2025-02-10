@@ -6,7 +6,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy_utils import create_database, database_exists
 
-DB_URL = "sqlite:///netspresso.db"
+# DB_URL = "sqlite:///netspresso.db"
+DB_URL = "mysql+pymysql://root:Nota180928!@10.169.1.62:3406/netspresso_test"
 engine = create_engine(
     f"{DB_URL}",
     pool_pre_ping=True,
@@ -51,5 +52,6 @@ def check_database(engine):
         create_database(engine.url)
     else:
         logger.info("The database has already been created.")
+
 
 check_database(engine=engine)

@@ -30,7 +30,7 @@ class ConversionTask(Base, TimestampMixin):
     input_model = relationship(
         "Model",
         uselist=False,
-        lazy='joined',
+        lazy="joined",
         foreign_keys=[input_model_id],
     )
 
@@ -39,6 +39,6 @@ class ConversionTask(Base, TimestampMixin):
     model = relationship(
         "Model",
         uselist=False,
-        lazy='joined',
+        lazy="joined",
         foreign_keys=[model_id],
     )

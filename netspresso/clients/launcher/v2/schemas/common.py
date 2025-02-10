@@ -4,13 +4,7 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 from netspresso.clients.utils.system import ENV_STR
-from netspresso.enums import (
-    DataType,
-    Framework,
-    HardwareType,
-    SoftwareVersion,
-    SoftwareVersionDisplay,
-)
+from netspresso.enums import DataType, Framework, HardwareType, SoftwareVersion, SoftwareVersionDisplay
 from netspresso.metadata import common
 from netspresso.metadata.common import AvailableOption, SoftwareVersions
 
@@ -32,10 +26,8 @@ class AuthorizationHeader:
         self.Authorization = f"Bearer {access_token}"
 
     def to_dict(self):
-        return {
-            "Authorization": self.Authorization,
-            "User-Agent": f"NetsPresso Python Package v{version} ({ENV_STR})"
-        }
+        return {"Authorization": self.Authorization, "User-Agent": f"NetsPresso Python Package v{version} ({ENV_STR})"}
+
 
 @dataclass
 class UploadFile:
@@ -105,6 +97,7 @@ class SoftwareVersionInfo:
 @dataclass
 class TaskInfo:
     """ """
+
     device_name: str
     display_brand_name: str
     display_device_name: str
@@ -140,6 +133,7 @@ class DeviceInfo:
         device_info.software_versions = [item.to() for item in self.software_versions]
 
         return device_info
+
 
 @dataclass
 class TaskOption:

@@ -35,8 +35,10 @@ class TrainTaskService:
                     name=model,
                     display_name=MODEL_DISPLAY_MAP.get(model),
                     group_name=MODEL_GROUP_MAP.get(model),
-                ) for model in models
-            ] for task, models in available_models.items()
+                )
+                for model in models
+            ]
+            for task, models in available_models.items()
         }
 
         return supported_models
@@ -44,19 +46,13 @@ class TrainTaskService:
     def get_supported_optimizers(self) -> List[OptimizerPayload]:
         """Get all supported optimizers."""
         supported_optimizers = get_supported_optimizers()
-        optimizers = [
-            OptimizerPayload(name=optimizer.get("name"))
-            for optimizer in supported_optimizers
-        ]
+        optimizers = [OptimizerPayload(name=optimizer.get("name")) for optimizer in supported_optimizers]
         return optimizers
 
     def get_supported_schedulers(self) -> List[SchedulerPayload]:
         """Get all supported schedulers."""
         supported_schedulers = get_supported_schedulers()
-        schedulers = [
-            SchedulerPayload(name=scheduler.get("name"))
-            for scheduler in supported_schedulers
-        ]
+        schedulers = [SchedulerPayload(name=scheduler.get("name")) for scheduler in supported_schedulers]
         return schedulers
 
     def _setup_trainer(self, trainer, training_in: TrainingCreate) -> Trainer:
@@ -72,10 +68,7 @@ class TrainTaskService:
         )
 
         img_size = training_in.input_shapes[0].dimension[0]
-        trainer.set_model_config(
-            model_name=training_in.pretrained_model,
-            img_size=img_size
-        )
+        trainer.set_model_config(model_name=training_in.pretrained_model, img_size=img_size)
 
         trainer.set_augmentation_config(
             train_transforms=[Resize(), ToTensor(), Normalize()],
@@ -86,9 +79,7 @@ class TrainTaskService:
             name=training_in.hyperparameter.optimizer,
             lr=training_in.hyperparameter.learning_rate,
         )
-        scheduler = SchedulerManager.get_scheduler(
-            name=training_in.hyperparameter.scheduler
-        )
+        scheduler = SchedulerManager.get_scheduler(name=training_in.hyperparameter.scheduler)
 
         trainer.set_training_config(
             epochs=training_in.hyperparameter.epochs,
@@ -135,10 +126,7 @@ class TrainTaskService:
         )
 
         # Extract existing names from models and count occurrences of base name
-        base_name_count = sum(
-            1 for model in models
-            if model.type == 'trained_models' and model.name.startswith(name)
-        )
+        base_name_count = sum(1 for model in models if model.type == "trained_models" and model.name.startswith(name))
 
         # If no models with this name exist, return original name
         if base_name_count == 0:

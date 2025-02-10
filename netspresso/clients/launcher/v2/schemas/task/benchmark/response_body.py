@@ -126,6 +126,7 @@ class ResponseBenchmarkStatusItem(ResponseItem):
     def __post_init__(self):
         self.data = TaskStatusInfo(**self.data)
 
+
 @dataclass
 class ResponseBenchmarkFrameworkOptionItems(ResponseItems):
     data: List[Optional[ModelOption]] = field(default_factory=list)

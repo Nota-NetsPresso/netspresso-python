@@ -79,4 +79,3 @@ launcher_framework_literal = Framework.create_launcher_literal()
 extension_literal = Extension.create_literal()
 originfrom_literal = OriginFrom.create_literal()
 datatype_literal = DataType.create_literal()
-

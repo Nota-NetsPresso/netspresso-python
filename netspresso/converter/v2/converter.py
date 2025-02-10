@@ -12,14 +12,7 @@ from netspresso.clients.launcher import launcher_client_v2
 from netspresso.clients.launcher.v2.schemas import InputLayer
 from netspresso.clients.launcher.v2.schemas.common import DeviceInfo, ModelOption
 from netspresso.clients.launcher.v2.schemas.task.convert.response_body import ConvertTask
-from netspresso.enums import (
-    DataType,
-    DeviceName,
-    ServiceTask,
-    SoftwareVersion,
-    Status,
-    TaskStatusForDisplay,
-)
+from netspresso.enums import DataType, DeviceName, ServiceTask, SoftwareVersion, Status, TaskStatusForDisplay
 from netspresso.enums.conversion import SourceFramework, TargetFramework
 from netspresso.enums.project import SubFolder
 from netspresso.metadata.converter import ConverterMetadata
@@ -41,16 +34,15 @@ class ConverterV2(NetsPressoBase):
 
     def get_supported_options(self, framework: SourceFramework) -> List[ModelOption]:
         options_response = launcher_client_v2.converter.read_framework_options(
-            access_token=self.token_handler.tokens.access_token, framework=framework,
+            access_token=self.token_handler.tokens.access_token,
+            framework=framework,
         )
 
         supported_options = options_response.data
 
         # TODO: Will be removed when we support DLC in the future
         supported_options = [
-            supported_option
-            for supported_option in supported_options
-            if supported_option.framework != "dlc"
+            supported_option for supported_option in supported_options if supported_option.framework != "dlc"
         ]
 
         return supported_options
@@ -58,8 +50,7 @@ class ConverterV2(NetsPressoBase):
     def create_available_options(self, target_framework, target_device, target_software_version):
         def filter_device(device: DeviceInfo, target_software_version: SoftwareVersion):
             filtered_versions = [
-                version for version in device.software_versions
-                if version.software_version == target_software_version
+                version for version in device.software_versions if version.software_version == target_software_version
             ]
 
             if filtered_versions:
@@ -86,7 +77,9 @@ class ConverterV2(NetsPressoBase):
 
         return available_options
 
-    def initialize_metadata(self, output_dir, input_model_path, target_framework, target_device, target_software_version):
+    def initialize_metadata(
+        self, output_dir, input_model_path, target_framework, target_device, target_software_version
+    ):
         def create_metadata_with_status(status, error_message=None):
             metadata = ConverterMetadata()
             metadata.status = status
@@ -110,9 +103,7 @@ class ConverterV2(NetsPressoBase):
 
         return metadata
 
-    def _download_converted_model(
-        self, convert_task: ConvertTask, local_path: str
-    ) -> None:
+    def _download_converted_model(self, convert_task: ConvertTask, local_path: str) -> None:
         """Download the converted model with given conversion task or conversion task uuid.
 
         Args:
@@ -312,7 +303,11 @@ class ConverterV2(NetsPressoBase):
                 self.print_remaining_credit(service_task=ServiceTask.MODEL_CONVERT)
                 conversion_task.status = Status.COMPLETED
                 logger.info("Conversion task was completed successfully.")
-            elif convert_response.data.status in [TaskStatusForDisplay.ERROR, TaskStatusForDisplay.USER_CANCEL, TaskStatusForDisplay.TIMEOUT]:
+            elif convert_response.data.status in [
+                TaskStatusForDisplay.ERROR,
+                TaskStatusForDisplay.USER_CANCEL,
+                TaskStatusForDisplay.TIMEOUT,
+            ]:
                 conversion_task.status = Status.ERROR
                 conversion_task.error_detail = convert_response.data.error_log
                 conversion_task = self._save_conversion_task(conversion_task)

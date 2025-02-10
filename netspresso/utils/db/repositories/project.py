@@ -19,9 +19,13 @@ class ProjectRepository(BaseRepository[Project]):
         return project
 
     def get_by_project_id(self, db: Session, project_id: str) -> Optional[Project]:
-        project = db.query(self.model).filter(
-            self.model.project_id == project_id,
-        ).first()
+        project = (
+            db.query(self.model)
+            .filter(
+                self.model.project_id == project_id,
+            )
+            .first()
+        )
 
         project = self.__is_available(project=project, project_id=project_id)
 
@@ -76,17 +80,18 @@ class ProjectRepository(BaseRepository[Project]):
         Returns:
             bool: True if the project name exists, False otherwise.
         """
-        return db.query(self.model).filter(
-            self.model.project_name == project_name,
-            self.model.user_id == user_id,
-        ).first() is not None
+        return (
+            db.query(self.model)
+            .filter(
+                self.model.project_name == project_name,
+                self.model.user_id == user_id,
+            )
+            .first()
+            is not None
+        )
 
     def count_by_user_id(self, db: Session, user_id: str) -> int:
-        return (
-            db.query(func.count(self.model.user_id))
-            .filter(self.model.user_id == user_id)
-            .scalar()
-        )
+        return db.query(func.count(self.model.user_id)).filter(self.model.user_id == user_id).scalar()
 
 
 project_repository = ProjectRepository(Project)

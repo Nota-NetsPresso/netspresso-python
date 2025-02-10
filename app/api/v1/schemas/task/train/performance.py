@@ -20,7 +20,7 @@ class PerformancePayload(BaseModel):
     total_epoch: int
     status: str
 
-    @field_validator('flops', 'params', mode='before')
+    @field_validator("flops", "params", mode="before")
     @classmethod
     def convert_string_to_int(cls, v: str) -> int:
         if isinstance(v, str):

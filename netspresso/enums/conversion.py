@@ -50,4 +50,3 @@ PRECISION_DISPLAY_MAP = {
     Precision.FP16: PrecisionDisplay.FP16,
     Precision.INT8: PrecisionDisplay.INT8,
 }
-
