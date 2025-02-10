@@ -8,6 +8,21 @@
 </br>
 
 <div align="center">
+  <a href="https://netspresso.ai/?utm_source=git&utm_medium=text_signup&utm_campaign=np_renew"> Sign Up </a>
+    | <a href="https://nota-netspresso.github.io/PyNetsPresso"> Docs </a> 
+</div>
+</br>
+
+
+
+<div align="center">
+  🔥 NetsPresso Tutorials (Google Colab) 🔥 <br>
+    <a href="https://colab.research.google.com/drive/15HBp88qfUDQl5PaEcZ5J-dnLo-1kvw-a"> NetsPresso Tutorial(with Compressor) </a></br>
+    <a href="https://colab.research.google.com/drive/1IJq9QXgQWVIdPasVApT1lrGyvrKq--Pp?usp=sharing"> NetsPresso Tutorial(with Quantizer) </a></br>
+</div>
+</br>
+
+<div align="center">
   ☀️ NetsPresso Model Zoo ☀️ <br>
       <a href="https://github.com/Nota-NetsPresso/ModelZoo-YOLOFastest-for-ARM-U55-M85"> YOLO Fastest </a>
     | <a href="https://github.com/Nota-NetsPresso/yolox_nota"> YOLOX </a>
@@ -141,6 +156,11 @@ We offer a comprehensive guide to walk you through the process of optimizing an 
           <td width="40%" align="center">Compress and optimize the user’s model.</td>
       </tr>
       <tr>
+          <td width="30%" align="center">Quantize</td>
+          <td width="30%" align="center">np.quantizer</td>
+          <td width="40%" align="center">Quantize the user’s model.</td>
+      </tr>
+      <tr>
           <td width="30%" align="center">Convert</td>
           <td width="30%" align="center">np.converter</td>
           <td width="40%" align="center">Convert and quantize the user’s model to run efficiently on device.</td>
@@ -180,6 +200,64 @@ from netspresso import NetsPresso
 
 netspresso = NetsPresso(email="YOUR_EMAIL", password="YOUR_PASSWORD")
 ```
+
+### ⭐⭐⭐ (New Feature) Quantizer ⭐⭐⭐
+
+#### Automatic quantization
+
+To start quantize a model, enter the model path, dataset path, and the desired quantization precision.
+
+The quantized model will be saved to the specified output directory (`output_dir`).
+
+```python
+from netspresso.enums import QuantizationPrecision, SimilarityMetric
+
+# 1. Declare quantizer
+quantizer = netspresso.quantizer()
+
+# 2. Run automatic quantization
+quantization_result = quantizer.automatic_quantization(
+    input_model_path="./examples/sample_models/test.onnx",
+    output_dir="./outputs/quantized/automatic_quantization",
+    dataset_path="./examples/sample_datasets/pickle_calibration_dataset_128x128.npy",
+    weight_precision=QuantizationPrecision.INT8,
+    activation_precision=QuantizationPrecision.INT8,
+    threshold=0,
+)
+```
+
+#### Custom precision quantization by layer name
+
+This method enables you to apply precision settings tailored to each layer, based on the recommendations, to optimize model.
+
+Or, you can modify it to your desired precision and optimize it.
+
+```python
+from netspresso.enums import QuantizationPrecision
+
+# 1. Declare quantizer
+quantizer = netspresso.quantizer()
+
+# 2. Recommendation precision
+metadata = quantizer.get_recommendation_precision(
+    input_model_path="./examples/sample_models/test.onnx",
+    output_dir="./outputs/quantized/recommendation",
+    dataset_path="./examples/sample_datasets/pickle_calibration_dataset_128x128.npy",
+    weight_precision=QuantizationPrecision.INT8,
+    activation_precision=QuantizationPrecision.INT8,
+    threshold=0,
+)
+recommendation_precisions = quantizer.load_recommendation_precision_result(metadata.recommendation_result_path)
+
+# 2. Run quantization by layer name
+quantization_result = quantizer.custom_precision_quantization_by_layer_name(
+    input_model_path="./examples/sample_models/test.onnx",
+    output_dir="./outputs/quantized/custom_precision_quantization_by_layer_name",
+    precision_by_layer_name=recommendation_precisions.layers,
+    dataset_path="./examples/sample_datasets/pickle_calibration_dataset_128x128.npy",
+)
+```
+
 
 ### Trainer
 
@@ -349,7 +427,6 @@ print(f"model cpu memory footprint: {benchmark_result.benchmark_result.memory_fo
 
   | Target / Source Framework | ONNX | TENSORFLOW_KERAS | TENSORFLOW |
   |:--------------------------|:----:|:----------------:|:----------:|
-  | DLC                       |  ✔️  |                  |            |
   | TENSORRT                  |  ✔️  |                  |            |
   | DRPAI                     |  ✔️  |                  |            |
   | OPENVINO                  |  ✔️  |                  |            |
@@ -357,29 +434,28 @@ print(f"model cpu memory footprint: {benchmark_result.benchmark_result.memory_fo
 
   ### Devices that support benchmarks for model's framework
 
-  | Device / Framework           | ONNX | TENSORRT | TENSORFLOW_LITE | DRPAI | OPENVINO | DLC |
-  |:-----------------------------|:----:|:--------:|:---------------:|:-----:|:--------:|:--------:|
-  | GALAXY_S24_ULTRA             |      |          |                 |       |          |    ✔️    |
-  | RASPBERRY_PI_5               |  ✔️  |          |       ✔️        |       |          |           |
-  | RASPBERRY_PI_4B              |  ✔️  |          |       ✔️        |       |          |           |
-  | RASPBERRY_PI_3B_PLUS         |  ✔️  |          |       ✔️        |       |          |           |
-  | RASPBERRY_PI_ZERO_W          |  ✔️  |          |       ✔️        |       |          |           |
-  | RASPBERRY_PI_ZERO_2W         |  ✔️  |          |       ✔️        |       |          |           |
-  | ARM_ETHOS_U_SERIES           |      |          |  ✔️(only INT8)  |       |          |           |
-  | ALIF_ENSEMBLE_E7_DEVKIT_GEN2 |      |          |  ✔️(only INT8)  |       |          |           |
-  | RENESAS_RA8D1                |      |          |  ✔️(only INT8)  |       |          |           |
-  | NXP_iMX93                    |      |          |  ✔️(only INT8)  |       |          |           |
-  | ARDUINO_NICLA_VISION         |      |          |  ✔️(only INT8)  |       |          |           |
-  | RENESAS_RZ_V2L               |  ✔️  |          |                 |  ✔️   |          |           |
-  | RENESAS_RZ_V2M               |  ✔️  |          |                 |  ✔️   |          |           |
-  | JETSON_NANO                  |  ✔️  |    ✔️    |                 |       |          |           |
-  | JETSON_TX2                   |  ✔️  |    ✔️    |                 |       |          |           |
-  | JETSON_XAVIER                |  ✔️  |    ✔️    |                 |       |          |           |
-  | JETSON_NX                    |  ✔️  |    ✔️    |                 |       |          |           |
-  | JETSON_AGX_ORIN              |  ✔️  |    ✔️    |                 |       |          |           |
-  | JETSON_ORIN_NANO             |  ✔️  |    ✔️    |                 |       |          |           |
-  | AWS_T4                       |  ✔️  |    ✔️    |                 |       |          |           |
-  | INTEL_XEON_W_2233            |      |          |                 |       |    ✔️    |           |
+  | Device / Framework           | ONNX | TENSORRT | TENSORFLOW_LITE | DRPAI | OPENVINO |
+  |:-----------------------------|:----:|:--------:|:---------------:|:-----:|:--------:|
+  | RASPBERRY_PI_5               |  ✔️  |          |       ✔️        |       |          |
+  | RASPBERRY_PI_4B              |  ✔️  |          |       ✔️        |       |          |
+  | RASPBERRY_PI_3B_PLUS         |  ✔️  |          |       ✔️        |       |          |
+  | RASPBERRY_PI_ZERO_W          |  ✔️  |          |       ✔️        |       |          |
+  | RASPBERRY_PI_ZERO_2W         |  ✔️  |          |       ✔️        |       |          |
+  | ARM_ETHOS_U_SERIES           |      |          |  ✔️(only INT8)  |       |          |
+  | ALIF_ENSEMBLE_E7_DEVKIT_GEN2 |      |          |  ✔️(only INT8)  |       |          |
+  | RENESAS_RA8D1                |      |          |  ✔️(only INT8)  |       |          |
+  | NXP_iMX93                    |      |          |  ✔️(only INT8)  |       |          |
+  | ARDUINO_NICLA_VISION         |      |          |  ✔️(only INT8)  |       |          |
+  | RENESAS_RZ_V2L               |  ✔️  |          |                 |  ✔️   |          |
+  | RENESAS_RZ_V2M               |  ✔️  |          |                 |  ✔️   |          |
+  | JETSON_NANO                  |  ✔️  |    ✔️    |                 |       |          |
+  | JETSON_TX2                   |  ✔️  |    ✔️    |                 |       |          |
+  | JETSON_XAVIER                |  ✔️  |    ✔️    |                 |       |          |
+  | JETSON_NX                    |  ✔️  |    ✔️    |                 |       |          |
+  | JETSON_AGX_ORIN              |  ✔️  |    ✔️    |                 |       |          |
+  | JETSON_ORIN_NANO             |  ✔️  |    ✔️    |                 |       |          |
+  | AWS_T4                       |  ✔️  |    ✔️    |                 |       |          |
+  | INTEL_XEON_W_2233            |      |          |                 |       |    ✔️    |
 
   ### Software versions that support conversions and benchmarks for specific devices 
 
@@ -392,13 +468,6 @@ print(f"model cpu memory footprint: {benchmark_result.benchmark_result.memory_fo
   | JETPACK_5_0_1             |             |            |               |           |       ✔️        |                  |
   | JETPACK_5_0_2             |             |            |               |    ✔️     |                 |                  |
   | JETPACK_6_0               |             |            |               |           |                 |        ✔️        |
-
-  Software Versions requires for Galaxy S24 Ultra. If you are using a different device, you do not need to enter it.
-
-  | Software Version / Device | GALAXY_S24_ULTRA |
-  |:--------------------------|:----------------:|
-  | SNPE_2_20                 |        ✔️        |
-  
 
   The code below is an example of using software version.
 

@@ -5,6 +5,7 @@ class TaskType(str, Enum):
     TRAIN = "train"
     COMPRESS = "compress"
     CONVERT = "convert"
+    QUANTIZE = "quantize"
     BENCHMARK = "benchmark"
     QUANTIZE = "quantize"
 

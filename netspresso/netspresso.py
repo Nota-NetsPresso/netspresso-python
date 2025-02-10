@@ -1,4 +1,4 @@
-import subprocess
+from pathlib import Path
 from typing import Optional, Union
 
 from loguru import logger
@@ -13,8 +13,11 @@ from netspresso.enums import Task
 from netspresso.np_qai.benchmarker import NPQAIBenchmarker
 from netspresso.np_qai.converter import NPQAIConverter
 from netspresso.np_qai.quantizer import NPQAIQuantizer
+from netspresso.inferencer.inferencer import CustomInferencer, NPInferencer
+from netspresso.quantizer import Quantizer
 from netspresso.tao import TAOTrainer
 from netspresso.trainer import Trainer
+from netspresso.utils.file import FileHandler
 
 
 class NetsPresso:
@@ -41,6 +44,32 @@ class NetsPresso:
             self.token_handler.tokens.access_token, self.token_handler.verify_ssl
         )
         return user_info
+
+    def create_project(self, project_name: str, project_path: str = "./"):
+        # Create the main project folder
+        project_folder_path = Path(project_path) / project_name
+
+        # Check if the project folder already exists
+        if project_folder_path.exists():
+            logger.info(f"Project '{project_name}' already exists at {project_folder_path.resolve()}.")
+        else:
+            project_folder_path.mkdir(parents=True, exist_ok=True)
+
+            # Subfolder names
+            subfolders = ["Trainer models", "Compressed models", "Pretrained models"]
+
+            # Create subfolders
+            for folder in subfolders:
+                (project_folder_path / folder).mkdir(parents=True, exist_ok=True)
+
+            # Create a metadata.json file
+            metadata_file_path = project_folder_path / "metadata.json"
+            metadata = {"is_project_folder": True}
+
+            # Write metadata to the json file
+            FileHandler.save_json(data=metadata, file_path=metadata_file_path)
+
+            logger.info(f"Project '{project_name}' created at {project_folder_path.resolve()}.")
 
     def trainer(
         self, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None
@@ -72,6 +101,14 @@ class NetsPresso:
         """
         return ConverterV2(token_handler=self.token_handler, user_info=self.user_info)
 
+    def quantizer(self) -> Quantizer:
+        """Initialize and return a Quantizer instance.
+
+        Returns:
+            Quantizer: Initialized Quantizer instance.
+        """
+        return Quantizer(token_handler=self.token_handler, user_info=self.user_info)
+
     def benchmarker_v2(self) -> BenchmarkerV2:
         """Initialize and return a Benchmarker instance.
 
@@ -79,6 +116,23 @@ class NetsPresso:
             Benchmarker: Initialized Benchmarker instance.
         """
         return BenchmarkerV2(token_handler=self.token_handler, user_info=self.user_info)
+
+    def np_inferencer(self, config_path: str, input_model_path: str) -> NPInferencer:
+        """Initialize and return a Inferencer instance.
+
+        Returns:
+            Inferencer: Initialized Inferencer instance.
+        """
+
+        return NPInferencer(config_path=config_path, input_model_path=input_model_path)
+
+    def custom_inferencer(self, input_model_path: str) -> CustomInferencer:
+        """Initialize and return a Inferencer instance.
+
+        Returns:
+            Inferencer: Initialized Inferencer instance.
+        """
+        return CustomInferencer(input_model_path=input_model_path)
 
 
 class TAO:

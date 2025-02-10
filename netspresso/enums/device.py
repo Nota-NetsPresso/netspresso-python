@@ -27,7 +27,6 @@ class DeviceName(str, Enum):
     ARM_ETHOS_U_SERIES = "Arm Virtual Hardware Ethos-U Series"
     NXP_iMX93 = "nxp_imx93_ethos_u65"
     ARDUINO_NICLA_VISION = "arduino_nicla_vision"
-    GALAXY_S24_ULTRA = "Samsung_Galaxy-S24-Ultra_Snapdragon-8-Gen3"
 
     @classmethod
     def create_literal(cls):
@@ -54,7 +53,6 @@ class DeviceName(str, Enum):
             "Arm Virtual Hardware Ethos-U Series",
             "nxp_imx93_ethos_u65",
             "arduino_nicla_vision",
-            "Samsung_Galaxy-S24-Ultra_Snapdragon-8-Gen3"
         ]
 
     JETSON_DEVICES = [
@@ -89,9 +87,15 @@ class DeviceName(str, Enum):
         RASPBERRY_PI_ZERO_2W,
         ARM_ETHOS_U_SERIES,
         NXP_iMX93,
-        ARDUINO_NICLA_VISION
+        ARDUINO_NICLA_VISION,
     ]
-    ONLY_INT8_DEVICES = [ALIF_ENSEMBLE_E7_DEVKIT_GEN2, RENESAS_RA8D1, ARM_ETHOS_U_SERIES, NXP_iMX93, ARDUINO_NICLA_VISION]
+    ONLY_INT8_DEVICES = [
+        ALIF_ENSEMBLE_E7_DEVKIT_GEN2,
+        RENESAS_RA8D1,
+        ARM_ETHOS_U_SERIES,
+        NXP_iMX93,
+        ARDUINO_NICLA_VISION,
+    ]
 
 
 class SoftwareVersion(str, Enum):
@@ -100,11 +104,10 @@ class SoftwareVersion(str, Enum):
     JETPACK_5_0_1 = "5.0.1-b118"
     JETPACK_5_0_2 = "5.0.2-b231"
     JETPACK_6_0 = "6.0-b52"
-    SNPE_2_20 = "2.20.0"
 
     @classmethod
     def create_literal(cls):
-        return Literal["4.4.1-b50", "4.6-b199", "5.0.1-b118", "5.0.2-b231", "6.0-b52", "2.20.0"]
+        return Literal["4.4.1-b50", "4.6-b199", "5.0.1-b118", "5.0.2-b231", "6.0-b52"]
 
 
 class DisplaySoftwareVersion(str, Enum):
@@ -113,7 +116,6 @@ class DisplaySoftwareVersion(str, Enum):
     JETPACK_5_0_1 = "Jetpack 5.0.1"
     JETPACK_5_0_2 = "Jetpack 5.0.2"
     JETPACK_6_0 = "Jetpack 6.0"
-    SNPE_2_20 = "SNPE 2.20.0"
 
 
 class HardwareType(str, Enum):

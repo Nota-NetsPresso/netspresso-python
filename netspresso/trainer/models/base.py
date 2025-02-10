@@ -32,4 +32,5 @@ class ModelConfig:
     checkpoint: CheckpointConfig = field(default_factory=lambda: CheckpointConfig())
     freeze_backbone: bool = False
     architecture: ArchitectureConfig = field(default_factory=lambda: ArchitectureConfig())
+    postprocessor: Optional[Dict[str, Any]] = None
     losses: Optional[List[Dict[str, Any]]] = None

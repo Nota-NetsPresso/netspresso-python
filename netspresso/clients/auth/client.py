@@ -15,7 +15,12 @@ class AuthClient:
         Initialize the UserSession.
         """
 
+        self.config = config
         self.api_client = AuthClientV2(config=config)
+
+    def is_cloud(self) -> bool:
+        # TODO
+        return self.config.is_cloud()
 
     def login(self, email, password, verify_ssl: bool = True) -> TokenResponse:
         return self.api_client.login(
@@ -52,10 +57,8 @@ class TokenHandler:
         self.verify_ssl = verify_ssl
 
     def check_jwt_exp(self):
-        payload = jwt.decode(
-            self.tokens.access_token, options={"verify_signature": False}
-        )
-        return datetime.now(pytz.utc).timestamp() <= payload["exp"]
+        payload = jwt.decode(self.tokens.access_token, options={"verify_signature": False})
+        return datetime.now(pytz.utc).timestamp() + 60 <= payload["exp"]
 
     def validate_token(self):
         if not self.check_jwt_exp():

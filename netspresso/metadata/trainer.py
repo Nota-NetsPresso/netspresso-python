@@ -18,7 +18,8 @@ class TrainingInfo:
     epochs: int = 0
     batch_size: int = 0
     learning_rate: float = 0.001
-    optimizer: str = "adam"
+    optimizer: str = "Adam"
+    scheduler: str = "CosineAnnealingWarmRestartsWithCustomWarmUp"
 
 
 @dataclass
@@ -28,6 +29,7 @@ class TrainerMetadata(BaseMetadata):
     best_fx_model_path: str = ""
     best_onnx_model_path: str = ""
     hparams: str = ""
+    runtime: str = ""
     model_info: ModelInfo = field(default_factory=ModelInfo)
     training_info: TrainingInfo = field(default_factory=TrainingInfo)
     training_result: Dict = field(default_factory=dict)
@@ -39,11 +41,12 @@ class TrainerMetadata(BaseMetadata):
         self.model_info.dataset = dataset
         self.model_info.input_shapes = input_shapes
 
-    def update_training_info(self, epochs, batch_size, learning_rate, optimizer):
+    def update_training_info(self, epochs, batch_size, learning_rate, optimizer, scheduler):
         self.training_info.epochs = epochs
         self.training_info.batch_size = batch_size
         self.training_info.learning_rate = learning_rate
         self.training_info.optimizer = optimizer
+        self.training_info.scheduler = scheduler
 
     def update_training_result(self, training_summary):
         self.training_result = training_summary

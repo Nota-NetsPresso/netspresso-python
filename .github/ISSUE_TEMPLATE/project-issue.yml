@@ -1,0 +1,20 @@
+name: "\U0001F4AA Project issue (ticket)"
+description: Create a ticket to attain the goal in this project.
+title: "[Sprint] Please write your own title"
+labels: ["enhancement"]
+
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Is there any feature that you would like to add?
+      description: Write a description for this ticket.
+    validations:
+      required: true
+
+  - type: checkboxes
+    attributes:
+      label: Checklits ✅
+      options:
+        - label: I would create a corresponding branch for this issue from the designated (mostly `develop`) branch.
+        - label: This issue only contains a preceding agreement between project owners.

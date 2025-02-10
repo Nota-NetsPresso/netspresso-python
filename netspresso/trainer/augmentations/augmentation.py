@@ -70,9 +70,8 @@ class MosaicDetection(Transform):
 @dataclass
 class Pad(Transform):
     name: str = 'pad'
-    padding: int = 0
+    size: List = field(default_factory=lambda: [DEFAULT_IMG_SIZE, DEFAULT_IMG_SIZE])
     fill: int = 0
-    padding_mode: str = 'constant'
 
 
 @dataclass
@@ -98,7 +97,7 @@ class RandomErasing(Transform):
     name: str = "randomerasing"
     p: float = 0.5
     scale: List = field(default_factory=lambda: [0.02, 0.33])
-    scale: List = field(default_factory=lambda: [0.3, 3.3])
+    ratio: List = field(default_factory=lambda: [0.3, 3.3])
     value: Optional[int] = 0
     inplace: bool = False
 
@@ -163,6 +162,20 @@ class RandomCutmix(Transform):
     alpha: float = 1.0
     p: float = 1.0
     inplace: bool = False
+
+
+@dataclass
+class ToTensor(Transform):
+    name: str = 'totensor'
+    pixel_range: float = 1.0
+
+
+@dataclass
+class Normalize(Transform):
+    name: str = 'normalize'
+    mean: List[float] = field(default_factory=lambda: [0.485, 0.456, 0.406])
+    std: List[float] = field(default_factory=lambda: [0.229, 0.224, 0.225])
+
 
 
 @dataclass

@@ -14,6 +14,13 @@ from .convert import (
     ResponseConvertStatusItem,
     ResponseConvertTaskItem,
 )
+from .quantize import (
+    RequestQuantizeTask,
+    ResponseQuantizeDownloadModelUrlItem,
+    ResponseQuantizeOptionItems,
+    ResponseQuantizeStatusItem,
+    ResponseQuantizeTaskItem,
+)
 
 __all__ = [
     TaskStatusInfo,
@@ -27,5 +34,10 @@ __all__ = [
     ResponseBenchmarkStatusItem,
     ResponseConvertDownloadModelUrlItem,
     ResponseConvertFrameworkOptionItems,
-    ResponseBenchmarkFrameworkOptionItems
+    ResponseBenchmarkFrameworkOptionItems,
+    RequestQuantizeTask,
+    ResponseQuantizeDownloadModelUrlItem,
+    ResponseQuantizeOptionItems,
+    ResponseQuantizeStatusItem,
+    ResponseQuantizeTaskItem,
 ]

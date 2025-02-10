@@ -33,6 +33,7 @@ from netspresso.trainer.models.resnet import (
 from netspresso.trainer.models.rtmpose import PoseEstimationMobileNetV3SmallModelConfig
 from netspresso.trainer.models.segformer import SegmentationSegFormerB0ModelConfig
 from netspresso.trainer.models.vit import ClassificationViTTinyModelConfig
+from netspresso.trainer.models.yolo import DetectionYoloFastestModelConfig
 from netspresso.trainer.models.yolox import (
     DetectionYoloXLModelConfig,
     DetectionYoloXMModelConfig,
@@ -64,6 +65,7 @@ DETECTION_MODELS = {
     "YOLOX-M": DetectionYoloXMModelConfig,
     "YOLOX-L": DetectionYoloXLModelConfig,
     "YOLOX-X": DetectionYoloXXModelConfig,
+    # "YOLO-Fastest": DetectionYoloFastestModelConfig,
 }
 
 SEGMENTATION_MODELS = {
@@ -84,6 +86,8 @@ POSEESTIMATION_MODELS = {
     "MobileNetV3_Small": PoseEstimationMobileNetV3SmallModelConfig,
     "MobileNetV3-S": PoseEstimationMobileNetV3SmallModelConfig,
 }
+
+# NOT_SUPPORTED_PRETRAINED_MODELS = ["YOLO-Fastest"]
 
 
 __all__ = [
