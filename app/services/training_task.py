@@ -171,7 +171,7 @@ class TrainTaskService:
 
     def get_training_task(self, db: Session, task_id: str, api_key: str) -> TrainingPayload:
         """Get training task by task ID."""
-        netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
+        # netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
         training_task = training_task_repository.get_by_task_id(db=db, task_id=task_id)
 
         return self._convert_to_payload_format(training_task)
