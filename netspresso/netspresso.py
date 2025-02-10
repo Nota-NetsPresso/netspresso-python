@@ -10,6 +10,9 @@ from netspresso.clients.tao import TAOTokenHandler
 from netspresso.compressor import CompressorV2
 from netspresso.converter import ConverterV2
 from netspresso.enums import Task
+from netspresso.np_qai.benchmarker import NPQAIBenchmarker
+from netspresso.np_qai.converter import NPQAIConverter
+from netspresso.np_qai.quantizer import NPQAIQuantizer
 from netspresso.inferencer.inferencer import CustomInferencer, NPInferencer
 from netspresso.quantizer import Quantizer
 from netspresso.tao import TAOTrainer
@@ -149,3 +152,38 @@ class TAO:
             TAO: Initialized Trainer instance.
         """
         return TAOTrainer(token_handler=self.token_handler)
+
+
+class NPQAI:
+    def __init__(self, api_token: str) -> None:
+        # Define the command and arguments
+        command = 'qai-hub'
+        args = ['configure', '--api_token', f'{api_token}']
+
+        # Execute the command
+        result = subprocess.run([command] + args, capture_output=True, text=True)
+        logger.info(result)
+
+    def converter(self) -> NPQAIConverter:
+        """Initialize and return a Converter instance.
+
+        Returns:
+            NPQAIConverter: Initialized Converter instance.
+        """
+        return NPQAIConverter()
+
+    def benchmarker(self) -> NPQAIBenchmarker:
+        """Initialize and return a Benchmarker instance.
+
+        Returns:
+            NPQAIBenchmarker: Initialized Benchmarker instance.
+        """
+        return NPQAIBenchmarker()
+
+    def quantizer(self) -> NPQAIQuantizer:
+        """Initialize and return a Quantizer instance.
+
+        Returns:
+            NPQAIQuantizer: Initialized Quantizer instance.
+        """
+        return NPQAIQuantizer()

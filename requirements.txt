@@ -12,3 +12,4 @@ requests-toolbelt>=1.0.0
 python-dotenv>=1.0.0
 netspresso-inference-package==0.1.4
 scipy
+qai-hub==0.21.0

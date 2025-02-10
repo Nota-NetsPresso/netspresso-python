@@ -1,4 +1,6 @@
 from dataclasses import dataclass, field
+
+from netspresso.enums import TaskType
 from typing import Dict, Union
 
 from netspresso.enums import (
@@ -28,6 +30,8 @@ class QuantizerMetadata(BaseMetadata):
     task_type: TaskType = TaskType.QUANTIZE
     input_model_path: str = ""
     quantized_model_path: str = ""
+    model_info: ModelInfo = field(default_factory=ModelInfo)
+    quantize_info: QuantizeInfo = field(default_factory=QuantizeInfo)
     recommendation_result_path: str = ""
     model_info: ModelInfo = field(default_factory=ModelInfo)
     quantize_info: QuantizeInfo = field(default_factory=QuantizeInfo)
