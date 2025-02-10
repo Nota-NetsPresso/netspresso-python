@@ -7,7 +7,6 @@ class TaskType(str, Enum):
     CONVERT = "convert"
     QUANTIZE = "quantize"
     BENCHMARK = "benchmark"
-    QUANTIZE = "quantize"
 
 
 class Status(str, Enum):
