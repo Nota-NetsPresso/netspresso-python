@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -10,7 +8,7 @@ from app.api.v1.schemas.task.train.hyperparameter import (
     SupportedSchedulersResponse,
 )
 from app.api.v1.schemas.task.train.train_task import TrainingCreate, TrainingResponse
-from app.services.train_task import train_task_service
+from app.services.training_task import train_task_service
 from netspresso.utils.db.session import get_db
 
 router = APIRouter()

@@ -8,7 +8,7 @@ from omegaconf import OmegaConf
 from netspresso.base import NetsPressoBase
 from netspresso.clients.auth import TokenHandler
 from netspresso.clients.launcher import launcher_client_v2
-from netspresso.enums import Framework, Optimizer, Scheduler, ServiceTask, Status, Task
+from netspresso.enums import Framework, ServiceTask, Status, Task
 from netspresso.enums.project import SubFolder
 from netspresso.enums.train import StorageLocation
 from netspresso.exceptions.trainer import (
@@ -38,12 +38,18 @@ from netspresso.trainer.schedulers.schedulers import get_supported_schedulers
 from netspresso.trainer.trainer_configs import TrainerConfigs
 from netspresso.trainer.training import TRAINING_CONFIG_TYPE, EnvironmentConfig, LoggingConfig, ScheduleConfig
 from netspresso.utils import FileHandler
-from netspresso.utils.db.models.model import TrainedModel
-from netspresso.utils.db.models.train import Augmentation, Dataset, Environment, Hyperparameter, Performance, TrainTask
-from netspresso.utils.db.repositories.model import trained_model_repository
-from netspresso.utils.db.repositories.task import train_task_repository
+from netspresso.utils.db.models.model import Model
+from netspresso.utils.db.models.training import (
+    Augmentation,
+    Dataset,
+    Environment,
+    Hyperparameter,
+    Performance,
+    TrainingTask,
+)
+from netspresso.utils.db.repositories.model import model_repository
+from netspresso.utils.db.repositories.training import training_task_repository
 from netspresso.utils.db.session import get_db_session
-from netspresso.utils.metadata import MetadataHandler
 
 
 class Trainer(NetsPressoBase):
@@ -315,7 +321,11 @@ class Trainer(NetsPressoBase):
         self.logging.sample_input_size = [img_size, img_size]
 
         if model is None:
-            raise NotSupportedModelException()
+            raise NotSupportedModelException(
+                available_models=self._get_available_models_w_deprecated_names(),
+                model_name=model_name,
+                task=self.task,
+            )
 
         self.model = model(
             checkpoint=CheckpointConfig(
@@ -539,24 +549,24 @@ class Trainer(NetsPressoBase):
 
     def _save_train_task(self, train_task):
         with get_db_session() as db:
-            train_task = train_task_repository.save(db=db, task=train_task)
+            train_task = training_task_repository.save(db=db, task=train_task)
 
             return train_task
 
-    def save_trained_model(self, model_name, train_task, project_id, user_id):
-        trained_model = TrainedModel(
+    def save_trained_model(self, model_name, project_id, user_id, object_path) -> Model:
+        model = Model(
             name=model_name,
             type=SubFolder.TRAINED_MODELS,
             is_retrainable=True,
             project_id=project_id,
             user_id=user_id,
-            train_task=train_task,
+            object_path=object_path,
         )
         with get_db_session() as db:
-            model = trained_model_repository.save(db=db, model=trained_model)
+            model = model_repository.save(db=db, model=model)
             return model
 
-    def create_training_task(self):
+    def create_training_task(self, model_id) -> TrainingTask:
         with get_db_session() as db:
             dataset = Dataset(
                 train_path="train",
@@ -593,7 +603,7 @@ class Trainer(NetsPressoBase):
                 num_workers=self.environment.num_workers,
                 gpus=self.environment.gpus,
             )
-            task = TrainTask(
+            task = TrainingTask(
                 pretrained_model=self.model_name,
                 task=self.task,
                 framework=Framework.PYTORCH,
@@ -602,12 +612,13 @@ class Trainer(NetsPressoBase):
                 dataset=dataset,
                 hyperparameter=hyperparameter,
                 environment=environment,
+                model_id=model_id,
             )
-            task = train_task_repository.save(db=db, task=task)
+            task = training_task_repository.save(db=db, task=task)
 
         return task
 
-    def create_performance(self, task: TrainTask, training_summary):
+    def create_performance(self, task: TrainingTask, training_summary):
         performance = Performance(
             train_losses=training_summary["train_losses"],
             valid_losses=training_summary["valid_losses"],
@@ -630,7 +641,7 @@ class Trainer(NetsPressoBase):
 
         return task
 
-    def train(self, gpus: str, model_name: str, project_id: str, output_dir: Optional[str] = "./outputs") -> TrainTask:
+    def train(self, gpus: str, model_name: str, project_id: str, output_dir: Optional[str] = "./outputs") -> TrainingTask:
         """Train the model with the specified configuration.
 
         Args:
@@ -652,9 +663,15 @@ class Trainer(NetsPressoBase):
 
         destination_folder = Path(project_abs_path) / SubFolder.TRAINED_MODELS.value / model_name
         destination_folder = FileHandler.create_unique_folder(folder_path=destination_folder)
+        object_path = Path(SubFolder.TRAINED_MODELS.value) / model_name
 
-        train_task = self.create_training_task()
-        trained_model = self.save_trained_model(model_name=model_name, train_task=train_task, project_id=project.project_id, user_id=project.user_id)
+        model = self.save_trained_model(
+            model_name=model_name,
+            project_id=project.project_id,
+            user_id=project.user_id,
+            object_path=object_path,
+        )
+        train_task = self.create_training_task(model_id=model.model_id)
 
         try:
             self.logging.output_dir = output_dir

@@ -6,10 +6,10 @@ from typing import List, Optional, Union
 from netspresso.clients.utils.system import ENV_STR
 from netspresso.enums import (
     DataType,
-    DisplaySoftwareVersion,
     Framework,
     HardwareType,
     SoftwareVersion,
+    SoftwareVersionDisplay,
 )
 from netspresso.metadata import common
 from netspresso.metadata.common import AvailableOption, SoftwareVersions
@@ -91,7 +91,7 @@ class SoftwareVersionInfo:
     """ """
 
     software_version: Optional[Union[None, SoftwareVersion]] = None
-    display_software_version: Optional[Union[None, DisplaySoftwareVersion]] = None
+    display_software_version: Optional[Union[None, SoftwareVersionDisplay]] = None
 
     def to(self) -> SoftwareVersions:
         software_version = SoftwareVersions()
@@ -109,7 +109,7 @@ class TaskInfo:
     display_brand_name: str
     display_device_name: str
     software_version: Optional[SoftwareVersion]
-    display_software_version: Optional[DisplaySoftwareVersion]
+    display_software_version: Optional[SoftwareVersionDisplay]
     data_type: DataType
     hardware_type: Optional[HardwareType]
 

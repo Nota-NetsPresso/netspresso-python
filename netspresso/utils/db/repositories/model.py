@@ -3,12 +3,12 @@ from typing import List, Optional
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from netspresso.utils.db.models.model import TrainedModel
+from netspresso.utils.db.models.model import Model
 from netspresso.utils.db.repositories.base import BaseRepository, Order
 
 
-class TrainedModelRepository(BaseRepository[TrainedModel]):
-    def get_by_model_id(self, db: Session, model_id: str, user_id: str) -> Optional[TrainedModel]:
+class ModelRepository(BaseRepository[Model]):
+    def get_by_model_id(self, db: Session, model_id: str, user_id: str) -> Optional[Model]:
         model = db.query(self.model).filter(
             self.model.model_id == model_id,
             self.model.user_id == user_id,
@@ -23,7 +23,7 @@ class TrainedModelRepository(BaseRepository[TrainedModel]):
         start: Optional[int] = None,
         size: Optional[int] = None,
         order: Optional[Order] = None,
-    ) -> Optional[List[TrainedModel]]:
+    ) -> Optional[List[Model]]:
         ordering_func = self.choose_order_func(order)
         query = db.query(self.model).filter(condition)
 
@@ -44,7 +44,7 @@ class TrainedModelRepository(BaseRepository[TrainedModel]):
         start: Optional[int] = None,
         size: Optional[int] = None,
         order: Optional[Order] = None,
-    ) -> Optional[List[TrainedModel]]:
+    ) -> Optional[List[Model]]:
         return self._get_models(
             db=db,
             condition=self.model.user_id == user_id,
@@ -60,7 +60,7 @@ class TrainedModelRepository(BaseRepository[TrainedModel]):
         start: Optional[int] = None,
         size: Optional[int] = None,
         order: Optional[Order] = Order.DESC,
-    ) -> Optional[List[TrainedModel]]:
+    ) -> Optional[List[Model]]:
         return self._get_models(
             db=db,
             condition=self.model.project_id == project_id,
@@ -77,4 +77,4 @@ class TrainedModelRepository(BaseRepository[TrainedModel]):
         )
 
 
-trained_model_repository = TrainedModelRepository(TrainedModel)
+model_repository = ModelRepository(Model)
