@@ -8,7 +8,7 @@ from qai_hub.client import Dataset, QuantizeJob
 from qai_hub.public_rest_api import DatasetEntries
 
 from netspresso.enums import Status
-from netspresso.metadata.quantizer import QuantizerMetadata
+from netspresso.metadata.quantizer import NPQAIQuantizerMetadata
 from netspresso.np_qai.base import NPQAIBase
 from netspresso.np_qai.options.quantize import QuantizeOptions
 from netspresso.utils import FileHandler
@@ -22,7 +22,7 @@ class NPQAIQuantizer(NPQAIBase):
 
         return status
 
-    def update_quantize_task(self, metadata: QuantizerMetadata):
+    def update_quantize_task(self, metadata: NPQAIQuantizerMetadata):
         job: QuantizeJob = hub.get_job(metadata.quantize_info.quantize_task_uuid)
         status = job.wait()
 
@@ -50,11 +50,11 @@ class NPQAIQuantizer(NPQAIBase):
         options: Union[QuantizeOptions, str] = QuantizeOptions(),
         job_name: Optional[str] = None,
         calibration_data: Union[Dataset, DatasetEntries, str, None] = None,
-    ) -> Union[QuantizerMetadata, List[QuantizerMetadata]]:
+    ) -> Union[NPQAIQuantizerMetadata, List[NPQAIQuantizerMetadata]]:
 
         output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
         default_model_path = (Path(output_dir) / f"{Path(output_dir).name}.ext").resolve()
-        metadata = QuantizerMetadata()
+        metadata = NPQAIQuantizerMetadata()
         metadata.input_model_path = Path(input_model_path).resolve().as_posix()
         extension = self.get_source_extension(model_path=input_model_path)
         metadata.model_info.framework = self.get_framework(extension=extension)
