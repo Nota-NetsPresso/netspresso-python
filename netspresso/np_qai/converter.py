@@ -50,7 +50,7 @@ class NPQAIConverter(NPQAIBase):
             metadata.status = Status.ERROR
             metadata.update_message(exception_detail=status.message)
 
-        MetadataHandler.save_json(data=metadata.asdict(), folder_path=Path(metadata.converted_model_path).parent.as_posix())
+        MetadataHandler.save_metadata(data=metadata, folder_path=Path(metadata.converted_model_path).parent.as_posix())
 
         return metadata
 
@@ -74,7 +74,7 @@ class NPQAIConverter(NPQAIBase):
         extension = self.get_source_extension(model_path=input_model_path)
         metadata.model_info.framework = self.get_framework(extension=extension)
 
-        MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
+        MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
         try:
             target_extension = self.get_target_extension(runtime=options.target_runtime)
@@ -106,11 +106,11 @@ class NPQAIConverter(NPQAIBase):
             metadata.convert_task_info.framework = framework
             metadata.convert_task_info.display_framework = display_framework
 
-            MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
+            MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
         except KeyboardInterrupt:
             metadata.status = Status.STOPPED
-            MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
+            MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
         return metadata
 

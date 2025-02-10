@@ -37,7 +37,7 @@ class NPQAIQuantizer(NPQAIBase):
             metadata.status = Status.ERROR
             metadata.update_message(exception_detail=status.message)
 
-        MetadataHandler.save_json(data=metadata.asdict(), folder_path=Path(metadata.quantized_model_path).parent.as_posix())
+        MetadataHandler.save_metadata(data=metadata, folder_path=Path(metadata.quantized_model_path).parent.as_posix())
 
         return metadata
 
@@ -59,7 +59,7 @@ class NPQAIQuantizer(NPQAIBase):
         extension = self.get_source_extension(model_path=input_model_path)
         metadata.model_info.framework = self.get_framework(extension=extension)
 
-        MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
+        MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
         try:
             # import ipdb; ipdb.set_trace()
@@ -81,11 +81,11 @@ class NPQAIQuantizer(NPQAIBase):
             # metadata.quantize_info.weight_precision = weights_dtype
             # metadata.quantize_info.activation_precision = activations_dtype
 
-            MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
+            MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
         except KeyboardInterrupt:
             metadata.status = Status.STOPPED
-            MetadataHandler.save_json(data=metadata.asdict(), folder_path=output_dir)
+            MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
         return metadata
 
