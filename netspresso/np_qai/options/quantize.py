@@ -19,6 +19,12 @@ class QuantizePrecision:
 
 @dataclass
 class QuantizeOptions:
+    """
+    Quantize options for the model.
+
+    For details, see `QuantizeOptions in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#quantize-options>`_.
+    """
+
     range_scheme: Optional[RangeScheme] = RangeScheme.AUTO
 
     def to_cli_string(self) -> str:

@@ -46,6 +46,12 @@ class QuantizeWeightType(str, Enum):
 
 @dataclass
 class CompileOptions(CommonOptions):
+    """
+    Compile options for the model.
+
+    For details, see `CompileOptions in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#compile-options>`_.
+    """
+
     target_runtime: Optional[Runtime] = Runtime.TFLITE
     output_names: Optional[str] = None
     truncate_64bit_tensors: Optional[bool] = False

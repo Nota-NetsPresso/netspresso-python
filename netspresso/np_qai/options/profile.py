@@ -463,6 +463,8 @@ class ProfileCommonOptions(CommonOptions):
     qnn_options: Optional[QnnOptions] = None
     onnx_options: Optional[Union[OnnxOptions, OnnxQnnOptions]] = None
     onnx_execution_providers: Optional[List[OnnxExecutionProviders]] = None
+    max_profiler_iterations: Optional[int] = 100
+    max_profiler_time: Optional[int] = 600
 
     def handle_tflite_options(self) -> str:
         if isinstance(self.tflite_options, (TfliteOptions, TfliteQnnOptions, TfliteGpuv2Options, TfliteNnapiOptions)):
@@ -501,25 +503,33 @@ class ProfileCommonOptions(CommonOptions):
         if self.onnx_execution_providers is not None:
             onnx_execution_providers = ",".join((self.onnx_execution_providers))
             args.append(f"--onnx_execution_providers {onnx_execution_providers}")
-        return args
-
-
-@dataclass
-class ProfileOptions(ProfileCommonOptions):
-    max_profiler_iterations: Optional[int] = 100
-    max_profiler_time: Optional[int] = 600
-
-    def to_cli_string(self) -> str:
-        args = self.handle_common_options()
         if self.max_profiler_iterations is not None:
             args.append(f"--max_profiler_iterations {self.max_profiler_iterations}")
         if self.max_profiler_time is not None:
             args.append(f"--max_profiler_time {self.max_profiler_time}")
+        return args
+
+    def to_cli_string(self) -> str:
+        args = self.handle_common_options()
         return " ".join(args)
+
+@dataclass
+class ProfileOptions(ProfileCommonOptions):
+    """
+    Profile options for the model.
+
+    For details, see `ProfileOptions in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#profile-inference-options>`_.
+    """
+
+    pass
 
 
 @dataclass
 class InferenceOptions(ProfileCommonOptions):
-    def to_cli_string(self) -> str:
-        args = self.handle_common_options()
-        return " ".join(args)
+    """
+    Inference options for the model.
+
+    For details, see `InferenceOptions in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#profile-inference-options>`_.
+    """
+
+    pass

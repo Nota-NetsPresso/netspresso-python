@@ -37,8 +37,13 @@ class NPQAIBenchmarker(NPQAIBase):
         """
         Retrieves the profile data from the given ProfileJob.
 
-        For more details, see:
-        [ProfileJob in QAI Hub API](https://app.aihub.qualcomm.com/docs/hub/api.html#qai_hub.ProfileJob)
+        For details, see `download_profile in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.ProfileJob.html#qai_hub.ProfileJob.download_profile>`_.
+
+        Args:
+            job: The ProfileJob to download the profile from.
+
+        Returns:
+            The profile data.
         """
         profile = job.download_profile()
 

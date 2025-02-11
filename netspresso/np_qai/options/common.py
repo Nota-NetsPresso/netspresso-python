@@ -12,4 +12,13 @@ class ComputeUnit(str, Enum):
 
 @dataclass
 class CommonOptions:
+    """
+    Common options for all tasks.
+
+    Args:
+        compute_unit: Specifies the target compute unit(s)
+
+    For details, see `CommonOptions in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#common-options>`_.
+    """
+
     compute_unit: Optional[List[ComputeUnit]] = None
