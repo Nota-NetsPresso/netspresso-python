@@ -426,39 +426,42 @@ class Quantizer(NetsPressoBase):
         wait_until_done: bool = True,
         sleep_interval: int = 30,
     ) -> QuantizerMetadata:
-        """Apply custom precision quantization to a model, specifying precision for each layer name.
+        """
+        Apply custom precision quantization to a model, specifying precision for each layer name.
 
-        This function allows precise control over the quantization process by enabling the user to assign specific
-        quantization precision (e.g., INT8, FP16) for each named layer within the model. The `precision_by_layer_name`
-        parameter provides a list where each item details the target precision for a specific layer name, enabling
-        customized quantization that can enhance model performance or compatibility.
+        This function allows precise control over the quantization process by enabling the user to
+        specify quantization precision (e.g., INT8, FP16) for each named layer within the model.
+        The `precision_by_layer_name` parameter provides a list where each item details the target
+        precision for a specific layer name, enabling customized quantization that can enhance
+        model performance or compatibility.
 
-        Users can target specific layers to be quantized to lower precision for optimized model size and performance
-        while keeping critical layers at higher precision for accuracy. Layers not explicitly listed in
-        `precision_by_layer_name` will use `default_weight_precision` and `default_activation_precision`.
+        Users can target specific layers to be quantized to lower precision for optimized model
+        size and performance while keeping critical layers at higher precision for accuracy.
+        Layers not explicitly listed in `precision_by_layer_name` will use
+        `default_weight_precision` and `default_activation_precision`.
 
         Args:
             input_model_path (str): The file path where the model is located.
             output_dir (str): The local folder path to save the quantized model.
             dataset_path (str): Path to the dataset. Useful for certain quantizations.
-            precision_by_layer_name (List[PrecisionByLayer]): A list specifying the precision for each layer name within the model.
-            precision_by_operator_type (List[PrecisionByLayer]):
-                List of `PrecisionByLayer` objects that specify the desired precision for each layer name in the model.
-                Each entry includes:
-                    - `name` (str): The layer name (e.g., /backbone/conv_first/block/act/Mul_output_0).
-                    - `precision` (QuantizationPrecision): The quantization precision level for the operator.
-            default_weight_precision (QuantizationPrecision): Weight precision
-            default_activation_precision (QuantizationPrecision): Activation precision
+            precision_by_layer_name (List[PrecisionByLayer]):
+                List of `PrecisionByLayer` objects that specify the desired precision for each
+                layer name in the model. Each entry includes: `name` (str): The layer name (e.g., /backbone/conv_first/block/act/Mul_output_0).
+                `precision` (QuantizationPrecision): The quantization precision level.
+            default_weight_precision (QuantizationPrecision): Weight precision.
+            default_activation_precision (QuantizationPrecision): Activation precision.
             metric (SimilarityMetric): Quantization quality metrics.
-            input_layers (List[InputShape], optional): Target input shape for quantization (e.g., dynamic batch to static batch).
-            wait_until_done (bool): If True, wait for the quantization result before returning the function.
-                                If False, request the quantization and return  the function immediately.
+            input_layers (List[InputShape], optional):
+                Target input shape for quantization (e.g., dynamic batch to static batch).
+            wait_until_done (bool): If True, wait for the quantization result before returning
+                the function. If False, request the quantization and return immediately.
+            sleep_interval (int): Interval in seconds between checks when `wait_until_done` is True.
 
         Raises:
             e: If an error occurs during the model quantization.
 
         Returns:
-            QuantizerMetadata: Quantize metadata.
+            QuantizerMetadata: Quantization metadata containing status, paths, etc.
         """
         layers = {
             layer.name: layer.precision
@@ -497,44 +500,47 @@ class Quantizer(NetsPressoBase):
         wait_until_done: bool = True,
         sleep_interval: int = 30,
     ) -> QuantizerMetadata:
-        """Apply custom quantization to a model, specifying precision for each operator type.
+        """
+        Apply custom quantization to a model, specifying precision for each operator type.
 
-        This function allows for highly customizable quantization by enabling the user to specify the quantization
-        precision (e.g., INT8, FP16) for each operator type within a model. The `precision_by_operator_type` parameter
-        is a list of mappings where each entry indicates the quantization precision for a specific operator type,
-        such as convolution (Conv), matrix multiplication (MatMul), etc.
+        This function allows for highly customizable quantization by enabling the user to specify
+        the quantization precision (e.g., INT8, FP16) for each operator type within a model. The
+        `precision_by_operator_type` parameter is a list of mappings where each entry indicates
+        the quantization precision for a specific operator type, such as convolution (Conv),
+        matrix multiplication (MatMul), etc.
 
-        Using `precision_by_operator_type`, users can selectively fine-tune the quantization strategy for different
-        operators within the model, based on performance requirements or hardware capabilities. Operators not explicitly
-        specified in `precision_by_operator_type` will fall back to `default_weight_precision` and `default_activation_precision`.
+        Using `precision_by_operator_type`, users can selectively fine-tune the quantization
+        strategy for different operators within the model, based on performance requirements
+        or hardware capabilities. Operators not explicitly specified in
+        `precision_by_operator_type` will fall back to `default_weight_precision` and
+        `default_activation_precision`.
 
         Args:
             input_model_path (str): The file path where the model is located.
             output_dir (str): The local folder path to save the quantized model.
             dataset_path (str): Path to the dataset. Useful for certain quantizations.
             precision_by_operator_type (List[PrecisionByOperator]):
-                List of `PrecisionByOperator` objects that specify the desired precision for each operator type in the model.
-                Each entry includes:
-                    - `type` (str): The operator type (e.g., Conv, MatMul).
-                    - `precision` (QuantizationPrecision): The quantization precision level for the operator.
-            default_weight_precision (QuantizationPrecision): Weight precision
-            default_activation_precision (QuantizationPrecision): Activation precision
+                List of `PrecisionByOperator` objects that specify the desired precision for each
+                operator type in the model. Each entry includes: `type` (str): The operator type (e.g., Conv, MatMul). `precision` (QuantizationPrecision): The quantization precision level.
+            default_weight_precision (QuantizationPrecision): Weight precision.
+            default_activation_precision (QuantizationPrecision): Activation precision.
             metric (SimilarityMetric): Quantization quality metrics.
-            input_layers (List[InputShape], optional): Target input shape for quantization (e.g., dynamic batch to static batch).
-            wait_until_done (bool): If True, wait for the quantization result before returning the function.
-                                If False, request the quantization and return  the function immediately.
+            input_layers (List[InputShape], optional):
+                Target input shape for quantization (e.g., dynamic batch to static batch).
+            wait_until_done (bool): If True, wait for the quantization result before returning
+                the function. If False, request the quantization and return immediately.
+            sleep_interval (int): Interval in seconds between checks when `wait_until_done` is True.
 
         Raises:
             e: If an error occurs during the model quantization.
 
         Returns:
-            QuantizerMetadata: Quantize metadata.
+            QuantizerMetadata: Quantization metadata containing status, paths, etc.
         """
         operators = {
             layer.type: layer.precision
             for layer in precision_by_operator_type
         }
-
         custom_quantization_dictionary = {"layers": {}, "operators": operators}
 
         metadata = self._custom_quantization(

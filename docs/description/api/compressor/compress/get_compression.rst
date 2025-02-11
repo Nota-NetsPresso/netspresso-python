@@ -7,7 +7,7 @@ Get Compression Information
 Details of Returns
 ------------------
 
-.. autoclass:: netspresso.compressor.core.compression.CompressionInfo
+.. autoclass:: netspresso.utils.metadata.default.compressor.CompressionInfo
     :noindex:
 
 
