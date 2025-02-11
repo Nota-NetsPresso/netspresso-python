@@ -3,7 +3,8 @@ from typing import List, Optional, Union
 
 import qai_hub as hub
 from loguru import logger
-from qai_hub.client import Dataset, Device, InferenceJob, ProfileJob
+from qai_hub import JobStatus
+from qai_hub.client import Dataset, Device, InferenceJob, ProfileJob, ProfileJobResult
 from qai_hub.public_rest_api import DatasetEntries
 
 from netspresso.enums import Status
@@ -15,23 +16,61 @@ from netspresso.utils.metadata import MetadataHandler
 
 
 class NPQAIBenchmarker(NPQAIBase):
-    def download_benchmark_results(self, job: ProfileJob, artifacts_dir: str):
+    def download_benchmark_results(self, job: ProfileJob, artifacts_dir: str) -> ProfileJobResult:
+        """
+        Downloads the benchmark results from a given ProfileJob.
+
+        For details, see `download_results in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.ProfileJob.html#qai_hub.ProfileJob.download_results>`_.
+
+        Args:
+            job: The ProfileJob to download the results from.
+            artifacts_dir: The directory to save the results to.
+
+        Returns:
+            ProfileJobResult: The benchmark results.
+        """
         results = job.download_results(artifacts_dir=artifacts_dir)
 
         return results
 
     def download_profile(self, job: ProfileJob):
+        """
+        Retrieves the profile data from the given ProfileJob.
+
+        For more details, see:
+        [ProfileJob in QAI Hub API](https://app.aihub.qualcomm.com/docs/hub/api.html#qai_hub.ProfileJob)
+        """
         profile = job.download_profile()
 
         return profile
 
-    def get_benchmark_task_status(self, benchmark_task_uuid):
-        job: ProfileJob = hub.get_job(benchmark_task_uuid)
+    def get_benchmark_task_status(self, benchmark_task_id: str) -> JobStatus:
+        """
+        Get the status of a benchmark task.
+
+        For details, see `JobStatus in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.JobStatus.html>`_.
+
+        Args:
+            benchmark_task_id: The ID of the benchmark task to get the status of.
+
+        Returns:
+            JobStatus: The status of the benchmark task.
+        """
+        job: ProfileJob = hub.get_job(benchmark_task_id)
         status = job.get_status()
 
         return status
 
-    def update_benchmark_task(self, metadata: BenchmarkerMetadata):
+    def update_benchmark_task(self, metadata: BenchmarkerMetadata) -> BenchmarkerMetadata:
+        """
+        Update the benchmark task.
+
+        Args:
+            metadata: The metadata of the benchmark task.
+
+        Returns:
+            BenchmarkerMetadata: The updated metadata of the benchmark task.
+        """
         job: ProfileJob = hub.get_job(metadata.benchmark_task_info.benchmark_task_uuid)
         status = job.wait()
 
@@ -70,6 +109,21 @@ class NPQAIBenchmarker(NPQAIBase):
         job_name: Optional[str] = None,
         retry: bool = True,
     ) -> Union[BenchmarkerMetadata, List[BenchmarkerMetadata]]:
+        """
+        Benchmark a model on a device in the QAI hub.
+
+        For details, see `submit_profile_job in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.submit_profile_job.html>`_.
+
+        Args:
+            input_model_path: The path to the input model.
+            target_device_name: The device to benchmark the model on.
+            options: The options to use for the benchmark.
+            job_name: The name of the job.
+            retry: Whether to retry the benchmark if it fails.
+
+        Returns:
+            Union[BenchmarkerMetadata, List[BenchmarkerMetadata]]: Returns a benchmarker metadata object if successful.
+        """
         FileHandler.check_input_model_path(input_model_path)
 
         folder_path = Path(input_model_path).parent
@@ -114,8 +168,19 @@ class NPQAIBenchmarker(NPQAIBase):
 
         return metadata
 
-    def get_inference_task_status(self, inference_task_uuid):
-        job: InferenceJob = hub.get_job(inference_task_uuid)
+    def get_inference_task_status(self, inference_task_id: str) -> JobStatus:
+        """
+        Get the status of an inference task.
+
+        For details, see `JobStatus in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.JobStatus.html>`_.
+
+        Args:
+            inference_task_id: The ID of the inference task to get the status of.
+
+        Returns:
+            JobStatus: The status of the inference task.
+        """
+        job: InferenceJob = hub.get_job(inference_task_id)
         status = job.get_status()
 
         return status
@@ -129,7 +194,22 @@ class NPQAIBenchmarker(NPQAIBase):
         options: Union[InferenceOptions, str] = InferenceOptions(),
         retry: bool = True,
     ) -> Union[InferenceJob, List[InferenceJob]]:
+        """
+        Inference a model on a device in the QAI hub.
 
+        For details, see `submit_inference_job in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.submit_inference_job.html>`_.
+
+        Args:
+            input_model_path: The path to the input model.
+            target_device_name: The device to benchmark the model on.
+            inputs: The input data to use for the inference.
+            job_name: The name of the job.
+            options: The options to use for the inference.
+            retry: Whether to retry the inference if it fails.
+
+        Returns:
+            Union[InferenceJob, List[InferenceJob]]: Returns an inference job object if successful.
+        """
         cli_string = options.to_cli_string() if isinstance(options, InferenceOptions) else options
 
         job: InferenceJob = hub.submit_inference_job(

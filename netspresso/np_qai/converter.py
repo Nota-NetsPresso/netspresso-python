@@ -3,6 +3,7 @@ from typing import List, Optional, Union
 
 import qai_hub as hub
 from loguru import logger
+from qai_hub import JobStatus
 from qai_hub.client import CompileJob, Dataset, Device, InputSpecs
 from qai_hub.public_rest_api import DatasetEntries
 
@@ -27,13 +28,33 @@ class NPQAIConverter(NPQAIBase):
             })
         return result
 
-    def get_convert_task_status(self, convert_task_uuid):
-        job: CompileJob = hub.get_job(convert_task_uuid)
+    def get_convert_task_status(self, convert_task_id: str) -> JobStatus:
+        """
+        Get the status of a convert task.
+
+        For details, see `JobStatus in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.JobStatus.html>`_.
+
+        Args:
+            convert_task_id: The ID of the convert task to get the status of.
+
+        Returns:
+            JobStatus: The status of the convert task.
+        """
+        job: CompileJob = hub.get_job(convert_task_id)
         status = job.get_status()
 
         return status
 
-    def update_convert_task(self, metadata: ConverterMetadata):
+    def update_convert_task(self, metadata: ConverterMetadata) -> ConverterMetadata:
+        """
+        Update the convert task.
+
+        Args:
+            metadata: The metadata of the convert task.
+
+        Returns:
+            ConverterMetadata: The updated metadata of the convert task.
+        """
         job: CompileJob = hub.get_job(metadata.convert_task_info.convert_task_uuid)
         status = job.wait()
 
@@ -66,6 +87,25 @@ class NPQAIConverter(NPQAIBase):
         calibration_data: Union[Dataset, DatasetEntries, str, None] = None,
         retry: bool = True,
     ) -> Union[ConverterMetadata, List[ConverterMetadata]]:
+        """
+        Convert a model in the QAI hub.
+
+        For details, see `submit_compile_job in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.submit_compile_job.html>`_.
+
+        Args:
+            input_model_path: The path to the input model.
+            output_dir: The directory to save the converted model.
+            target_device_name: The device to compile the model for.
+            input_shapes: The input shapes of the model.
+            options: The options to use for the conversion.
+            job_name: The name of the job.
+            single_compile: Whether to compile the model in a single step.
+            calibration_data: The calibration data to use for the conversion.
+            retry: Whether to retry the conversion if it fails.
+
+        Returns:
+            Union[ConverterMetadata, List[ConverterMetadata]]: Returns a converter metadata object if successful.
+        """
 
         output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
         default_model_path = (Path(output_dir) / f"{Path(output_dir).name}.ext").resolve()
@@ -115,4 +155,13 @@ class NPQAIConverter(NPQAIBase):
         return metadata
 
     def download_model(self, job: CompileJob, filename: str):
+        """
+        Download a model from the QAI Hub.
+
+        For details, see `download_target_model in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.CompileJob.html#qai_hub.CompileJob.download_target_model>`_.
+
+        Args:
+            job: The job to download the model from.
+            filename: The filename to save the model to.
+        """
         job.download_target_model(filename=filename)

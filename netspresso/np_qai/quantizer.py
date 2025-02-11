@@ -3,7 +3,7 @@ from typing import List, Optional, Union
 
 import qai_hub as hub
 from loguru import logger
-from qai_hub import QuantizeDtype
+from qai_hub import JobStatus, QuantizeDtype
 from qai_hub.client import Dataset, QuantizeJob
 from qai_hub.public_rest_api import DatasetEntries
 
@@ -16,13 +16,33 @@ from netspresso.utils.metadata import MetadataHandler
 
 
 class NPQAIQuantizer(NPQAIBase):
-    def get_quantize_task_status(self, quantize_task_uuid):
-        job: QuantizeJob = hub.get_job(quantize_task_uuid)
+    def get_quantize_task_status(self, quantize_task_id: str) -> JobStatus:
+        """
+        Get the status of a quantize task.
+
+        For details, see `JobStatus in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.JobStatus.html>`_.
+
+        Args:
+            quantize_task_id: The ID of the quantize task to get the status of.
+
+        Returns:
+            JobStatus: The status of the quantize task.
+        """
+        job: QuantizeJob = hub.get_job(quantize_task_id)
         status = job.get_status()
 
         return status
 
-    def update_quantize_task(self, metadata: NPQAIQuantizerMetadata):
+    def update_quantize_task(self, metadata: NPQAIQuantizerMetadata) -> NPQAIQuantizerMetadata:
+        """
+        Update the quantize task.
+
+        Args:
+            metadata: The metadata of the quantize task.
+
+        Returns:
+            NPQAIQuantizerMetadata: The updated metadata of the quantize task.
+        """
         job: QuantizeJob = hub.get_job(metadata.quantize_info.quantize_task_uuid)
         status = job.wait()
 
@@ -51,7 +71,23 @@ class NPQAIQuantizer(NPQAIBase):
         job_name: Optional[str] = None,
         calibration_data: Union[Dataset, DatasetEntries, str, None] = None,
     ) -> Union[NPQAIQuantizerMetadata, List[NPQAIQuantizerMetadata]]:
+        """
+        Quantize a model in the QAI hub.
 
+        For details, see `submit_quantize_job in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.submit_quantize_job.html>`_.
+
+        Args:
+            input_model_path: The path to the input model.
+            output_dir: The directory to save the quantized model.
+            weights_dtype: The data type to use for the weights.
+            activations_dtype: The data type to use for the activations.
+            options: The options to use for the quantization.
+            job_name: The name of the job.
+            calibration_data: The calibration data to use for the quantization.
+
+        Returns:
+            Union[NPQAIQuantizerMetadata, List[NPQAIQuantizerMetadata]]: Returns a quantizer metadata object if successful.
+        """
         output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
         default_model_path = (Path(output_dir) / f"{Path(output_dir).name}.ext").resolve()
         metadata = NPQAIQuantizerMetadata()
@@ -62,7 +98,6 @@ class NPQAIQuantizer(NPQAIBase):
         MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
         try:
-            # import ipdb; ipdb.set_trace()
             quantized_model_path = default_model_path.with_suffix(".onnx").as_posix()
 
             cli_string = options.to_cli_string() if isinstance(options, QuantizeOptions) else options
@@ -78,8 +113,6 @@ class NPQAIQuantizer(NPQAIBase):
             metadata.quantized_model_path = quantized_model_path
             metadata.quantize_info.quantize_task_uuid = job.job_id
             metadata.quantize_info.input_model_uuid = job.model.model_id
-            # metadata.quantize_info.weight_precision = weights_dtype
-            # metadata.quantize_info.activation_precision = activations_dtype
 
             MetadataHandler.save_metadata(data=metadata, folder_path=output_dir)
 
@@ -90,4 +123,13 @@ class NPQAIQuantizer(NPQAIBase):
         return metadata
 
     def download_model(self, job: QuantizeJob, filename: str):
+        """
+        Download a model from the QAI hub.
+
+        For details, see `download_target_model in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.QuantizeJob.html#qai_hub.QuantizeJob.download_target_model>`_.
+
+        Args:
+            job: The job to download the model from.
+            filename: The filename to save the model to.
+        """
         job.download_target_model(filename=filename)

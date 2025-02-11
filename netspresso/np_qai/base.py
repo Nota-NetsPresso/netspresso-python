@@ -12,36 +12,119 @@ class NPQAIBase:
         hub.set_verbose(verbose)
 
     def upload_dataset(self, data, name=None) -> Dataset:
+        """
+        Upload a dataset to the QAI Hub.
+
+        For details, see `upload_dataset in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.upload_dataset.html>`_.
+
+        Args:
+            data: The dataset to upload.
+            name: The name of the dataset.
+
+        Returns:
+            Dataset: Returns a dataset object if successful.
+        """
         dataset = hub.upload_dataset(data=data, name=name)
 
         return dataset
 
     def get_dataset(self, dataset_id: str) -> Dataset:
+        """
+        Get a dataset from the QAI Hub.
+
+        For details, see `get_dataset in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_dataset.html>`_.
+
+        Args:
+            dataset_id: The ID of the dataset to get.
+
+        Returns:
+            Dataset: Returns a dataset object if successful.
+        """
         dataset = hub.get_dataset(dataset_id=dataset_id)
 
         return dataset
 
-    def get_datasets() -> List[Dataset]:
-        datasets = hub.get_datasets()
+    def get_datasets(self, offset: int = 0, limit: int = 50) -> List[Dataset]:
+        """
+        Get a list of datasets from the QAI Hub.
+
+        For details, see `get_datasets in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_datasets.html>`_.
+
+        Args:
+            offset: The offset of the datasets to get even older datasets.
+            limit: The limit of the datasets to get.
+
+        Returns:
+            List[Dataset]: Returns a list of dataset objects if successful.
+        """
+        datasets = hub.get_datasets(offset=offset, limit=limit)
 
         return datasets
 
     def upload_model(self, model: Union[SourceModel, str], name: Optional[str] = None) -> Model:
+        """
+        Upload a model to the QAI Hub.
+
+        For details, see `upload_model in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.upload_model.html>`_.
+
+        Args:
+            model: The model to upload.
+            name: The name of the model.
+
+        Returns:
+            Model: Returns a model object if successful.
+        """
         model = hub.upload_model(model=model, name=name)
 
         return model
 
     def get_models(self, offset: int = 0, limit: int = 50) -> List[Model]:
+        """
+        Get a list of models from the QAI Hub.
+
+        For details, see `get_models in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_models.html>`_.
+
+        Args:
+            offset: The offset of the models to get even older models.
+            limit: The limit of the models to get.
+
+        Returns:
+            List[Model]: Returns a list of model objects if successful.
+        """
         models = hub.get_models(offset=offset, limit=limit)
 
         return models
 
     def get_model(self, model_id: str) -> Model:
+        """
+        Get a model from the QAI Hub.
+
+        For details, see `get_model in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_model.html>`_.
+
+        Args:
+            model_id: The ID of the model to get.
+
+        Returns:
+            Model: Returns a model object if successful.
+        """
         model = hub.get_model(model_id=model_id)
 
         return model
 
     def get_devices(self, name: str = "", os: str = "", attributes: Union[str, List[str]] = None) -> List[Device]:
+        """
+        Get a list of devices from the QAI Hub.
+
+        For details, see `get_devices in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_devices.html>`_.
+
+        Args:
+            name: The name of the device to get.
+            os: The OS of the device to get.
+            attributes: The attributes of the device to get.
+
+        Returns:
+            List[Device]: Returns a list of device objects if successful.
+        """
         if attributes is None:
             attributes = []
         devices = hub.get_devices(name=name, os=os, attributes=attributes)
@@ -49,6 +132,14 @@ class NPQAIBase:
         return devices
 
     def get_device_attributes(self) -> List[str]:
+        """
+        Get a list of device attributes from the QAI Hub.
+
+        For details, see `get_device_attributes in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_device_attributes.html>`_.
+
+        Returns:
+            List[str]: Returns a list of device attribute strings if successful.
+        """
         device_attributes = hub.get_device_attributes()
 
         return device_attributes
@@ -61,16 +152,43 @@ class NPQAIBase:
         state: Union[Optional[JobStatus.State], List[JobStatus.State]] = None,
         type: Optional[JobType] = None,
     ) -> List[JobSummary]:
+        """
+        Get a list of job summaries from the QAI Hub.
+
+        For details, see `get_job_summaries in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_job_summaries.html>`_.
+
+        Returns:
+            List[JobSummary]: Returns a list of job summary objects if successful.
+        """
         job_summaries = hub.get_job_summaries(offset=offset, limit=limit, creator=creator, state=state, type=type)
 
         return job_summaries
 
     def get_jobs(self, offset: int = 0, limit: int = 50, creator: Optional[str] = None) -> List[Job]:
+        """
+        Get a list of jobs from the QAI Hub.
+
+        For details, see `get_jobs in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_jobs.html>`_.
+
+        Returns:
+            List[Job]: Returns a list of job objects if successful.
+        """
         jobs = hub.get_jobs(offset=offset, limit=limit, creator=creator)
 
         return jobs
 
     def get_job(self, job_id: str) -> Job:
+        """
+        Get a job from the QAI Hub.
+
+        For details, see `get_job in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_job.html>`_.
+
+        Args:
+            job_id: The ID of the job to get.
+
+        Returns:
+            Job: Returns a job object if successful.
+        """
         job = hub.get_job(job_id=job_id)
 
         return job
