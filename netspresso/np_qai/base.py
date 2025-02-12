@@ -15,14 +15,15 @@ class NPQAIBase:
         """
         Upload a dataset to the QAI Hub.
 
-        For details, see `upload_dataset in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.upload_dataset.html>`_.
-
         Args:
             data: The dataset to upload.
             name: The name of the dataset.
 
         Returns:
             Dataset: Returns a dataset object if successful.
+
+        Note:
+            For details, see `upload_dataset in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#upload-dataset>`_.
         """
         dataset = hub.upload_dataset(data=data, name=name)
 
@@ -32,13 +33,14 @@ class NPQAIBase:
         """
         Get a dataset from the QAI Hub.
 
-        For details, see `get_dataset in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_dataset.html>`_.
-
         Args:
             dataset_id: The ID of the dataset to get.
 
         Returns:
             Dataset: Returns a dataset object if successful.
+
+        Note:
+            For details, see `get_dataset in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#get-dataset>`_.
         """
         dataset = hub.get_dataset(dataset_id=dataset_id)
 
@@ -48,14 +50,15 @@ class NPQAIBase:
         """
         Get a list of datasets from the QAI Hub.
 
-        For details, see `get_datasets in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_datasets.html>`_.
-
         Args:
             offset: The offset of the datasets to get even older datasets.
             limit: The limit of the datasets to get.
 
         Returns:
             List[Dataset]: Returns a list of dataset objects if successful.
+
+        Note:
+            For details, see `get_datasets in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#get-datasets>`_.
         """
         datasets = hub.get_datasets(offset=offset, limit=limit)
 
@@ -65,14 +68,15 @@ class NPQAIBase:
         """
         Upload a model to the QAI Hub.
 
-        For details, see `upload_model in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.upload_model.html>`_.
-
         Args:
             model: The model to upload.
             name: The name of the model.
 
         Returns:
             Model: Returns a model object if successful.
+
+        Note:
+            For details, see `upload_model in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#upload-model>`_.
         """
         model = hub.upload_model(model=model, name=name)
 
@@ -82,14 +86,15 @@ class NPQAIBase:
         """
         Get a list of models from the QAI Hub.
 
-        For details, see `get_models in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_models.html>`_.
-
         Args:
             offset: The offset of the models to get even older models.
             limit: The limit of the models to get.
 
         Returns:
             List[Model]: Returns a list of model objects if successful.
+
+        Note:
+            For details, see `get_models in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#get-models>`_.
         """
         models = hub.get_models(offset=offset, limit=limit)
 
@@ -99,13 +104,14 @@ class NPQAIBase:
         """
         Get a model from the QAI Hub.
 
-        For details, see `get_model in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_model.html>`_.
-
         Args:
             model_id: The ID of the model to get.
 
         Returns:
             Model: Returns a model object if successful.
+
+        Note:
+            For details, see `get_model in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#get-model>`_.
         """
         model = hub.get_model(model_id=model_id)
 
@@ -115,8 +121,6 @@ class NPQAIBase:
         """
         Get a list of devices from the QAI Hub.
 
-        For details, see `get_devices in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_devices.html>`_.
-
         Args:
             name: The name of the device to get.
             os: The OS of the device to get.
@@ -124,6 +128,9 @@ class NPQAIBase:
 
         Returns:
             List[Device]: Returns a list of device objects if successful.
+
+        Note:
+            For details, see `get_devices in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#get-devices>`_.
         """
         if attributes is None:
             attributes = []
@@ -135,10 +142,11 @@ class NPQAIBase:
         """
         Get a list of device attributes from the QAI Hub.
 
-        For details, see `get_device_attributes in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_device_attributes.html>`_.
-
         Returns:
             List[str]: Returns a list of device attribute strings if successful.
+
+        Note:
+            For details, see `get_device_attributes in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#get-device-attributes>`_.
         """
         device_attributes = hub.get_device_attributes()
 
@@ -155,10 +163,11 @@ class NPQAIBase:
         """
         Get a list of job summaries from the QAI Hub.
 
-        For details, see `get_job_summaries in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_job_summaries.html>`_.
-
         Returns:
             List[JobSummary]: Returns a list of job summary objects if successful.
+
+        Note:
+            For details, see `get_job_summaries in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#get-job-summaries>`_.
         """
         job_summaries = hub.get_job_summaries(offset=offset, limit=limit, creator=creator, state=state, type=type)
 
@@ -168,10 +177,11 @@ class NPQAIBase:
         """
         Get a list of jobs from the QAI Hub.
 
-        For details, see `get_jobs in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_jobs.html>`_.
-
         Returns:
             List[Job]: Returns a list of job objects if successful.
+
+        Note:
+            For details, see `get_jobs in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#get-jobs>`_.
         """
         jobs = hub.get_jobs(offset=offset, limit=limit, creator=creator)
 
@@ -181,13 +191,14 @@ class NPQAIBase:
         """
         Get a job from the QAI Hub.
 
-        For details, see `get_job in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.get_job.html>`_.
-
         Args:
             job_id: The ID of the job to get.
 
         Returns:
             Job: Returns a job object if successful.
+
+        Note:
+            For details, see `get_job in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#get-job>`_.
         """
         job = hub.get_job(job_id=job_id)
 

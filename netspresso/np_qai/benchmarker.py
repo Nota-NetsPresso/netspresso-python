@@ -20,14 +20,15 @@ class NPQAIBenchmarker(NPQAIBase):
         """
         Downloads the benchmark results from a given ProfileJob.
 
-        For details, see `download_results in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.ProfileJob.html#qai_hub.ProfileJob.download_results>`_.
-
         Args:
             job: The ProfileJob to download the results from.
             artifacts_dir: The directory to save the results to.
 
         Returns:
             ProfileJobResult: The benchmark results.
+
+        Note:
+            For details, see `download_results in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#download-results>`_.
         """
         results = job.download_results(artifacts_dir=artifacts_dir)
 
@@ -37,13 +38,14 @@ class NPQAIBenchmarker(NPQAIBase):
         """
         Retrieves the profile data from the given ProfileJob.
 
-        For details, see `download_profile in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.ProfileJob.html#qai_hub.ProfileJob.download_profile>`_.
-
         Args:
             job: The ProfileJob to download the profile from.
 
         Returns:
             The profile data.
+
+        Note:
+            For details, see `download_profile in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#download-profile>`_.
         """
         profile = job.download_profile()
 
@@ -53,13 +55,14 @@ class NPQAIBenchmarker(NPQAIBase):
         """
         Get the status of a benchmark task.
 
-        For details, see `JobStatus in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.JobStatus.html>`_.
-
         Args:
             benchmark_task_id: The ID of the benchmark task to get the status of.
 
         Returns:
             JobStatus: The status of the benchmark task.
+
+        Note:
+            For details, see `JobStatus in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#job-status>`_.
         """
         job: ProfileJob = hub.get_job(benchmark_task_id)
         status = job.get_status()
@@ -117,8 +120,6 @@ class NPQAIBenchmarker(NPQAIBase):
         """
         Benchmark a model on a device in the QAI hub.
 
-        For details, see `submit_profile_job in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.submit_profile_job.html>`_.
-
         Args:
             input_model_path: The path to the input model.
             target_device_name: The device to benchmark the model on.
@@ -128,6 +129,9 @@ class NPQAIBenchmarker(NPQAIBase):
 
         Returns:
             Union[BenchmarkerMetadata, List[BenchmarkerMetadata]]: Returns a benchmarker metadata object if successful.
+
+        Note:
+            For details, see `submit_profile_job in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#submit-profile-job>`_.
         """
         FileHandler.check_input_model_path(input_model_path)
 
@@ -177,13 +181,14 @@ class NPQAIBenchmarker(NPQAIBase):
         """
         Get the status of an inference task.
 
-        For details, see `JobStatus in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.JobStatus.html>`_.
-
         Args:
             inference_task_id: The ID of the inference task to get the status of.
 
         Returns:
             JobStatus: The status of the inference task.
+
+        Note:
+            For details, see `JobStatus in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#job-status>`_.
         """
         job: InferenceJob = hub.get_job(inference_task_id)
         status = job.get_status()
@@ -202,8 +207,6 @@ class NPQAIBenchmarker(NPQAIBase):
         """
         Inference a model on a device in the QAI hub.
 
-        For details, see `submit_inference_job in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.submit_inference_job.html>`_.
-
         Args:
             input_model_path: The path to the input model.
             target_device_name: The device to benchmark the model on.
@@ -214,6 +217,9 @@ class NPQAIBenchmarker(NPQAIBase):
 
         Returns:
             Union[InferenceJob, List[InferenceJob]]: Returns an inference job object if successful.
+
+        Note:
+            For details, see `submit_inference_job in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#submit-inference-job>`_.
         """
         cli_string = options.to_cli_string() if isinstance(options, InferenceOptions) else options
 

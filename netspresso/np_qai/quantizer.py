@@ -20,13 +20,14 @@ class NPQAIQuantizer(NPQAIBase):
         """
         Get the status of a quantize task.
 
-        For details, see `JobStatus in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.JobStatus.html>`_.
-
         Args:
             quantize_task_id: The ID of the quantize task to get the status of.
 
         Returns:
             JobStatus: The status of the quantize task.
+
+        Note:
+            For details, see `JobStatus in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#job-status>`_.
         """
         job: QuantizeJob = hub.get_job(quantize_task_id)
         status = job.get_status()
@@ -74,8 +75,6 @@ class NPQAIQuantizer(NPQAIBase):
         """
         Quantize a model in the QAI hub.
 
-        For details, see `submit_quantize_job in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.submit_quantize_job.html>`_.
-
         Args:
             input_model_path: The path to the input model.
             output_dir: The directory to save the quantized model.
@@ -87,6 +86,9 @@ class NPQAIQuantizer(NPQAIBase):
 
         Returns:
             Union[NPQAIQuantizerMetadata, List[NPQAIQuantizerMetadata]]: Returns a quantizer metadata object if successful.
+
+        Note:
+            For details, see `submit_quantize_job in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#submit-quantize-job>`_.
         """
         output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
         default_model_path = (Path(output_dir) / f"{Path(output_dir).name}.ext").resolve()
@@ -126,10 +128,11 @@ class NPQAIQuantizer(NPQAIBase):
         """
         Download a model from the QAI hub.
 
-        For details, see `download_target_model in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.QuantizeJob.html#qai_hub.QuantizeJob.download_target_model>`_.
-
         Args:
             job: The job to download the model from.
             filename: The filename to save the model to.
+
+        Note:
+            For details, see `download_target_model in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#download-target-model>`_.
         """
         job.download_target_model(filename=filename)
