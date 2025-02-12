@@ -4,3 +4,6 @@ recommonmark
 sphinx_rtd_theme
 netspresso==1.14.0.b7
 tensorflow==2.8.0
+pillow>=8.0,<11.0
+urllib3>=1.25.4,<1.27
+protobuf>=3.20,<4
