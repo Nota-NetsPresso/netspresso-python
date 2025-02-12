@@ -27,7 +27,7 @@ class NPQAIQuantizer(NPQAIBase):
             JobStatus: The status of the quantize task.
 
         Note:
-            For details, see `JobStatus in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#job-status>`_.
+            For details, see `JobStatus in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.JobStatus.html>`_.
         """
         job: QuantizeJob = hub.get_job(quantize_task_id)
         status = job.get_status()
@@ -88,7 +88,7 @@ class NPQAIQuantizer(NPQAIBase):
             Union[NPQAIQuantizerMetadata, List[NPQAIQuantizerMetadata]]: Returns a quantizer metadata object if successful.
 
         Note:
-            For details, see `submit_quantize_job in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#submit-quantize-job>`_.
+            For details, see `submit_quantize_job in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.submit_quantize_job.html>`_.
         """
         output_dir = FileHandler.create_unique_folder(folder_path=output_dir)
         default_model_path = (Path(output_dir) / f"{Path(output_dir).name}.ext").resolve()
@@ -133,6 +133,6 @@ class NPQAIQuantizer(NPQAIBase):
             filename: The filename to save the model to.
 
         Note:
-            For details, see `download_target_model in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#download-target-model>`_.
+            For details, see `download_target_model in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.QuantizeJob.html#qai_hub.QuantizeJob.download_target_model>`_.
         """
         job.download_target_model(filename=filename)
