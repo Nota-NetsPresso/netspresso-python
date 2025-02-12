@@ -1,5 +1,4 @@
 import subprocess
-
 from pathlib import Path
 from typing import Optional, Union
 
@@ -12,10 +11,10 @@ from netspresso.clients.tao import TAOTokenHandler
 from netspresso.compressor import CompressorV2
 from netspresso.converter import ConverterV2
 from netspresso.enums import Task
+from netspresso.inferencer.inferencer import CustomInferencer, NPInferencer
 from netspresso.np_qai.benchmarker import NPQAIBenchmarker
 from netspresso.np_qai.converter import NPQAIConverter
 from netspresso.np_qai.quantizer import NPQAIQuantizer
-from netspresso.inferencer.inferencer import CustomInferencer, NPInferencer
 from netspresso.quantizer import Quantizer
 from netspresso.tao import TAOTrainer
 from netspresso.trainer import Trainer
@@ -31,9 +30,7 @@ class NetsPresso:
             password (str): User's password for authentication.
             verify_ssl (bool): Flag to indicate whether SSL certificates should be verified. Defaults to True.
         """
-        self.token_handler = TokenHandler(
-            email=email, password=password, verify_ssl=verify_ssl
-        )
+        self.token_handler = TokenHandler(email=email, password=password, verify_ssl=verify_ssl)
         self.user_info = self.get_user()
 
     def get_user(self) -> UserResponse:
@@ -42,9 +39,7 @@ class NetsPresso:
         Returns:
             UserInfo: User information.
         """
-        user_info = auth_client.get_user_info(
-            self.token_handler.tokens.access_token, self.token_handler.verify_ssl
-        )
+        user_info = auth_client.get_user_info(self.token_handler.tokens.access_token, self.token_handler.verify_ssl)
         return user_info
 
     def create_project(self, project_name: str, project_path: str = "./"):
@@ -73,9 +68,7 @@ class NetsPresso:
 
             logger.info(f"Project '{project_name}' created at {project_folder_path.resolve()}.")
 
-    def trainer(
-        self, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None
-    ) -> Trainer:
+    def trainer(self, task: Optional[Union[str, Task]] = None, yaml_path: Optional[str] = None) -> Trainer:
         """Initialize and return a Trainer instance.
 
         Args:
@@ -159,8 +152,8 @@ class TAO:
 class NPQAI:
     def __init__(self, api_token: str) -> None:
         # Define the command and arguments
-        command = 'qai-hub'
-        args = ['configure', '--api_token', f'{api_token}']
+        command = "qai-hub"
+        args = ["configure", "--api_token", f"{api_token}"]
 
         # Execute the command
         result = subprocess.run([command] + args, capture_output=True, text=True)

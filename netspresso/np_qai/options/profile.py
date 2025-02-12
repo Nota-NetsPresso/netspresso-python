@@ -262,9 +262,9 @@ class TfliteQnnOptions(TfliteOptions):
     qnn_dsp_encoding: Optional[QnnDspEncoding] = QnnDspEncoding.K_DSP_STATIC
     qnn_htp_performance_mode: Optional[TfliteQnnHtpPerformanceMode] = TfliteQnnHtpPerformanceMode.K_HTP_BURST
     qnn_htp_precision: Optional[QnnHtpPrecision] = QnnHtpPrecision.K_HTP_FP16
-    qnn_htp_optimization_strategy: Optional[QnnHtpOptimizationStrategy] = (
-        QnnHtpOptimizationStrategy.K_HTP_OPTIMIZE_FOR_INFERENCE
-    )
+    qnn_htp_optimization_strategy: Optional[
+        QnnHtpOptimizationStrategy
+    ] = QnnHtpOptimizationStrategy.K_HTP_OPTIMIZE_FOR_INFERENCE
     qnn_htp_use_conv_hmx: Optional[bool] = True
     qnn_htp_use_fold_relu: Optional[bool] = False
     qnn_htp_vtcm_size: Optional[int] = None
@@ -305,18 +305,18 @@ class TfliteQnnOptions(TfliteOptions):
 
 @dataclass
 class TfliteGpuv2Options(TfliteOptions):
-    gpu_inference_preference: Optional[GpuInferencePreference] = (
-        GpuInferencePreference.TFLITE_GPU_INFERENCE_PREFERENCE_SUSTAINED_SPEED
-    )
-    gpu_inference_priority1: Optional[GpuInferencePriority] = (
-        GpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_MIN_LATENCY
-    )
-    gpu_inference_priority2: Optional[GpuInferencePriority] = (
-        GpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE
-    )
-    gpu_inference_priority3: Optional[GpuInferencePriority] = (
-        GpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_MAX_PRECISION
-    )
+    gpu_inference_preference: Optional[
+        GpuInferencePreference
+    ] = GpuInferencePreference.TFLITE_GPU_INFERENCE_PREFERENCE_SUSTAINED_SPEED
+    gpu_inference_priority1: Optional[
+        GpuInferencePriority
+    ] = GpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_MIN_LATENCY
+    gpu_inference_priority2: Optional[
+        GpuInferencePriority
+    ] = GpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE
+    gpu_inference_priority3: Optional[
+        GpuInferencePriority
+    ] = GpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_MAX_PRECISION
     gpu_max_delegated_partitions: Optional[int] = 1
 
     def to_cli_string(self) -> str:
@@ -374,9 +374,9 @@ class QnnOptions:
     default_graph_gpu_disable_queue_recording: Optional[bool] = None
     default_graph_htp_disable_fold_relu_activation_into_conv: Optional[bool] = False
     default_graph_htp_num_hvx_threads: Optional[int] = 4
-    default_graph_htp_optimization_type: Optional[DefaultGraphHtpOptimizationType] = (
-        DefaultGraphHtpOptimizationType.FINALIZE_OPTIMIZATION_FLAG
-    )
+    default_graph_htp_optimization_type: Optional[
+        DefaultGraphHtpOptimizationType
+    ] = DefaultGraphHtpOptimizationType.FINALIZE_OPTIMIZATION_FLAG
     default_graph_htp_optimization_value: Optional[int] = field(default=None, metadata={"valid_values": [1, 2, 3]})
     default_graph_htp_precision: Optional[DefaultGraphHtpPrecision] = DefaultGraphHtpPrecision.FLOAT16
     default_graph_htp_disable_short_depth_conv_on_hmx: Optional[bool] = False
@@ -512,6 +512,7 @@ class ProfileCommonOptions(CommonOptions):
     def to_cli_string(self) -> str:
         args = self.handle_common_options()
         return " ".join(args)
+
 
 @dataclass
 class ProfileOptions(ProfileCommonOptions):

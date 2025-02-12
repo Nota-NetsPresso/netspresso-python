@@ -12,7 +12,7 @@ class LoggingConfig:
     stdout: bool = True
     save_optimizer_state: bool = True
     sample_input_size: List = field(default_factory=lambda: [512, 512])
-    onnx_export_opset: int = 13 # Recommend in range [13, 17]
+    onnx_export_opset: int = 13  # Recommend in range [13, 17]
     validation_epoch: int = 10
     save_checkpoint_epoch: Optional[int] = None
 

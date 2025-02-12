@@ -20,12 +20,7 @@ class NPQAIConverter(NPQAIBase):
         result = []
         for key, value in image_dict.items():
             batch, channel, *dimension = value
-            result.append({
-                "name": key,
-                "batch": batch,
-                "channel": channel,
-                "dimension": dimension
-            })
+            result.append({"name": key, "batch": batch, "channel": channel, "dimension": dimension})
         return result
 
     def get_convert_task_status(self, convert_task_id: str) -> JobStatus:

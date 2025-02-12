@@ -86,9 +86,7 @@ class NPQAIBenchmarker(NPQAIBase):
             logger.info(f"{status.symbol} {status.state.name}")
             profile = self.download_profile(job=job)
             metadata.benchmark_result.latency = profile["execution_summary"]["estimated_inference_time"] / 1000
-            metadata.benchmark_result.memory_footprint = profile["execution_summary"][
-                "estimated_inference_peak_memory"
-            ]
+            metadata.benchmark_result.memory_footprint = profile["execution_summary"]["estimated_inference_peak_memory"]
             metadata.status = Status.COMPLETED
         elif status.failure:
             logger.info(f"{status.symbol} {status.state}: {status.message}")
@@ -101,7 +99,10 @@ class NPQAIBenchmarker(NPQAIBase):
             metadatas = MetadataHandler.load_json(file_path)
 
         for i, stored_metadata in enumerate(metadatas):
-            if stored_metadata.get("benchmark_task_info", {}).get("benchmark_task_uuid") == metadata.benchmark_task_info.benchmark_task_uuid:
+            if (
+                stored_metadata.get("benchmark_task_info", {}).get("benchmark_task_uuid")
+                == metadata.benchmark_task_info.benchmark_task_uuid
+            ):
                 metadatas[i] = metadata.asdict()
                 break
 

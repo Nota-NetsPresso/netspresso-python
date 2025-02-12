@@ -49,7 +49,7 @@ class NPQAIQuantizer(NPQAIBase):
 
         if status.success:
             logger.info(f"{status.symbol} {status.state.name}")
-            self.download_model(job=job, filename=metadata.quantized_model_path                                         )
+            self.download_model(job=job, filename=metadata.quantized_model_path)
             target_model = job.get_target_model()
             metadata.quantize_info.output_model_uuid = target_model.model_id
             metadata.status = Status.COMPLETED

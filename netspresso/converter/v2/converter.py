@@ -12,15 +12,7 @@ from netspresso.clients.launcher import launcher_client_v2
 from netspresso.clients.launcher.v2.schemas import InputLayer
 from netspresso.clients.launcher.v2.schemas.common import DeviceInfo
 from netspresso.clients.launcher.v2.schemas.task.convert.response_body import ConvertTask
-from netspresso.enums import (
-    DataType,
-    DeviceName,
-    Framework,
-    ServiceTask,
-    SoftwareVersion,
-    Status,
-    TaskStatusForDisplay,
-)
+from netspresso.enums import DataType, DeviceName, Framework, ServiceTask, SoftwareVersion, Status, TaskStatusForDisplay
 from netspresso.metadata.converter import ConverterMetadata
 from netspresso.utils import FileHandler
 from netspresso.utils.metadata import MetadataHandler
@@ -36,8 +28,7 @@ class ConverterV2(NetsPressoBase):
     def create_available_options(self, target_framework, target_device, target_software_version):
         def filter_device(device: DeviceInfo, target_software_version: SoftwareVersion):
             filtered_versions = [
-                version for version in device.software_versions
-                if version.software_version == target_software_version
+                version for version in device.software_versions if version.software_version == target_software_version
             ]
 
             if filtered_versions:
@@ -64,7 +55,9 @@ class ConverterV2(NetsPressoBase):
 
         return available_options
 
-    def initialize_metadata(self, output_dir, input_model_path, target_framework, target_device, target_software_version):
+    def initialize_metadata(
+        self, output_dir, input_model_path, target_framework, target_device, target_software_version
+    ):
         def create_metadata_with_status(status, error_message=None):
             metadata = ConverterMetadata()
             metadata.status = status
@@ -88,9 +81,7 @@ class ConverterV2(NetsPressoBase):
 
         return metadata
 
-    def _download_converted_model(
-        self, convert_task: ConvertTask, local_path: str
-    ) -> None:
+    def _download_converted_model(self, convert_task: ConvertTask, local_path: str) -> None:
         """Download the converted model with given conversion task or conversion task uuid.
 
         Args:
