@@ -14,17 +14,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      
-      # Add this step to install required system packages
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-glx
-          sudo apt-get install -y libglib2.0-0
-      - uses: ammaraskar/sphinx-action@master
-        with:
-          docs-folder: "docs/"
+      # - uses: actions/checkout@v1
+      # - uses: ammaraskar/sphinx-action@master
+      #   with:
+      #     docs-folder: "docs/"
 
       # Docs: https://github.com/peaceiris/actions-gh-pages#%EF%B8%8F-docusaurus
       - name: Push to gh-pages
@@ -39,4 +32,4 @@ jobs:
           # The GH actions bot is used by default if you didn't specify the two fields.
           # You can swap them out with your own user credentials.
           user_name: github-actions[bot]
-          user_email: github-actions[bot]@users.noreply.github.com
+          user_email: github-actions[bot]@users.noreply.github.comthub-actions[bot]@users.noreply.github.com"
