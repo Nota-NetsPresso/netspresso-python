@@ -173,20 +173,6 @@ class NPQAIBase:
 
         return job_summaries
 
-    def get_jobs(self, offset: int = 0, limit: int = 50, creator: Optional[str] = None) -> List[Job]:
-        """
-        Get a list of jobs from the QAI Hub.
-
-        Returns:
-            List[Job]: Returns a list of job objects if successful.
-
-        Note:
-            For details, see `get_jobs in QAI Hub API <https://app.aihub.qualcomm.com/docs/hub/api.html#get-jobs>`_.
-        """
-        jobs = hub.get_jobs(offset=offset, limit=limit, creator=creator)
-
-        return jobs
-
     def get_job(self, job_id: str) -> Job:
         """
         Get a job from the QAI Hub.
