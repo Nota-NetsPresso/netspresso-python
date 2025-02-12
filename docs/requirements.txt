@@ -2,9 +2,4 @@ pyzstd==0.16.1
 sphinx==7.0.0
 recommonmark
 sphinx_rtd_theme
-netspresso==1.14.0.b7
-tensorflow==2.8.0
-pillow>=8.0,<11.0
-protobuf>=3.20,<4
-pygithub==2.4.0
-urllib3==2.0.2
+netspresso
