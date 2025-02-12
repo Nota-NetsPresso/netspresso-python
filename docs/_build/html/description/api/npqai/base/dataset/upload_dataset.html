@@ -115,7 +115,7 @@
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>For details, see <a class="reference external" href="https://app.aihub.qualcomm.com/docs/hub/api.html#upload-dataset">upload_dataset in QAI Hub API</a>.</p>
+<p>For details, see <a class="reference external" href="https://app.aihub.qualcomm.com/docs/hub/generated/qai_hub.upload_dataset.html">upload_dataset in QAI Hub API</a>.</p>
 </div>
 </dd></dl>
 
@@ -123,7 +123,8 @@
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">netspresso</span><span class="w"> </span><span class="kn">import</span> <span class="n">NPQAI</span>
 
-<span class="n">np_qai</span> <span class="o">=</span> <span class="n">NPQAI</span><span class="p">()</span>
+<span class="n">QAI_HUB_API_TOKEN</span> <span class="o">=</span> <span class="s2">&quot;YOUR_QAI_HUB_API_TOKEN&quot;</span>
+<span class="n">np_qai</span> <span class="o">=</span> <span class="n">NPQAI</span><span class="p">(</span><span class="n">api_token</span><span class="o">=</span><span class="n">QAI_HUB_API_TOKEN</span><span class="p">)</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">np_qai</span><span class="o">.</span><span class="n">upload_dataset</span><span class="p">(</span><span class="s2">&quot;YOUR_DATASET_PATH&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
