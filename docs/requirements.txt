@@ -2,4 +2,4 @@ pyzstd==0.16.1
 sphinx==7.0.0
 recommonmark
 sphinx_rtd_theme
-netspresso
+git+https://github.com/your-repo/netspresso.git@develop#egg=netspresso
