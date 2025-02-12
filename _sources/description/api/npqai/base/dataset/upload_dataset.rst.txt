@@ -11,5 +11,6 @@ Example
 
     from netspresso import NPQAI
 
-    np_qai = NPQAI()
+    QAI_HUB_API_TOKEN = "YOUR_QAI_HUB_API_TOKEN"
+    np_qai = NPQAI(api_token=QAI_HUB_API_TOKEN)
     dataset = np_qai.upload_dataset("YOUR_DATASET_PATH")
