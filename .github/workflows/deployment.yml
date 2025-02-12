@@ -14,7 +14,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      # - uses: actions/checkout@v1
+      - uses: actions/checkout@v1
       # - uses: ammaraskar/sphinx-action@master
       #   with:
       #     docs-folder: "docs/"
@@ -32,4 +32,4 @@ jobs:
           # The GH actions bot is used by default if you didn't specify the two fields.
           # You can swap them out with your own user credentials.
           user_name: github-actions[bot]
-          user_email: github-actions[bot]@users.noreply.github.comthub-actions[bot]@users.noreply.github.com"
+          user_email: github-actions[bot]@users.noreply.github.com
