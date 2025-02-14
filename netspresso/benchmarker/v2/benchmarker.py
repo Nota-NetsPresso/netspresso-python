@@ -8,16 +8,10 @@ from netspresso.base import NetsPressoBase
 from netspresso.clients.auth import TokenHandler
 from netspresso.clients.auth.response_body import UserResponse
 from netspresso.clients.launcher import launcher_client_v2
-from netspresso.clients.launcher.v2.schemas.task.benchmark.response_body import (
-    BenchmarkTask,
-)
+from netspresso.clients.launcher.v2.schemas.task.benchmark.response_body import BenchmarkTask
 from netspresso.enums import Status, TaskStatusForDisplay
 from netspresso.enums.credit import ServiceTask
-from netspresso.enums.device import (
-    DeviceName,
-    HardwareType,
-    SoftwareVersion,
-)
+from netspresso.enums.device import DeviceName, HardwareType, SoftwareVersion
 from netspresso.enums.model import DataType
 from netspresso.metadata.benchmarker import BenchmarkerMetadata
 from netspresso.utils import FileHandler

@@ -9,9 +9,7 @@ class ShufflenetV2ArchitectureConfig(ArchitectureConfig):
     backbone: Dict[str, Any] = field(
         default_factory=lambda: {
             "name": "shufflenetv2",
-            "params": {
-                "model_size": "0.5x"
-            },
+            "params": {"model_size": "0.5x"},
             "stage_params": None,
         }
     )
@@ -34,8 +32,8 @@ class DetectionYoloFastestModelConfig(ModelConfig):
                 "name": "yolo_fastest_head_v2",
                 "params": {
                     "anchors": [
-                        [12,18, 37,49, 52,132],  # P2
-                        [115,73, 119,199, 242,238],  # P3
+                        [12, 18, 37, 49, 52, 132],  # P2
+                        [115, 73, 119, 199, 242, 238],  # P3
                     ]
                 },
             },
@@ -53,6 +51,4 @@ class DetectionYoloFastestModelConfig(ModelConfig):
             },
         }
     )
-    losses: List[Dict[str, Any]] = field(
-        default_factory=lambda: [{"criterion": "retinanet_loss", "weight": None}]
-    )
+    losses: List[Dict[str, Any]] = field(default_factory=lambda: [{"criterion": "retinanet_loss", "weight": None}])

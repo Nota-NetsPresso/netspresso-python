@@ -52,4 +52,5 @@ def check_database(engine):
     else:
         logger.info("The database has already been created.")
 
+
 check_database(engine=engine)

@@ -9,16 +9,24 @@ from netspresso.utils.db.repositories.base import BaseRepository, Order
 
 class TrainingTaskRepository(BaseRepository[TrainingTask]):
     def get_by_task_id(self, db: Session, task_id: str) -> Optional[TrainingTask]:
-        task = db.query(self.model).filter(
-            self.model.task_id == task_id,
-        ).first()
+        task = (
+            db.query(self.model)
+            .filter(
+                self.model.task_id == task_id,
+            )
+            .first()
+        )
 
         return task
 
     def get_by_model_id(self, db: Session, model_id: str) -> Optional[TrainingTask]:
-        task = db.query(self.model).filter(
-            self.model.model_id == model_id,
-        ).first()
+        task = (
+            db.query(self.model)
+            .filter(
+                self.model.model_id == model_id,
+            )
+            .first()
+        )
 
         return task
 
@@ -28,5 +36,6 @@ class TrainingTaskRepository(BaseRepository[TrainingTask]):
         db.refresh(task)
 
         return task
+
 
 training_task_repository = TrainingTaskRepository(TrainingTask)

@@ -67,7 +67,6 @@ class SupportedDevicePayload(BaseModel):
         return self
 
 
-
 class TargetDevicePayload(BaseModel):
     name: DeviceName
     display_name: Optional[DeviceDisplay] = Field(default=None, description="Device display name")

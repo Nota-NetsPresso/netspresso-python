@@ -28,7 +28,9 @@ from netspresso.utils.db.repositories.model import model_repository
 
 
 class ConversionTaskService:
-    def get_supported_devices(self, db: Session, framework: SourceFramework, api_key: str) -> List[SupportedDeviceResponse]:
+    def get_supported_devices(
+        self, db: Session, framework: SourceFramework, api_key: str
+    ) -> List[SupportedDeviceResponse]:
         """Get supported devices for conversion tasks.
 
         Args:
@@ -43,10 +45,7 @@ class ConversionTaskService:
         converter = netspresso.converter_v2()
         supported_options = converter.get_supported_options(framework=framework)
 
-        return [
-            self._create_supported_device_response(option)
-            for option in supported_options
-        ]
+        return [self._create_supported_device_response(option) for option in supported_options]
 
     def _create_supported_device_response(self, option) -> SupportedDeviceResponse:
         """Create SupportedDeviceResponse from converter option.
@@ -59,10 +58,7 @@ class ConversionTaskService:
         """
         return SupportedDeviceResponse(
             framework=TargetFrameworkPayload(name=option.framework),
-            devices=[
-                self._create_device_payload(device)
-                for device in option.devices
-            ]
+            devices=[self._create_device_payload(device) for device in option.devices],
         )
 
     def _create_device_payload(self, device: DeviceInfo) -> SupportedDevicePayload:
@@ -77,24 +73,21 @@ class ConversionTaskService:
         return SupportedDevicePayload(
             name=device.device_name,
             software_versions=[
-                SoftwareVersionPayload(name=version.software_version)
-                for version in device.software_versions
+                SoftwareVersionPayload(name=version.software_version) for version in device.software_versions
             ],
-            precisions=[
-                PrecisionPayload(name=precision)
-                for precision in device.data_types
-            ],
-            hardware_types=[
-                HardwareTypePayload(name=hardware_type)
-                for hardware_type in device.hardware_types
-            ],
+            precisions=[PrecisionPayload(name=precision) for precision in device.data_types],
+            hardware_types=[HardwareTypePayload(name=hardware_type) for hardware_type in device.hardware_types],
         )
 
-    def create_conversion_task(self, db: Session, conversion_in: ConversionCreate, api_key: str) -> ConversionCreatePayload:
+    def create_conversion_task(
+        self, db: Session, conversion_in: ConversionCreate, api_key: str
+    ) -> ConversionCreatePayload:
         netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
 
         # Get model from trained models repository
-        model = model_repository.get_by_model_id(db=db, model_id=conversion_in.input_model_id, user_id=netspresso.user_info.user_id)
+        model = model_repository.get_by_model_id(
+            db=db, model_id=conversion_in.input_model_id, user_id=netspresso.user_info.user_id
+        )
         project = project_service.get_project(db=db, project_id=model.project_id, api_key=api_key)
 
         # Create output directory path as a 'converted' subfolder of input model path
@@ -104,12 +97,12 @@ class ConversionTaskService:
         print(f"Input model path: {input_model_dir}")
 
         # Find .onnx file in the directory
-        onnx_files = list(input_model_dir.glob('*.onnx'))
+        onnx_files = list(input_model_dir.glob("*.onnx"))
         if not onnx_files:
             raise FileNotFoundError(f"No .onnx file found in directory: {input_model_dir}")
         input_model_path = onnx_files[0]  # Use the first .onnx file found
 
-        output_dir = input_model_dir / 'converted'
+        output_dir = input_model_dir / "converted"
         output_dir.mkdir(exist_ok=True)
 
         task = convert_model_task.delay(
@@ -120,7 +113,7 @@ class ConversionTaskService:
             target_device_name=conversion_in.device_name,
             target_data_type=conversion_in.precision,
             target_software_version=conversion_in.software_version,
-            input_model_id=conversion_in.input_model_id
+            input_model_id=conversion_in.input_model_id,
         )
         task_id = task.get()
         return ConversionCreatePayload(task_id=task_id)
@@ -147,7 +140,9 @@ class ConversionTaskService:
 
         framework = TargetFrameworkPayload(name=conversion_task.framework)
         device_name = TargetDevicePayload(name=conversion_task.device_name)
-        software_version = SoftwareVersionPayload(name=conversion_task.software_version) if conversion_task.software_version else None
+        software_version = (
+            SoftwareVersionPayload(name=conversion_task.software_version) if conversion_task.software_version else None
+        )
         precision = PrecisionPayload(name=conversion_task.precision)
 
         conversion_payload = ConversionPayload(
@@ -181,7 +176,9 @@ class ConversionTaskService:
 
         framework = TargetFrameworkPayload(name=conversion_task.framework)
         device_name = TargetDevicePayload(name=conversion_task.device_name)
-        software_version = SoftwareVersionPayload(name=conversion_task.software_version) if conversion_task.software_version else None
+        software_version = (
+            SoftwareVersionPayload(name=conversion_task.software_version) if conversion_task.software_version else None
+        )
         precision = PrecisionPayload(name=conversion_task.precision)
 
         conversion_payload = ConversionPayload(

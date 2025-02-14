@@ -9,9 +9,13 @@ from netspresso.utils.db.repositories.base import BaseRepository, Order
 
 class ConversionTaskRepository(BaseRepository[ConversionTask]):
     def get_by_task_id(self, db: Session, task_id: str) -> Optional[ConversionTask]:
-        task = db.query(self.model).filter(
-            self.model.task_id == task_id,
-        ).first()
+        task = (
+            db.query(self.model)
+            .filter(
+                self.model.task_id == task_id,
+            )
+            .first()
+        )
 
         return task
 
@@ -51,5 +55,6 @@ class ConversionTaskRepository(BaseRepository[ConversionTask]):
             size=size,
             order=order,
         )
+
 
 conversion_task_repository = ConversionTaskRepository(ConversionTask)

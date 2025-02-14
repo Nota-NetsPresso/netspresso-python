@@ -9,10 +9,14 @@ from netspresso.utils.db.repositories.base import BaseRepository, Order
 
 class ModelRepository(BaseRepository[Model]):
     def get_by_model_id(self, db: Session, model_id: str, user_id: str) -> Optional[Model]:
-        model = db.query(self.model).filter(
-            self.model.model_id == model_id,
-            self.model.user_id == user_id,
-        ).first()
+        model = (
+            db.query(self.model)
+            .filter(
+                self.model.model_id == model_id,
+                self.model.user_id == user_id,
+            )
+            .first()
+        )
 
         return model
 
@@ -70,11 +74,7 @@ class ModelRepository(BaseRepository[Model]):
         )
 
     def count_by_user_id(self, db: Session, user_id: str) -> int:
-        return (
-            db.query(func.count(self.model.user_id))
-            .filter(self.model.user_id == user_id)
-            .scalar()
-        )
+        return db.query(func.count(self.model.user_id)).filter(self.model.user_id == user_id).scalar()
 
 
 model_repository = ModelRepository(Model)

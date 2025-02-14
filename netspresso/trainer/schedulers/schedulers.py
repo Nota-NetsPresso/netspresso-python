@@ -11,7 +11,7 @@ class BaseScheduler:
         """
         Extract all fields except 'name' as parameters.
         """
-        return {k: v for k, v in asdict(self).items() if k != 'name'}
+        return {k: v for k, v in asdict(self).items() if k != "name"}
 
 
 @dataclass
@@ -56,6 +56,6 @@ def get_supported_schedulers() -> List[Dict[str, Any]]:
         StepLR(),
         PolynomialLRWithWarmUp(),
         CosineAnnealingLRWithCustomWarmUp(),
-        CosineAnnealingWarmRestartsWithCustomWarmUp()
+        CosineAnnealingWarmRestartsWithCustomWarmUp(),
     ]
     return [{"name": scheduler.name, "parameters": scheduler.to_parameters()} for scheduler in schedulers]

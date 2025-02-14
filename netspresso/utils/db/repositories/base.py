@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from netspresso.utils.db.session import Base
 
-ModelType = TypeVar("ModelType", bound=Base) # type: ignore
+ModelType = TypeVar("ModelType", bound=Base)  # type: ignore
 
 
 class Order(str, Enum):

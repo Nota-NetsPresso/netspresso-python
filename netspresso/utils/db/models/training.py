@@ -12,10 +12,10 @@ class Augmentation(Base):
     id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True, nullable=False)
     name = Column(String(50), nullable=False)
     parameters = Column(JSON, nullable=False)
-    phase = Column(String(30), nullable=False) # train, inference
+    phase = Column(String(30), nullable=False)  # train, inference
 
     hyperparameter_id = Column(Integer, ForeignKey("hyperparameter.id"), nullable=False)
-    hyperparameter = relationship("Hyperparameter", back_populates="augmentations", lazy='joined')
+    hyperparameter = relationship("Hyperparameter", back_populates="augmentations", lazy="joined")
 
 
 class TrainingTask(Base, TimestampMixin):
@@ -32,17 +32,23 @@ class TrainingTask(Base, TimestampMixin):
     is_deleted = Column(Boolean, nullable=False, default=False)
 
     # Relationships (1:1 Mapping)
-    dataset = relationship("Dataset", back_populates="task", uselist=False, cascade="all, delete-orphan", lazy='joined')
-    hyperparameter = relationship("Hyperparameter", back_populates="task", uselist=False, cascade="all, delete-orphan", lazy='joined')
-    environment = relationship("Environment", back_populates="task", uselist=False, cascade="all, delete-orphan", lazy='joined')
-    performance = relationship("Performance", back_populates="task", uselist=False, cascade="all, delete-orphan", lazy='joined')
+    dataset = relationship("Dataset", back_populates="task", uselist=False, cascade="all, delete-orphan", lazy="joined")
+    hyperparameter = relationship(
+        "Hyperparameter", back_populates="task", uselist=False, cascade="all, delete-orphan", lazy="joined"
+    )
+    environment = relationship(
+        "Environment", back_populates="task", uselist=False, cascade="all, delete-orphan", lazy="joined"
+    )
+    performance = relationship(
+        "Performance", back_populates="task", uselist=False, cascade="all, delete-orphan", lazy="joined"
+    )
 
     # Relationship to Model
     model_id = Column(String(36), ForeignKey("model.model_id"), nullable=True)
     model = relationship(
         "Model",
         uselist=False,
-        lazy='joined',
+        lazy="joined",
     )
 
 
@@ -71,7 +77,9 @@ class Hyperparameter(Base, TimestampMixin):
     optimizer = Column(JSON, nullable=True)
     scheduler = Column(JSON, nullable=True)
 
-    augmentations = relationship("Augmentation", back_populates="hyperparameter", cascade="all, delete-orphan", lazy='joined')
+    augmentations = relationship(
+        "Augmentation", back_populates="hyperparameter", cascade="all, delete-orphan", lazy="joined"
+    )
 
     # Relationship to TrainingTask
     task_id = Column(String(36), ForeignKey("training_task.task_id", ondelete="CASCADE"), unique=True, nullable=False)

@@ -17,7 +17,7 @@ class ModelService:
 
         new_models = []
         for model in models:
-            if model.type == 'converted_models':
+            if model.type == "converted_models":
                 continue
 
             training_task = training_task_repository.get_by_model_id(db=db, model_id=model.model_id)
