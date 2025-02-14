@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import List
 
 from sqlalchemy.orm import Session
@@ -9,10 +10,17 @@ from app.api.v1.schemas.device import (
     SupportedDevicePayload,
     SupportedDeviceResponse,
 )
-from app.api.v1.schemas.task.benchmark.benchmark_task import TargetFrameworkPayload
+from app.api.v1.schemas.task.benchmark.benchmark_task import (
+    BenchmarkCreate,
+    BenchmarkCreatePayload,
+    TargetFrameworkPayload,
+)
 from app.services.conversion_task import conversion_task_service
+from app.services.project import project_service
 from app.services.user import user_service
+from app.worker.celery_app import benchmark_model_task
 from netspresso.clients.launcher.v2.schemas.common import DeviceInfo
+from netspresso.utils.db.repositories.model import model_repository
 
 
 class BenchmarkTaskService:
@@ -79,6 +87,32 @@ class BenchmarkTaskService:
             precisions=[PrecisionPayload(name=precision) for precision in device.data_types],
             hardware_types=[HardwareTypePayload(name=hardware_type) for hardware_type in device.hardware_types],
         )
+
+    def create_benchmark_task(self, db: Session, benchmark_in: BenchmarkCreate, api_key: str) -> BenchmarkCreatePayload:
+        netspresso = user_service.build_netspresso_with_api_key(db=db, api_key=api_key)
+
+        # Get model from trained models repository
+        model = model_repository.get_by_model_id(
+            db=db, model_id=benchmark_in.input_model_id, user_id=netspresso.user_info.user_id
+        )
+        project = project_service.get_project(db=db, project_id=model.project_id, api_key=api_key)
+
+        # Create output directory path as a 'converted' subfolder of input model path
+        project_abs_path = Path(project.project_abs_path)
+        input_model_path = project_abs_path / model.object_path
+
+        print(f"Input model path: {input_model_path}")
+
+        task = benchmark_model_task.delay(
+            api_key=api_key,
+            input_model_path=input_model_path.as_posix(),
+            target_device_name=benchmark_in.device_name,
+            target_software_version=benchmark_in.software_version,
+            target_hardware_type=benchmark_in.hardware_type,
+            input_model_id=benchmark_in.input_model_id,
+        )
+        task_id = task.get()
+        return BenchmarkCreatePayload(task_id=task_id)
 
 
 benchmark_task_service = BenchmarkTaskService()

@@ -87,6 +87,7 @@ class TargetDevicePayload(BaseModel):
 
         return self
 
+
 class TargetFrameworkPayload(BaseModel):
     name: TargetFramework = Field(description="Framework name")
     display_name: Optional[TargetFrameworkDisplay] = Field(default=None, description="Framework display name")
@@ -94,6 +95,7 @@ class TargetFrameworkPayload(BaseModel):
     @model_validator(mode="after")
     def set_display_name(self) -> str:
         self.display_name = TARGET_FRAMEWORK_DISPLAY_MAP.get(self.name)
+
         return self
 
 
