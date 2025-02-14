@@ -19,7 +19,7 @@ from netspresso.enums.model import DataType
 from netspresso.enums.project import SubFolder
 from netspresso.metadata.benchmarker import BenchmarkerMetadata
 from netspresso.utils import FileHandler
-from netspresso.utils.db.models.benchmark import BenchmarkTask
+from netspresso.utils.db.models.benchmark import BenchmarkResult, BenchmarkTask
 from netspresso.utils.db.models.model import Model
 from netspresso.utils.db.repositories.benchmark import benchmark_task_repository
 from netspresso.utils.db.repositories.model import model_repository
@@ -139,6 +139,23 @@ class BenchmarkerV2(NetsPressoBase):
 
     def _save_benchmark_task(self, benchmark_task: BenchmarkTask) -> BenchmarkTask:
         with get_db_session() as db:
+            benchmark_task = benchmark_task_repository.save(db=db, model=benchmark_task)
+
+            return benchmark_task
+
+    def save_benchmark_result(self, benchmark_task: BenchmarkTask, benchmark_result, file_size_in_mb) -> BenchmarkTask:
+        benchmark_result = BenchmarkResult(
+            processor=benchmark_result.processor,
+            memory_footprint_gpu=benchmark_result.memory_footprint_gpu,
+            memory_footprint_cpu=benchmark_result.memory_footprint_cpu,
+            power_consumption=benchmark_result.power_consumption,
+            ram_size=benchmark_result.ram_size,
+            latency=benchmark_result.latency,
+            file_size=file_size_in_mb,
+        )
+
+        with get_db_session() as db:
+            benchmark_task.result = benchmark_result
             benchmark_task = benchmark_task_repository.save(db=db, model=benchmark_task)
 
             return benchmark_task
@@ -276,14 +293,8 @@ class BenchmarkerV2(NetsPressoBase):
                 benchmark_task.status = Status.COMPLETED
 
                 # Save benchmark results
-                benchmark_result = benchmark_response.data.benchmark_result
-                benchmark_task.result.processor = benchmark_result.processor
-                benchmark_task.result.memory_footprint_gpu = benchmark_result.memory_footprint_gpu
-                benchmark_task.result.memory_footprint_cpu = benchmark_result.memory_footprint_cpu
-                benchmark_task.result.power_consumption = benchmark_result.power_consumption
-                benchmark_task.result.ram_size = benchmark_result.ram_size
-                benchmark_task.result.latency = benchmark_result.latency
-                benchmark_task.result.file_size = validate_model_response.data.file_size_in_mb
+                _benchmark_result = benchmark_response.data.benchmark_result
+                benchmark_task = self.save_benchmark_result(benchmark_task, _benchmark_result, validate_model_response.data.file_size_in_mb)
 
                 logger.info("Benchmark task was completed successfully.")
             elif benchmark_response.data.status in [

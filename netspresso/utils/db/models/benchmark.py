@@ -13,7 +13,6 @@ class BenchmarkResult(Base):
 
     # Performance metrics
     processor = Column(String(30), nullable=True)
-    memory_footprint = Column(Integer, nullable=True)
     memory_footprint_gpu = Column(Integer, nullable=True)
     memory_footprint_cpu = Column(Integer, nullable=True)
     power_consumption = Column(Integer, nullable=True)
