@@ -2,7 +2,15 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field, model_validator
 
-from netspresso.enums.conversion import PRECISION_DISPLAY_MAP, Precision, PrecisionDisplay
+from app.api.v1.schemas.base import ResponseListItems
+from netspresso.enums.conversion import (
+    PRECISION_DISPLAY_MAP,
+    TARGET_FRAMEWORK_DISPLAY_MAP,
+    Precision,
+    PrecisionDisplay,
+    TargetFramework,
+    TargetFrameworkDisplay,
+)
 from netspresso.enums.device import (
     DEVICE_BRAND_MAP,
     DEVICE_DISPLAY_MAP,
@@ -78,3 +86,23 @@ class TargetDevicePayload(BaseModel):
         self.brand_name = DEVICE_BRAND_MAP.get(self.name)
 
         return self
+
+
+class TargetFrameworkPayload(BaseModel):
+    name: TargetFramework = Field(description="Framework name")
+    display_name: Optional[TargetFrameworkDisplay] = Field(default=None, description="Framework display name")
+
+    @model_validator(mode="after")
+    def set_display_name(self) -> str:
+        self.display_name = TARGET_FRAMEWORK_DISPLAY_MAP.get(self.name)
+
+        return self
+
+
+class SupportedDeviceResponse(BaseModel):
+    framework: TargetFrameworkPayload
+    devices: List[SupportedDevicePayload]
+
+
+class SupportedDevicesResponse(ResponseListItems):
+    data: List[SupportedDeviceResponse]

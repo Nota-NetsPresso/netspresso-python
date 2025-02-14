@@ -1,15 +1,18 @@
 import time
 from pathlib import Path
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 from loguru import logger
 
 from netspresso.base import NetsPressoBase
 from netspresso.clients.auth import TokenHandler
 from netspresso.clients.auth.response_body import UserResponse
+from netspresso.clients.compressor.v2.schemas.common import DeviceInfo
 from netspresso.clients.launcher import launcher_client_v2
+from netspresso.clients.launcher.v2.schemas.common import ModelOption
 from netspresso.clients.launcher.v2.schemas.task.benchmark.response_body import BenchmarkTask
 from netspresso.enums import Status, TaskStatusForDisplay
+from netspresso.enums.conversion import TargetFramework
 from netspresso.enums.credit import ServiceTask
 from netspresso.enums.device import DeviceName, HardwareType, SoftwareVersion
 from netspresso.enums.model import DataType
@@ -24,6 +27,79 @@ class BenchmarkerV2(NetsPressoBase):
 
         super().__init__(token_handler)
         self.user_info = user_info
+
+    def filter_device_by_version(
+        self, device: DeviceInfo, target_software_version: Optional[SoftwareVersion] = None
+    ) -> Optional[DeviceInfo]:
+        """Filter device by software version.
+
+        Args:
+            device: Device information to filter
+            target_software_version: Target software version to filter by
+
+        Returns:
+            Optional[DeviceInfo]: Filtered device info or None if no matching version
+        """
+        filtered_versions = [
+            version for version in device.software_versions if version.software_version == target_software_version
+        ]
+
+        if filtered_versions:
+            device.software_versions = filtered_versions
+            return device
+        return None
+
+    def filter_devices_by_name_and_version(
+        self, devices: List[DeviceInfo], target_device: DeviceName, target_version: Optional[SoftwareVersion] = None
+    ) -> List[DeviceInfo]:
+        """Filter devices by name and software version.
+
+        Args:
+            devices: List of devices to filter
+            target_device: Target device name to filter by
+            target_version: Target software version to filter by
+
+        Returns:
+            List[DeviceInfo]: List of filtered devices
+        """
+        filtered_devices = [
+            self.filter_device_by_version(device, target_version)
+            for device in devices
+            if device.device_name == target_device
+        ]
+        return [device for device in filtered_devices if device]
+
+    def get_supported_options(
+        self, framework: TargetFramework, device: DeviceName, software_version: Optional[SoftwareVersion] = None
+    ) -> List[ModelOption]:
+        """Get supported options for given framework, device and software version.
+
+        Args:
+            framework: Target framework
+            device: Target device name
+            software_version: Target software version
+
+        Returns:
+            List[ModelOption]: List of supported model options
+        """
+        self.token_handler.validate_token()
+
+        # Get all options from launcher
+        options_response = launcher_client_v2.benchmarker.read_framework_options(
+            access_token=self.token_handler.tokens.access_token,
+            framework=framework,
+        )
+        supported_options = options_response.data
+
+        # Filter options for specific frameworks
+        if framework in [TargetFramework.TENSORRT, TargetFramework.DRPAI]:
+            for option in supported_options:
+                if option.framework == framework:
+                    option.devices = self.filter_devices_by_name_and_version(
+                        devices=option.devices, target_device=device, target_version=software_version
+                    )
+
+        return supported_options
 
     def get_data_type(self, input_model_dir):
         metadata_path = input_model_dir / "metadata.json"
