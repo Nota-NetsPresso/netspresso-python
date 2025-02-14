@@ -1,38 +1,17 @@
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.api.v1.schemas.base import ResponseItem
-from app.api.v1.schemas.task.conversion.device import (
+from app.api.v1.schemas.device import (
     PrecisionPayload,
     SoftwareVersionPayload,
-    SupportedDevicePayload,
     TargetDevicePayload,
+    TargetFrameworkPayload,
 )
-from netspresso.enums.conversion import TARGET_FRAMEWORK_DISPLAY_MAP, Precision, TargetFramework, TargetFrameworkDisplay
+from netspresso.enums.conversion import Precision, TargetFramework
 from netspresso.enums.device import DeviceName, SoftwareVersion
-from netspresso.enums.model import DataType
-
-
-class TargetFrameworkPayload(BaseModel):
-    name: TargetFramework = Field(description="Framework name")
-    display_name: Optional[TargetFrameworkDisplay] = Field(default=None, description="Framework display name")
-
-    @model_validator(mode="after")
-    def set_display_name(self) -> str:
-        self.display_name = TARGET_FRAMEWORK_DISPLAY_MAP.get(self.name)
-
-        return self
-
-
-class SupportedDeviceResponse(BaseModel):
-    framework: TargetFrameworkPayload
-    devices: List[SupportedDevicePayload]
-
-
-class SupportedDevicesResponse(BaseModel):
-    data: List[SupportedDeviceResponse]
 
 
 class ConversionCreate(BaseModel):
